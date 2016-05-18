@@ -1,18 +1,11 @@
 #!/usr/bin/ruby
 
-def get_go_url
-  return "#{ENV["URL"]}/go"
-end
+require 'json'
 
-def get_dashboard_url
-  return "#{get_go_url}/pipelines"
-end
-
-def get_agents_url
-  return "#{get_go_url}/agents"
+def get_url path
+  return "#{ENV["URL"]}/go#{path}"
 end
 
 def get_scenarios
-  return { "dashboard" => {"name" => "dashboard", "url" => get_dashboard_url, "count" => 10, "rampup" => 60, "duration" => 300 },
-           "agents" => {"name" => "agents", "url" => get_agents_url, "count" => 10, "rampup" => 60, "duration" => 300}}
+  return JSON.parse(File.read('scripts/load_scenarios.json'))
 end
