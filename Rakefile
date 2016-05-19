@@ -7,5 +7,6 @@ task :start do
   File.delete('jmeter.log') if File.exists?('jmeter.log')
   File.delete('custom.log') if File.exists?('custom.log')
   File.delete('jmeter.jtl') if File.exists?('jmeter.jtl')
+  File.delete('perf.jtl') if File.exists?('perf.jtl')
   ruby "scripts/run_test.rb"
 end

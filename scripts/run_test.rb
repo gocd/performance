@@ -49,6 +49,9 @@ test do
 				assert equals: scenario["response_code"], test_field: 'Assertion.response_code'
 			end
 		end
+
+
+
 	end
 
   log filename: 'custom.log', error_logging: true
@@ -59,8 +62,24 @@ test do
   response_times_over_time 'Response Times Over Time'
   response_times_percentiles 'Response Times Percentiles'
 
+	perfmon_collector name: 'Perfmon Metrics Collector',
+		nodes: [
+		 {
+				 server: 'localhost',
+				 port: 4444,
+				 metric: 'Memory',
+				 parameters: 'name=node#1:label=memory-node'
+		 },{
+				 server: 'localhost',
+				 port: 4444,
+				 metric: 'CPU',
+				 parameters: 'name=node#1:label=cpu-node:pid=240:core=2'
+		 }],
+		 filename: 'perf.jtl',
+		 xml: true
+
 end.run(path: ENV['JMETER_PATH'],
   file: 'jmeter.jmx',
   log: 'jmeter.log',
-  properties: {"jmeter.save.saveservice.output_format" => "xml"})
+  properties: {"jmeter.save.saveservice.output_format" => "xml"}, gui: true)
 #end.run(path: ENV['JMETER_PATH'], gui: true)
