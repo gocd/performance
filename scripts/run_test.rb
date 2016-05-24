@@ -2,9 +2,8 @@ require 'rubygems'
 require 'ruby-jmeter'
 require_relative 'load_scenarios'
 
-
 test do
-	get_scenarios.each do |key, scenario|
+  get_scenarios.each do |key, scenario|
 		test_url = get_url scenario["url"]
 		if scenario["name"] == "dashboard_api"
 			threads count: scenario["count"], rampup: scenario["rampup"], duration: scenario["duration"] do
@@ -12,7 +11,7 @@ test do
 					scenario["header"].each do |header|
 						header({name: header["name"], value: header["value"]})
 					end
-					assert equals: scenario["response_code"], test_field: 'Assertion.response_code'
+				    assert equals: scenario["response_code"], test_field: 'Assertion.response_code'
 					extract json: '$._embedded.pipeline_groups[0]._embedded.pipelines[0]._links.settings_path.href', name: 'general'
 					extract json: '$._embedded.pipeline_groups[0]._embedded.pipelines[0]._links.self.href', name: 'history'
 					extract json: '$._embedded.pipeline_groups[0]._embedded.pipelines[0]._embedded.instances[0]._links.self.href', name: 'stage'
@@ -63,23 +62,32 @@ test do
   response_times_percentiles 'Response Times Percentiles'
 
 	perfmon_collector name: 'Perfmon Metrics Collector',
-		nodes: [
-		 {
-				 server: 'localhost',
-				 port: 4444,
-				 metric: 'Memory',
-				 parameters: 'name=node#1:label=memory-node'
-		 },{
-				 server: 'localhost',
-				 port: 4444,
-				 metric: 'CPU',
-				 parameters: 'name=node#1:label=cpu-node:pid=240:core=2'
-		 }],
+		nodes: [{
+				server: 'localhost',
+				port: 4444,
+				metric: 'Memory',
+				parameters: 'name=node#1:label=memory-node'
+			},{
+				server: 'localhost',
+				port: 4444,
+				metric: 'CPU',
+				parameters: 'name=node#1:label=cpu-node'
+			},{
+				server: 'localhost',
+				port: 4444,
+				metric: 'JMX',
+				parameters: 'url=localhost\:4711:gc-time'
+			},{
+				server: 'localhost',
+				port: 4444,
+				metric: 'JMX',
+				parameters: 'url=localhost\:4711:memory-usage'
+			}],
 		 filename: 'perf.jtl',
 		 xml: true
 
 end.run(path: ENV['JMETER_PATH'],
-  file: 'jmeter.jmx',
-  log: 'jmeter.log',
-  properties: {"jmeter.save.saveservice.output_format" => "xml"}, gui: true)
+	file: 'jmeter.jmx',
+	log: 'jmeter.log',
+	properties: {"jmeter.save.saveservice.output_format" => "xml"}, gui: true)
 #end.run(path: ENV['JMETER_PATH'], gui: true)
