@@ -22,5 +22,5 @@ def get_url path
 end
 
 def get_scenarios
-	return JSON.parse(File.read('scripts/load_scenarios.json'))
+  return JSON.parse(File.read('scripts/load_scenarios.json'))
 end
