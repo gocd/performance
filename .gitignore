@@ -1,2 +1,6 @@
 target
 .idea
+*.log
+*.jmx
+*.jtl
+*.lock
