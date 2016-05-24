@@ -20,3 +20,4 @@ target
 *.jmx
 *.jtl
 *.lock
+.DS_Store
