@@ -2,88 +2,88 @@
   "dashboard_ui": {
     "name" : "dashboard_ui",
     "url" : "/pipelines",
-    "count" : 1,
+    "count" : 10,
     "rampup" : 1,
-    "duration" : 1,
+    "duration" : 30,
     "response_code" : 200
   },
   "agents": {
     "name" : "agents",
     "url" : "/agents",
-    "count" : 1,
+    "count" : 10,
     "rampup" : 1,
-    "duration" : 1,
+    "duration" : 30,
     "response_code" : 200
 
   },
   "environments": {
     "name" : "environments",
     "url" : "/environments",
-    "count" : 1,
+    "count" : 10,
     "rampup" : 1,
-    "duration" : 1,
+    "duration" : 30,
     "response_code" : 200
 
   },
   "pipelines": {
     "name" : "pipelines",
     "url" : "/admin/pipelines",
-    "count" : 1,
+    "count" : 10,
     "rampup" : 1,
-    "duration" : 1,
+    "duration" : 30,
     "response_code" : 200
 
   },
   "templates": {
     "name" : "templates",
     "url" : "/admin/templates",
-    "count" : 1,
+    "count" : 10,
     "rampup" : 1,
-    "duration" : 1,
+    "duration" : 30,
     "response_code" : 200
 
   },
   "users": {
     "name" : "users",
     "url" : "/admin/users",
-    "count" : 1,
+    "count" : 10,
     "rampup" : 1,
-    "duration" : 1,
+    "duration" : 30,
     "response_code" : 200
 
   },
   "server": {
     "name" : "server",
     "url" : "/admin/config/server",
-    "count" : 1,
+    "count" : 10,
     "rampup" : 1,
-    "duration" : 1,
+    "duration" : 30,
     "response_code" : 200
 
   },
   "messages": {
     "name" : "messages",
     "url" : "/server/messages.json",
-    "count" : 1,
+    "count" : 10,
     "rampup" : 1,
-    "duration" : 1,
+    "duration" : 30,
     "response_code" : 200
 
   },
   "cctray": {
     "name" : "cctray",
     "url" : "/cctray.xml",
-    "count" : 1,
+    "count" : 10,
     "rampup" : 1,
-    "duration" : 1,
+    "duration" : 30,
     "response_code" : 200
   },
   "dashboard_api": {
     "name" : "dashboard_api",
     "url" : "/api/dashboard",
-    "count" : 1,
+    "count" : 10,
     "rampup" : 1,
-    "duration" : 1,
+    "duration" : 30,
     "response_code" : 200,
     "header" : [{
       "name" : "Accept",
