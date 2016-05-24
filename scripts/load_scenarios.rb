@@ -1,18 +1,26 @@
 #!/usr/bin/ruby
+##########################################################################
+# Copyright 2016 ThoughtWorks, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+##########################################################################
 
-def get_go_url
-  return "#{ENV["URL"]}/go"
-end
+require 'json'
 
-def get_dashboard_url
-  return "#{get_go_url}/pipelines"
-end
-
-def get_agents_url
-  return "#{get_go_url}/agents"
+def get_url path
+  return "#{ENV["URL"]}/go#{path}"
 end
 
 def get_scenarios
-  return { "dashboard" => {"name" => "dashboard", "url" => get_dashboard_url, "count" => 10, "rampup" => 60, "duration" => 300 },
-           "agents" => {"name" => "agents", "url" => get_agents_url, "count" => 10, "rampup" => 60, "duration" => 300}}
+  return JSON.parse(File.read('scripts/load_scenarios.json'))
 end
