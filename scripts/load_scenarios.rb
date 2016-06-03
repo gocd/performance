@@ -18,12 +18,7 @@
 require 'json'
 require 'nokogiri'
 require 'cgi'
-
-NO_OF_PIPELINES = ENV["NO_OF_PIPELINES"] || 10
-NO_OF_AGENTS = ENV["NO_OF_AGENTS"]  || 5
-GO_SERVER_URL = ENV["GO_SERVER_URL"] || "http://localhost:8153"
-GO_SERVER_SSH_URL = ENV["GO_SERVER_SSH_URL"] || "https://localhost:8154"
-RELEASES_JSON_URL = 'https://download.go.cd/experimental/releases.json'
+require_relative 'init'
 
 def get_url path=''
   return "#{GO_SERVER_URL}/go#{path}"
@@ -45,11 +40,9 @@ def create_pipelines
     sh(%Q{curl -sL -w "%{http_code}" -X POST  -H "Accept: application/vnd.go.cd.v1+json" -H "Content-Type: application/json" --data "@scripts/pipeline.json" #{url} -o /dev/null})
     sh(%Q{curl -sL -w "%{http_code}" -X POST  -H "Accept:application/vnd.go.cd.v1+text" -H "CONFIRM:true" #{get_url}/api/pipelines/perfpipeline_#{pipeline}/unpause -o /dev/null})
   }
-
 end
 
 def create_agents
-
   json = JSON.parse(open(RELEASES_JSON_URL).read)
   version, release = json.sort {|a, b| a['go_full_version'] <=> b['go_full_version']}.last['go_full_version'].split('-')
   go_full_version = "#{version}-#{release}"
@@ -61,14 +54,23 @@ def create_agents
   (1..NO_OF_AGENTS).each{|i|
     sh("cp -r go-agents/go-agent-#{version} go-agents/agent-#{i}")
     sh("cp scripts/autoregister.properties go-agents/agent-#{i}/config/autoregister.properties")
-    sh("chmod +x go-agents/agent-#{i}/agent.sh; GO_SERVER=#{GO_SERVER_URL[/http:\/\/(.*?)\:/,1]} go-agents/agent-#{i}/agent.sh 2>&1 &")
+    sh("chmod +x go-agents/agent-#{i}/agent.sh; GO_SERVER=#{GO_SERVER_URL[/http:\/\/(.*?)\:/,1]} DAEMON=Y go-agents/agent-#{i}/agent.sh > /dev/null")
   }
+end
+
+def stop_agents
+  p "Stopping all agents"
+  (1..NO_OF_AGENTS).each{|i|
+    sh("chmod +x go-agents/agent-#{i}/stop-agent.sh; go-agents/agent-#{i}/stop-agent.sh > /dev/null")
+  }
+  sh('rm -rf go-agents')
 end
 
 def set_agent_auto_register_key
   response = `curl #{get_url}/admin/configuration/file.xml`
   response_with_headers = `curl -i #{get_url}/admin/configuration/file.xml`
-  md5 = response_with_headers.scan(/X-CRUISE-CONFIG-MD5: (.*)\r/)
+  p response_with_headers
+  md5 = response_with_headers[/X-CRUISE-CONFIG-MD5: (.*?)\r/,1]
 
   puts "Previous MD5 was: #{md5}"
   xml = Nokogiri::XML(response)
@@ -80,14 +82,16 @@ def set_agent_auto_register_key
   File.open(file = '/tmp/perf_config_file.xml', 'w') do |h|
     h.write(params)
   end
-  reply = `curl -i #{get_url}/admin/configuration/file.xml -d @#{file}`
+  reply = `curl -d @#{file} -i #{get_url}/admin/configuration/file.xml`
+  puts "#{reply}\n==="
 
 end
 
 def update_config
   response = `curl #{get_url}/admin/configuration/file.xml`
   response_with_headers = `curl -i #{get_url}/admin/configuration/file.xml`
-  md5 = response_with_headers.scan(/X-CRUISE-CONFIG-MD5: (.*)\r/)
+  p response_with_headers
+  md5 = response_with_headers[/X-CRUISE-CONFIG-MD5: (.*?)\r/,1]
 
   puts "Previous MD5 was: #{md5}"
   if response.include? 'jobTimeout="61"'
@@ -100,6 +104,7 @@ def update_config
     h.write(params)
   end
   reply = `curl -i #{get_url}/admin/configuration/file.xml -d @#{file}`
+  puts "#{reply}\n==="
 end
 
 def checkin_git_repo
@@ -114,11 +119,18 @@ end
 
 
 def warm_up
-
+  Timeout.timeout(180) do
+    loop do
+      agents = JSON.parse(open("#{get_url}/api/agents").read)
+      break if agents.size == NO_OF_AGENTS
+    end
+  end
+  sleep(180)
 end
 
 
 def destroy pid
+  p "destroying child process #{pid}"
   Process.kill 9, pid
   Process.wait pid
 end

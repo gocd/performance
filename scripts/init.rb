@@ -15,11 +15,13 @@
 # limitations under the License.
 ##########################################################################
 
-require  'nokogiri'
-xml_doc = Nokogiri::XML(File.open("jmeter.jtl"))
-xml_doc.xpath('//failure').each do |failure_attribute|
-  if failure_attribute.text == 'true'
-    puts failure_attribute.parent.parent
-    exit 1
-  end
-end
+
+NO_OF_PIPELINES = ENV["NO_OF_PIPELINES"] || 10
+NO_OF_AGENTS = ENV["NO_OF_AGENTS"]  || 5
+GO_SERVER_URL = ENV["GO_SERVER_URL"] || "http://localhost:8153"
+GO_SERVER_SSH_URL = ENV["GO_SERVER_SSH_URL"] || "https://localhost:8154"
+RELEASES_JSON_URL = 'https://download.go.cd/experimental/releases.json'
+CONFIG_UPDATE_INTERVAL = ENV['CONFIG_UPDATE_INTERVAL'] || 6
+SCM_COMMIT_INTERVAL = ENV['SCM_UPDATE_INTERVAL'] || 6
+JMETER_PATH="/Users/rajieshn/workspace/performance"
+ENV['JMETER_PATH'] = "#{JMETER_PATH}/apache-jmeter-3.0/bin/"

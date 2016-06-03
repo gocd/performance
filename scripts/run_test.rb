@@ -17,8 +17,9 @@
 require 'rubygems'
 require 'ruby-jmeter'
 require_relative 'load_scenarios'
+require_relative 'init'
 
-JMETER_PATH = ENV['JMETER_PATH'] || "/usr/local/Cellar/jmeter/2.13/bin/"
+JMETER_PATH = ENV['JMETER_PATH'] #|| "/usr/local/Cellar/jmeter/2.13/bin/"
 
 test do
   get_scenarios.each do |key, scenario|
@@ -106,4 +107,4 @@ test do
 end.run(path: JMETER_PATH,
         file: 'jmeter.jmx',
         log: 'jmeter.log',
-        properties: {"jmeter.save.saveservice.output_format" => "xml"}, gui: false)
+        properties: {"jmeter.save.saveservice.output_format" => "xml", "jmeter.save.saveservice.response_data" => "true"}, gui: false)

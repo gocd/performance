@@ -18,23 +18,21 @@ require "fileutils"
 require 'json'
 require 'open-uri'
 require_relative 'scripts/load_scenarios'
+require_relative 'scripts/init'
 
-$stoptest=false
-CONFIG_UPDATE_INTERVAL = ENV['CONFIG_UPDATE_INTERVAL'] || 6
-SCM_COMMIT_INTERVAL = ENV['SCM_UPDATE_INTERVAL'] || 6
-
-JMETER_PATH="/var/go"
-ENV['JMETER_PATH'] = "#{JMETER_PATH}/apache-jmeter-3.0/bin"
-
-task :start_perf do
-  cleanup
-  @scm_pid = scm_commit_loop
-  @config_pid = config_update_loop
-  warm_up
-  ruby "scripts/run_test.rb"
-  destroy @scm_pid
-  destroy @config_pid
-  stop_agents
+task :start_stop_perf do
+  begin
+    cleanup
+    @scm_pid = scm_commit_loop
+    @config_pid = config_update_loop
+    warm_up
+    ruby "scripts/run_test.rb"
+  ensure
+    p "Starting clean up Process for #{@scm_pid} and #{@config_pid}"
+    destroy @scm_pid if defined? @scm_pid
+    destroy @config_pid if defined? @config_pid
+    stop_agents
+  end
 end
 
 def cleanup
@@ -42,6 +40,7 @@ def cleanup
   File.delete('jmeter.log') if File.exists?('jmeter.log')
   File.delete('custom.log') if File.exists?('custom.log')
   File.delete('perf.jtl') if File.exists?('perf.jtl')
+  File.delete('jmeter.jtl') if File.exists?('jmeter.jtl')
 end
 
 def scm_commit_loop
@@ -64,7 +63,6 @@ def config_update_loop
   end
   pid
 end
-
 
 def extract_files
   puts "Extract files"
@@ -90,7 +88,6 @@ def clean_up_directory
   end
 end
 
-
 task :create_agents do
   set_agent_auto_register_key
   create_agents
@@ -100,12 +97,7 @@ task :create_pipelines do
   create_pipelines
 end
 
-#, :create_pipelines, :start_perf
-
-
-
-
-task :download do
+def download
   ["http://mirror.fibergrid.in/apache//jmeter/binaries/apache-jmeter-3.0.zip",
     "http://jmeter-plugins.org/downloads/file/JMeterPlugins-Standard-1.4.0.zip",
     "http://jmeter-plugins.org/downloads/file/JMeterPlugins-Extras-1.4.0.zip",
@@ -116,15 +108,19 @@ task :download do
 end
 
 task :prepare_jmeter_with_plugins do
-  extract_files
-  setup_plugins_for_jmeter
-  clean_up_directory
+  if File.directory?("#{JMETER_PATH}/apache-jmeter-3.0")
+    p "Jmeter available at #{JMETER_PATH}/apache-jmeter-3.0 is being used"
+  else
+    download
+    extract_files
+    setup_plugins_for_jmeter
+    clean_up_directory
+  end
 end
 
-task :setup => [:download, :prepare_jmeter_with_plugins]
-
-task :do_perf_test => [:create_agents, :create_pipelines, :start_perf]
+task :do_perf_test => [:prepare_jmeter_with_plugins, :create_agents, :create_pipelines, :start_stop_perf]
 
 task :dummy do
-  stop_agents
+  agents = JSON.parse(open('http://localhost:8153/go/api/agents').read)
+  p agents.size
 end
