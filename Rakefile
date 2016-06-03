@@ -23,6 +23,9 @@ $stoptest=false
 CONFIG_UPDATE_INTERVAL = ENV['CONFIG_UPDATE_INTERVAL'] || 6
 SCM_COMMIT_INTERVAL = ENV['SCM_UPDATE_INTERVAL'] || 6
 
+JMETER_PATH="/var/go"
+ENV['JMETER_PATH'] = "#{JMETER_PATH}/apache-jmeter-3.0/bin"
+
 task :start_perf do
   cleanup
   @scm_pid = scm_commit_loop
@@ -62,6 +65,32 @@ def config_update_loop
   pid
 end
 
+
+def extract_files
+  puts "Extract files"
+  `cd #{JMETER_PATH} && unzip apache-jmeter-3.0.zip`
+  `cd #{JMETER_PATH} && unzip JMeterPlugins-Extras-1.4.0.zip -d 1`
+  `cd #{JMETER_PATH} && unzip JMeterPlugins-ExtrasLibs-1.4.0.zip -d 2`
+  `cd #{JMETER_PATH} && unzip JMeterPlugins-Standard-1.4.0.zip -d 3`
+end
+
+def setup_plugins_for_jmeter
+  puts "Move all the plugins to jmeter"
+  [1,2,3].each do |dir_name|
+    `cd #{JMETER_PATH} && mv #{dir_name}/lib/*.jar apache-jmeter-3.0/lib`
+    `cd #{JMETER_PATH} && mv #{dir_name}/lib/ext/*.jar apache-jmeter-3.0/lib/ext`
+  end
+end
+
+def clean_up_directory
+  puts "Clean up directory"
+  `cd #{JMETER_PATH} && rm -rf *.zip`
+  [1,2,3].each do |dir_name|
+    `cd #{JMETER_PATH} && rm -rf #{dir_name}`
+  end
+end
+
+
 task :create_agents do
   set_agent_auto_register_key
   create_agents
@@ -70,7 +99,30 @@ end
 task :create_pipelines do
   create_pipelines
 end
+
 #, :create_pipelines, :start_perf
+
+
+
+
+task :download do
+  ["http://mirror.fibergrid.in/apache//jmeter/binaries/apache-jmeter-3.0.zip",
+    "http://jmeter-plugins.org/downloads/file/JMeterPlugins-Standard-1.4.0.zip",
+    "http://jmeter-plugins.org/downloads/file/JMeterPlugins-Extras-1.4.0.zip",
+    "http://jmeter-plugins.org/downloads/file/JMeterPlugins-ExtrasLibs-1.4.0.zip"].each do |url|
+
+    `wget -P #{JMETER_PATH}/ #{url}`
+    end
+end
+
+task :prepare_jmeter_with_plugins do
+  extract_files
+  setup_plugins_for_jmeter
+  clean_up_directory
+end
+
+task :setup => [:download, :prepare_jmeter_with_plugins]
+
 task :do_perf_test => [:create_agents, :create_pipelines, :start_perf]
 
 task :dummy do
