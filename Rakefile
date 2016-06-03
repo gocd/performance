@@ -20,8 +20,8 @@ require 'open-uri'
 require_relative 'scripts/load_scenarios'
 
 $stoptest=false
-CONFIG_UPDATE_INTERVAL = ENV['CONFIG_UPDATE_INTERVAL'] || 60
-SCM_COMMIT_INTERVAL = ENV['SCM_UPDATE_INTERVAL'] || 60
+CONFIG_UPDATE_INTERVAL = ENV['CONFIG_UPDATE_INTERVAL'] || 6
+SCM_COMMIT_INTERVAL = ENV['SCM_UPDATE_INTERVAL'] || 6
 
 task :start_perf do
   cleanup
@@ -31,13 +31,13 @@ task :start_perf do
   ruby "scripts/run_test.rb"
   destroy @scm_pid
   destroy @config_pid
+  stop_agents
 end
 
 def cleanup
   File.delete('jmeter.jmx') if File.exists?('jmeter.jmx')
   File.delete('jmeter.log') if File.exists?('jmeter.log')
   File.delete('custom.log') if File.exists?('custom.log')
-  File.delete('jmeter.jtl') if File.exists?('jmeter.jtl')
   File.delete('perf.jtl') if File.exists?('perf.jtl')
 end
 
@@ -70,5 +70,9 @@ end
 task :create_pipelines do
   create_pipelines
 end
-
+#, :create_pipelines, :start_perf
 task :do_perf_test => [:create_agents, :create_pipelines, :start_perf]
+
+task :dummy do
+  stop_agents
+end
