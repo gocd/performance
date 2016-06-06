@@ -33,6 +33,7 @@ def create_pipelines
     url = "#{get_url}/api/admin/pipelines"
     hash = JSON.parse(File.read('scripts/pipeline.json'))
     hash["pipeline"]["name"] = "perfpipeline_#{pipeline}"
+    hash["pipeline"]["materials"][0]["attributes"]["url"]  = "git://#{GIT_REPOSITORY_SERVER}/git-repo-#{pipeline}"
     fJson = File.open("scripts/pipeline.json","w")
     fJson.write(hash.to_json)
     fJson.close
@@ -107,14 +108,40 @@ def update_config
   puts "#{reply}\n==="
 end
 
-def checkin_git_repo
-  sh(%Q{cd /tmp/testrepo.git ; echo "next commit" >> file.txt ; git add . ; git commit -m "commit"})
+def setup_git_repo
+  create_git_repos
 end
 
-def setup_git_repo
-  FileUtils.remove_dir("/tmp/testrepo.git") if File.directory?("/tmp/testrepo.git")
-  sh("git init /tmp/testrepo.git")
-  sh(%Q{cd /tmp/testrepo.git ; echo "first commit" >> file.txt ; git add . ; git commit -m "commit"})
+def create_git_repos
+  GIT_REPOS.each do |repo_name|
+    git_repo = "#{GIT_ROOT}/#{repo_name}"
+    sh("git init #{git_repo}")
+    sh("cd #{git_repo}; touch .git/git-daemon-export-ok")
+    sh("touch #{git_repo}/file")
+    sh("cd #{git_repo}; git add .")
+    sh("cd #{git_repo}; git commit -m 'simple checkin' --author 'foo <foo@bar.com>'")
+    puts "Creating repository #{git_repo}"
+  end
+  start_git_server
+end
+
+def start_git_server
+    sh("git daemon --base-path=#{GIT_ROOT} --detach --syslog --export-all")
+end
+
+def git_cleanup
+  sh("rm -rf #{GIT_ROOT}/git-repo-*")
+end
+
+def checkin_git_repo
+  sh("cd #{GIT_ROOT}")
+  GIT_REPOS.each do |repo_name|
+    git_repo = "#{GIT_ROOT}/#{repo_name}"
+    (1..NO_OF_COMMITS).each do |i|
+      sh("(cd #{git_repo}; echo #{rand(10**24-10)+10} > file;)")
+      sh("cd #{git_repo}; git add .;git commit -m 'This is commit #{i}' --author 'foo <foo@bar.com>'")
+    end
+  end
 end
 
 

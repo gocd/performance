@@ -25,3 +25,9 @@ CONFIG_UPDATE_INTERVAL = ENV['CONFIG_UPDATE_INTERVAL'] || 6
 SCM_COMMIT_INTERVAL = ENV['SCM_UPDATE_INTERVAL'] || 6
 JMETER_PATH="/Users/rajieshn/workspace/performance"
 ENV['JMETER_PATH'] = "#{JMETER_PATH}/apache-jmeter-3.0/bin/"
+GIT_ROOT = ENV["GIT_ROOT"] || "/Users/rajieshn/workspace/manual/perfrepos"
+GIT_REPOSITORY_SERVER = ENV['GIT_REPOSITORY_SERVER'] || "localhost"
+GIT_REPOS = (1..NO_OF_PIPELINES).inject([]) do |repos, i|
+  repos << "git-repo-#{i}"
+end
+NO_OF_COMMITS = ENV['NO_OF_COMMITS'] || 1

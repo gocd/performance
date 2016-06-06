@@ -32,6 +32,7 @@ task :start_stop_perf do
     destroy @scm_pid if defined? @scm_pid
     destroy @config_pid if defined? @config_pid
     stop_agents
+    git_cleanup
   end
 end
 
@@ -120,7 +121,22 @@ end
 
 task :do_perf_test => [:prepare_jmeter_with_plugins, :create_agents, :create_pipelines, :start_stop_perf]
 
-task :dummy do
-  agents = JSON.parse(open('http://localhost:8153/go/api/agents').read)
-  p agents.size
+task :shutdown_server, :server_dir do |t, args|
+    SERVER_DIR = args[:server_dir]
+    result= `
+    if [ -e #{SERVER_DIR}/go-server.pid ]; then
+      cd #{SERVER_DIR};
+      sh stop-server.sh;
+    fi;
+
+    pkill -f [g]o.jar;
+    for i in \`seq 1 60\`; do
+      if ! pgrep -f [g]o.jar; then
+        exit 0;
+      fi;
+      sleep 1;
+    done;
+    pkill -9 -f [g]o.jar;
+
+  END`
 end
