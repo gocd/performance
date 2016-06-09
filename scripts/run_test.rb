@@ -17,6 +17,7 @@
 require 'rubygems'
 require 'ruby-jmeter'
 require_relative 'load_scenarios'
+require_relative 'init'
 
 test do
   get_scenarios.each do |key, scenario|
@@ -104,4 +105,5 @@ test do
 end.run(path: ENV['JMETER_PATH'],
         file: 'jmeter.jmx',
         log: 'jmeter.log',
-        properties: {"jmeter.save.saveservice.output_format" => "xml"}, gui: true)
+        properties: {"jmeter.save.saveservice.output_format" => "xml"}, gui: false)
+ # Add this to log response data -  "jmeter.save.saveservice.response_data" => "true" - expect logs to grow
