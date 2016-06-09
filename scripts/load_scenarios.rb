@@ -145,6 +145,60 @@ def checkin_git_repo
 end
 
 
+def cleanup
+  FileUtils.rm_rf('jmeter.jmx')
+  FileUtils.rm_rf('jmeter.log')
+  FileUtils.rm_rf('custom.log')
+  FileUtils.rm_rf('perf.jtl')
+  FileUtils.rm_rf('jmeter.jtl')
+end
+
+def fork_and_loop command, sleep_time
+  pid = fork do
+    while true
+      send(command)
+      sleep(sleep_time)
+    end
+  end
+  return pid
+end
+
+def scm_commit_loop
+  setup_git_repo
+  pid = fork_and_loop :checkin_git_repo , SCM_COMMIT_INTERVAL
+end
+
+def config_update_loop
+  pid = fork_and_loop :update_config, CONFIG_UPDATE_INTERVAL
+end
+
+def extract_files
+  puts "Extract files"
+  sh("cd #{JMETER_PATH} && unzip apache-jmeter-3.0.zip")
+  sh("cd #{JMETER_PATH} && unzip JMeterPlugins-Extras-1.4.0.zip -d 1")
+  sh("cd #{JMETER_PATH} && unzip JMeterPlugins-ExtrasLibs-1.4.0.zip -d 2")
+  sh("cd #{JMETER_PATH} && unzip JMeterPlugins-Standard-1.4.0.zip -d 3")
+end
+
+def setup_plugins_for_jmeter
+  puts "Move all the plugins to jmeter"
+  Dir.chdir("#{JMETER_PATH}") do
+    [1,2,3].each do |dir_name|
+      Dir["#{dir_name}/lib/*.jar"].each{|file| FileUtils.mv file, 'apache-jmeter-3.0/lib'}
+      Dir["#{dir_name}/lib/ext/*.jar"].each{|file| FileUtils.mv file, 'apache-jmeter-3.0/lib/ext'}
+    end
+  end
+end
+
+def clean_up_directory
+  puts "Clean up directory"
+  sh("cd #{JMETER_PATH} && rm -rf *.zip")
+  [1,2,3].each do |dir_name|
+    sh("cd #{JMETER_PATH} && rm -rf #{dir_name}")
+  end
+end
+
+
 def warm_up
   Timeout.timeout(180) do
     loop do

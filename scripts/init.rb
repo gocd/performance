@@ -21,11 +21,11 @@ NO_OF_AGENTS = ENV["NO_OF_AGENTS"]  || 5
 GO_SERVER_URL = ENV["GO_SERVER_URL"] || "http://localhost:8153"
 GO_SERVER_SSH_URL = ENV["GO_SERVER_SSH_URL"] || "https://localhost:8154"
 RELEASES_JSON_URL = 'https://download.go.cd/experimental/releases.json'
-CONFIG_UPDATE_INTERVAL = ENV['CONFIG_UPDATE_INTERVAL'] || 6
-SCM_COMMIT_INTERVAL = ENV['SCM_UPDATE_INTERVAL'] || 6
-JMETER_PATH="/Users/rajieshn/workspace/performance"
+CONFIG_UPDATE_INTERVAL = ENV['CONFIG_UPDATE_INTERVAL'] || 5
+SCM_COMMIT_INTERVAL = ENV['SCM_UPDATE_INTERVAL'] || 5
+JMETER_PATH="/var/go"
 ENV['JMETER_PATH'] = "#{JMETER_PATH}/apache-jmeter-3.0/bin/"
-GIT_ROOT = ENV["GIT_ROOT"] || "/Users/rajieshn/workspace/manual/perfrepos"
+GIT_ROOT = ENV["GIT_ROOT"] || "/tmp"
 GIT_REPOSITORY_SERVER = ENV['GIT_REPOSITORY_SERVER'] || "localhost"
 GIT_REPOS = (1..NO_OF_PIPELINES).inject([]) do |repos, i|
   repos << "git-repo-#{i}"

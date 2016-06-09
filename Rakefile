@@ -36,59 +36,6 @@ task :start_stop_perf do
   end
 end
 
-def cleanup
-  File.delete('jmeter.jmx') if File.exists?('jmeter.jmx')
-  File.delete('jmeter.log') if File.exists?('jmeter.log')
-  File.delete('custom.log') if File.exists?('custom.log')
-  File.delete('perf.jtl') if File.exists?('perf.jtl')
-  File.delete('jmeter.jtl') if File.exists?('jmeter.jtl')
-end
-
-def scm_commit_loop
-  pid = fork do
-    setup_git_repo
-    loop do
-      checkin_git_repo
-      sleep(SCM_COMMIT_INTERVAL)
-    end
-  end
-  pid
-end
-
-def config_update_loop
-  pid = fork do
-    loop do
-      update_config
-      sleep(CONFIG_UPDATE_INTERVAL)
-    end
-  end
-  pid
-end
-
-def extract_files
-  puts "Extract files"
-  `cd #{JMETER_PATH} && unzip apache-jmeter-3.0.zip`
-  `cd #{JMETER_PATH} && unzip JMeterPlugins-Extras-1.4.0.zip -d 1`
-  `cd #{JMETER_PATH} && unzip JMeterPlugins-ExtrasLibs-1.4.0.zip -d 2`
-  `cd #{JMETER_PATH} && unzip JMeterPlugins-Standard-1.4.0.zip -d 3`
-end
-
-def setup_plugins_for_jmeter
-  puts "Move all the plugins to jmeter"
-  [1,2,3].each do |dir_name|
-    `cd #{JMETER_PATH} && mv #{dir_name}/lib/*.jar apache-jmeter-3.0/lib`
-    `cd #{JMETER_PATH} && mv #{dir_name}/lib/ext/*.jar apache-jmeter-3.0/lib/ext`
-  end
-end
-
-def clean_up_directory
-  puts "Clean up directory"
-  `cd #{JMETER_PATH} && rm -rf *.zip`
-  [1,2,3].each do |dir_name|
-    `cd #{JMETER_PATH} && rm -rf #{dir_name}`
-  end
-end
-
 task :create_agents do
   set_agent_auto_register_key
   create_agents
@@ -104,7 +51,7 @@ def download
     "http://jmeter-plugins.org/downloads/file/JMeterPlugins-Extras-1.4.0.zip",
     "http://jmeter-plugins.org/downloads/file/JMeterPlugins-ExtrasLibs-1.4.0.zip"].each do |url|
 
-    `wget -P #{JMETER_PATH}/ #{url}`
+    sh("wget -P #{JMETER_PATH}/ #{url}")
     end
 end
 
@@ -123,25 +70,5 @@ task :do_perf_test => [:prepare_jmeter_with_plugins, :create_agents, :create_pip
 
 task :shutdown_server, :server_dir do |t, args|
     SERVER_DIR = args[:server_dir]
-    result= `
-    if [ -e #{SERVER_DIR}/go-server.pid ]; then
-      cd #{SERVER_DIR};
-      sh stop-server.sh;
-    fi;
-
-    pkill -f [g]o.jar;
-    for i in \`seq 1 60\`; do
-      if ! pgrep -f [g]o.jar; then
-        exit 0;
-      fi;
-      sleep 1;
-    done;
-    pkill -9 -f [g]o.jar;
-
-  END`
-end
-
-task :dummy do
-  agents = JSON.parse(open('http://localhost:8153/go/api/agents').read)
-  p agents.size
+    sh("sh scripts/stop_server.sh #{SERVER_DIR}")
 end
