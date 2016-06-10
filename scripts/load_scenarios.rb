@@ -21,7 +21,7 @@ require 'cgi'
 require_relative 'init'
 
 def get_url path=''
-  return "#{GO_SERVER_URL}/go#{path}"
+  return "#{PERF_SERVER_URL}/go#{path}"
 end
 
 def get_scenarios
@@ -55,7 +55,7 @@ def create_agents
   (1..NO_OF_AGENTS).each{|i|
     sh("cp -r go-agents/go-agent-#{version} go-agents/agent-#{i}")
     sh("cp scripts/autoregister.properties go-agents/agent-#{i}/config/autoregister.properties")
-    sh("chmod +x go-agents/agent-#{i}/agent.sh; GO_SERVER=#{GO_SERVER_URL[/http:\/\/(.*?)\:/,1]} DAEMON=Y go-agents/agent-#{i}/agent.sh > /dev/null")
+    sh("chmod +x go-agents/agent-#{i}/agent.sh; GO_SERVER=#{PERF_SERVER_URL[/http:\/\/(.*?)\:/,1]} DAEMON=Y go-agents/agent-#{i}/agent.sh > /dev/null")
   }
 end
 
@@ -170,6 +170,16 @@ end
 
 def config_update_loop
   pid = fork_and_loop :update_config, CONFIG_UPDATE_INTERVAL
+end
+
+def download
+  ["http://mirror.fibergrid.in/apache//jmeter/binaries/apache-jmeter-3.0.zip",
+    "http://jmeter-plugins.org/downloads/file/JMeterPlugins-Standard-1.4.0.zip",
+    "http://jmeter-plugins.org/downloads/file/JMeterPlugins-Extras-1.4.0.zip",
+    "http://jmeter-plugins.org/downloads/file/JMeterPlugins-ExtrasLibs-1.4.0.zip"].each do |url|
+
+    sh("wget -P #{JMETER_PATH}/ #{url}")
+    end
 end
 
 def extract_files
