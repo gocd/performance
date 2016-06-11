@@ -44,19 +44,54 @@ def create_pipelines
 end
 
 def create_agents
-  json = JSON.parse(open(RELEASES_JSON_URL).read)
-  version, release = json.sort {|a, b| a['go_full_version'] <=> b['go_full_version']}.last['go_full_version'].split('-')
-  go_full_version = "#{version}-#{release}"
-
-  sh('mkdir go-agents')
+  go_full_version = get_go_full_version
+  version = go_full_version.split('-')[0]
+  mkdir_p('go-agents')
   sh(%Q{wget -O go-agents/go-agent-#{go_full_version}.zip https://download.go.cd/experimental/binaries/#{go_full_version}/generic/go-agent-#{go_full_version}.zip})
   sh("unzip go-agents/go-agent-#{go_full_version}.zip -d go-agents/")
 
   (1..NO_OF_AGENTS).each{|i|
-    sh("cp -r go-agents/go-agent-#{version} go-agents/agent-#{i}")
-    sh("cp scripts/autoregister.properties go-agents/agent-#{i}/config/autoregister.properties")
+    cp_r "go-agents/go-agent-#{version}" , "go-agents/agent-#{i}"
+    cp_r "scripts/autoregister.properties" ,  "go-agents/agent-#{i}/config/autoregister.properties"
     sh("chmod +x go-agents/agent-#{i}/agent.sh; GO_SERVER=#{PERF_SERVER_URL[/http:\/\/(.*?)\:/,1]} DAEMON=Y go-agents/agent-#{i}/agent.sh > /dev/null")
   }
+end
+
+def get_go_full_version
+  json = JSON.parse(open(RELEASES_JSON_URL).read)
+  version, release = json.sort {|a, b| a['go_full_version'] <=> b['go_full_version']}.last['go_full_version'].split('-')
+  go_full_version = "#{version}-#{release}"
+end
+
+def start_server
+  go_full_version = get_go_full_version
+  version = go_full_version.split('-')[0]
+  Dir.chdir("#{SERVER_DIR}") do
+    mkdir_p('go-server')
+    sh(%Q{wget -O go-server/go-server-#{go_full_version}.zip https://download.go.cd/experimental/binaries/#{go_full_version}/generic/go-server-#{go_full_version}.zip})
+    sh("unzip go-server/go-server-#{go_full_version}.zip -d go-server/")
+    sh("chmod +x go-server/go-server-#{version}/server.sh; DAEMON=Y go-server/go-server-#{version}/server.sh > /dev/null")
+  end
+  puts 'wait for server to come up'
+  sh("wget #{get_url}/about --waitretry=90 --retry-connrefused --quiet -O /dev/null")
+  start_jmeter_permon_agent
+end
+
+def start_jmeter_permon_agent
+  if !Dir.exists?("#{JMETER_DIR}/perfmonAgent")
+    Dir.chdir("#{JMETER_DIR}") do
+      sh(%Q{wget -O perfmonAgent.zip http://jmeter-plugins.org/downloads/file/ServerAgent-2.2.1.zip})
+      sh("unzip perfmonAgent.zip -d perfmonAgent")
+      sh("perfmonAgent/startAgent.sh 2>&1 & > /dev/null")
+      rm_rf('perfmonAgent.zip')
+    end
+  end
+end
+
+def shutdown_server
+  version = get_go_full_version.split('-')[0]
+  sh("sh scripts/stop_server.sh #{SERVER_DIR}/go-server/go-server-#{version}")
+  rm_rf("#{SERVER_DIR}/go-server")
 end
 
 def stop_agents
@@ -64,7 +99,7 @@ def stop_agents
   (1..NO_OF_AGENTS).each{|i|
     sh("chmod +x go-agents/agent-#{i}/stop-agent.sh; go-agents/agent-#{i}/stop-agent.sh > /dev/null")
   }
-  sh('rm -rf go-agents')
+  rm_rf 'go-agents'
 end
 
 def set_agent_auto_register_key
@@ -126,31 +161,34 @@ def create_git_repos
 end
 
 def start_git_server
-    sh("git daemon --base-path=#{GIT_ROOT} --detach --syslog --export-all")
+  sh("git daemon --base-path=#{GIT_ROOT} --detach --syslog --export-all")
 end
 
 def git_cleanup
-  sh("rm -rf #{GIT_ROOT}/git-repo-*")
+  GIT_REPOS.each do |repo_name|
+    rm_rf "#{GIT_ROOT}/#{repo_name}"
+  end
 end
 
 def checkin_git_repo
-  sh("cd #{GIT_ROOT}")
-  GIT_REPOS.each do |repo_name|
-    git_repo = "#{GIT_ROOT}/#{repo_name}"
-    (1..NO_OF_COMMITS).each do |i|
-      sh("(cd #{git_repo}; echo #{rand(10**24-10)+10} > file;)")
-      sh("cd #{git_repo}; git add .;git commit -m 'This is commit #{i}' --author 'foo <foo@bar.com>'")
+  Dir.chdir "#{GIT_ROOT}" do
+    GIT_REPOS.each do |repo_name|
+      git_repo = "#{GIT_ROOT}/#{repo_name}"
+      (1..NO_OF_COMMITS).each do |i|
+        sh("(cd #{git_repo}; echo #{rand(10**24-10)+10} > file;)")
+        sh("cd #{git_repo}; git add .;git commit -m 'This is commit #{i}' --author 'foo <foo@bar.com>'")
+      end
     end
   end
 end
 
 
 def cleanup
-  FileUtils.rm_rf('jmeter.jmx')
-  FileUtils.rm_rf('jmeter.log')
-  FileUtils.rm_rf('custom.log')
-  FileUtils.rm_rf('perf.jtl')
-  FileUtils.rm_rf('jmeter.jtl')
+  rm_rf('jmeter.jmx')
+  rm_rf('jmeter.log')
+  rm_rf('custom.log')
+  rm_rf('perf.jtl')
+  rm_rf('jmeter.jtl')
 end
 
 def fork_and_loop command, sleep_time
@@ -178,21 +216,23 @@ def download
     "http://jmeter-plugins.org/downloads/file/JMeterPlugins-Extras-1.4.0.zip",
     "http://jmeter-plugins.org/downloads/file/JMeterPlugins-ExtrasLibs-1.4.0.zip"].each do |url|
 
-    sh("wget -P #{JMETER_PATH}/ #{url}")
+    sh("wget -P #{JMETER_DIR}/ #{url}")
     end
 end
 
 def extract_files
   puts "Extract files"
-  sh("cd #{JMETER_PATH} && unzip apache-jmeter-3.0.zip")
-  sh("cd #{JMETER_PATH} && unzip JMeterPlugins-Extras-1.4.0.zip -d 1")
-  sh("cd #{JMETER_PATH} && unzip JMeterPlugins-ExtrasLibs-1.4.0.zip -d 2")
-  sh("cd #{JMETER_PATH} && unzip JMeterPlugins-Standard-1.4.0.zip -d 3")
+  Dir.chdir("#{JMETER_DIR}") do
+    sh("unzip apache-jmeter-3.0.zip")
+    sh("unzip JMeterPlugins-Extras-1.4.0.zip -d 1")
+    sh("unzip JMeterPlugins-ExtrasLibs-1.4.0.zip -d 2")
+    sh("unzip JMeterPlugins-Standard-1.4.0.zip -d 3")
+  end
 end
 
 def setup_plugins_for_jmeter
   puts "Move all the plugins to jmeter"
-  Dir.chdir("#{JMETER_PATH}") do
+  Dir.chdir("#{JMETER_DIR}") do
     [1,2,3].each do |dir_name|
       Dir["#{dir_name}/lib/*.jar"].each{|file| FileUtils.mv file, 'apache-jmeter-3.0/lib'}
       Dir["#{dir_name}/lib/ext/*.jar"].each{|file| FileUtils.mv file, 'apache-jmeter-3.0/lib/ext'}
@@ -202,12 +242,24 @@ end
 
 def clean_up_directory
   puts "Clean up directory"
-  sh("cd #{JMETER_PATH} && rm -rf *.zip")
-  [1,2,3].each do |dir_name|
-    sh("cd #{JMETER_PATH} && rm -rf #{dir_name}")
+  Dir.chdir("#{JMETER_DIR}") do
+    rm_rf("*.zip")
+    [1,2,3].each do |dir_name|
+      rm_rf("#{dir_name}")
+    end
   end
 end
 
+def prepare_jmeter_with_plugins
+  if File.directory?("#{JMETER_DIR}/apache-jmeter-3.0")
+    p "Jmeter available at #{JMETER_DIR}/apache-jmeter-3.0 is being used"
+  else
+    download
+    extract_files
+    setup_plugins_for_jmeter
+    clean_up_directory
+  end
+end
 
 def warm_up
   Timeout.timeout(180) do
@@ -218,7 +270,6 @@ def warm_up
   end
   sleep(180)
 end
-
 
 def destroy pid
   p "destroying child process #{pid}"
