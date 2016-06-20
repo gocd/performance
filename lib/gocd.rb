@@ -14,11 +14,6 @@
 # limitations under the License.
 ##########################################################################
 
-source 'https://rubygems.org'
-gem 'ruby-jmeter'
-gem 'rake'
-gem 'rake-rspec'
-gem 'rest-client'
-gem 'assert_json'
-gem 'json_builder'
-gem 'deep_merge'
+require_relative "./gocd/pipeline.rb"
+
+module GoCD; end

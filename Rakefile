@@ -19,13 +19,45 @@ require 'json'
 require 'open-uri'
 require_relative 'scripts/load_scenarios'
 require_relative 'scripts/init'
+require 'rest-client'
+require_relative 'lib/gocd'
+require 'rake/rspec'
+
+include GoCD
+
+namespace :pipeline do
+  desc "Create Pipelines"
+  task :create do
+    pipelines = [*1..NO_OF_PIPELINES].map{ |i| "perf#{i}"}
+
+    pipelines.each {|pipeline|
+      performance_pipeline = Pipeline.new(group: 'performance', name: "#{pipeline}")
+      performance_pipeline << Material.new(type: 'git', attributes: { url: "git://#{GIT_REPOSITORY_SERVER}/git-repo-#{pipeline}"} )
+
+      stage = Stage.new(name: 'default')
+      performance_pipeline << stage
+
+      job = Job.new(name: 'defaultJob')
+      job << Task.new(type: 'exec', attributes: { command: 'ls' })
+      stage << job
+
+      begin
+        RestClient.post "#{get_url}/api/admin/pipelines" , performance_pipeline.to_json, :accept =>  'application/vnd.go.cd.v1+json', :content_type =>  'application/json'
+        RestClient.post "#{get_url}/api/pipelines/#{performance_pipeline.name}/unpause" , "", :'Confirm'=> true
+      rescue
+        raise "Something went wrong while creating pipeline #{pipeline}."
+      end
+    }
+    p "Created pipeline(s) #{pipelines.join(', ')} at #{get_url}/pipelines"
+  end
+end
 
 task :start_stop_perf do
   begin
     prepare_jmeter_with_plugins
     set_agent_auto_register_key
     create_agents
-    create_pipelines
+    Rake::Task['pipeline:create']
     cleanup
     @scm_pid = scm_commit_loop
     @config_pid = config_update_loop
@@ -43,10 +75,6 @@ end
 task :create_agents do
   set_agent_auto_register_key
   create_agents
-end
-
-task :create_pipelines do
-  create_pipelines
 end
 
 task :start_server do

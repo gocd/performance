@@ -16,7 +16,7 @@
 ##########################################################################
 
 
-NO_OF_PIPELINES = ENV["NO_OF_PIPELINES"] || 10
+NO_OF_PIPELINES = ENV["NO_OF_PIPELINES"].to_i || 10
 NO_OF_AGENTS = ENV["NO_OF_AGENTS"]  || 5
 PERF_SERVER_URL = ENV["PERF_SERVER_URL"] || "http://localhost:8153"
 PERF_SERVER_SSH_URL = ENV["PERF_SERVER_SSH_URL"] || "https://localhost:8154"
