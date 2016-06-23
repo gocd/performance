@@ -42,10 +42,16 @@ namespace :pipeline do
       stage << job
 
       begin
-        RestClient.post "#{get_url}/api/admin/pipelines" , performance_pipeline.to_json, :accept =>  'application/vnd.go.cd.v1+json', :content_type =>  'application/json'
-        RestClient.post "#{get_url}/api/pipelines/#{performance_pipeline.name}/unpause" , "", :'Confirm'=> true
-      rescue
-        raise "Something went wrong while creating pipeline #{pipeline}."
+        RestClient.post "#{get_url}/api/admin/pipelines", 
+          performance_pipeline.to_json,
+          :accept =>  'application/vnd.go.cd.v1+json', 
+          :content_type =>  'application/json'
+
+        RestClient.post "#{get_url}/api/pipelines/#{performance_pipeline.name}/unpause",
+          "", :'Confirm'=> true
+
+      rescue => e
+        raise "Something went wrong while creating pipeline #{pipeline}. \n Server says:\n #{e.response}"
       end
     }
     p "Created pipeline(s) #{pipelines.join(', ')} at #{get_url}/pipelines"
