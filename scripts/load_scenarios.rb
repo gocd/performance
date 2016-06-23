@@ -20,10 +20,6 @@ require 'nokogiri'
 require 'cgi'
 require_relative 'init'
 
-def get_url path=''
-  return "#{PERF_SERVER_URL}/go#{path}"
-end
-
 def get_scenarios
 	return JSON.parse(File.read('scripts/load_scenarios.json'))
 end

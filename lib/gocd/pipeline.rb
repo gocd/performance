@@ -78,7 +78,7 @@ module GoCD
   end
 
   class Material < Configuration; end
-  class GitMaterial < Configuration
+  class GitMaterial < Material
     def default
       {
         type: 'git',

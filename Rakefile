@@ -26,13 +26,13 @@ require 'rake/rspec'
 include GoCD
 
 namespace :pipeline do
-  desc "Create Pipelines"
-  task :create do
-    pipelines = [*1..NO_OF_PIPELINES].map{ |i| "perf#{i}"}
+  configuration = Configuration.new
 
-    pipelines.each {|pipeline|
+  desc "Create Pipelines"
+  task :create => :clean do
+    configuration.pipelines.each {|pipeline|
       performance_pipeline = Pipeline.new(group: 'performance', name: "#{pipeline}")
-      performance_pipeline << Material.new(type: 'git', attributes: { url: "git://#{GIT_REPOSITORY_SERVER}/git-repo-#{pipeline}"} )
+      performance_pipeline << GitMaterial.new(url: "git://#{configuration.git_repository_server}/git-repo-#{pipeline}")
 
       stage = Stage.new(name: 'default')
       performance_pipeline << stage
@@ -42,19 +42,30 @@ namespace :pipeline do
       stage << job
 
       begin
-        RestClient.post "#{get_url}/api/admin/pipelines", 
+        RestClient.post "#{configuration.gocd_host}/api/admin/pipelines", 
           performance_pipeline.to_json,
           :accept =>  'application/vnd.go.cd.v1+json', 
           :content_type =>  'application/json'
 
-        RestClient.post "#{get_url}/api/pipelines/#{performance_pipeline.name}/unpause",
+        RestClient.post "#{configuration.gocd_host}/api/pipelines/#{performance_pipeline.name}/unpause",
           "", :'Confirm'=> true
 
       rescue => e
         raise "Something went wrong while creating pipeline #{pipeline}. \n Server says:\n #{e.response}"
       end
     }
-    p "Created pipeline(s) #{pipelines.join(', ')} at #{get_url}/pipelines"
+    p "Created pipeline(s) #{configuration.pipelines.join(', ')} at #{configuration.gocd_host}/pipelines"
+  end
+  
+  desc "Clear pipelines"
+  task :clean do
+    configuration.pipelines.each { |pipeline|
+      begin
+      RestClient.delete "#{configuration.gocd_host}/api/admin/pipelines/#{pipeline}", 
+        :accept =>  'application/vnd.go.cd.v1+json'
+      rescue RestClient::ResourceNotFound
+      end
+    }
   end
 end
 
