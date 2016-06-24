@@ -20,28 +20,10 @@ require 'nokogiri'
 require 'cgi'
 require_relative 'init'
 
-def get_url path=''
-  return "#{PERF_SERVER_URL}/go#{path}"
-end
-
 def get_scenarios
 	return JSON.parse(File.read('scripts/load_scenarios.json'))
 end
 
-def create_pipelines
-  (1..NO_OF_PIPELINES).each {|pipeline|
-    url = "#{get_url}/api/admin/pipelines"
-    hash = JSON.parse(File.read('scripts/pipeline.json'))
-    hash["pipeline"]["name"] = "perfpipeline_#{pipeline}"
-    hash["pipeline"]["materials"][0]["attributes"]["url"]  = "git://#{GIT_REPOSITORY_SERVER}/git-repo-#{pipeline}"
-    fJson = File.open("scripts/pipeline.json","w")
-    fJson.write(hash.to_json)
-    fJson.close
-    puts 'create a pipeline'
-    sh(%Q{curl -sL -w "%{http_code}" -X POST  -H "Accept: application/vnd.go.cd.v1+json" -H "Content-Type: application/json" --data "@scripts/pipeline.json" #{url} -o /dev/null})
-    sh(%Q{curl -sL -w "%{http_code}" -X POST  -H "Accept:application/vnd.go.cd.v1+text" -H "CONFIRM:true" #{get_url}/api/pipelines/perfpipeline_#{pipeline}/unpause -o /dev/null})
-  }
-end
 
 def create_agents
   go_full_version = get_go_full_version

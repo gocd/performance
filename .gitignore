@@ -21,3 +21,9 @@ target
 *.jtl
 *.lock
 .DS_Store
+.bundle
+vendor
+tags
+*.swp
+Session.vim
+*RubyJump*
