@@ -1,5 +1,4 @@
-require './lib/configuration.rb'
-
+require './lib/configuration.rb' 
 describe "Configuration" do
   before(:each) do
     @configuration = Configuration.new
@@ -17,8 +16,8 @@ describe "Configuration" do
     expect(@configuration.agents).to eq([1,2])
   end
   it "defaults to 10 agents" do
-   ENV['NO_OF_AGENTS'] = nil
-   expect(@configuration.agents).to eq([1,2,3,4,5,6,7,8,9,10])
+    ENV['NO_OF_AGENTS'] = nil
+    expect(@configuration.agents).to eq([1,2,3,4,5,6,7,8,9,10])
   end
   it "sets the server url from SERVER env variable with default port" do
     ENV['SERVER'] = 'goserver'
@@ -26,13 +25,19 @@ describe "Configuration" do
     expect(@configuration.server_url).to eq('http://goserver:8153')
   end
   it "sets the server url from SERVER and PORT environment variables" do
-   ENV['SERVER'] = 'goserver' 
-   ENV['PORT'] = '8253'
-   expect(@configuration.server_url).to eq('http://goserver:8253')
+    ENV['SERVER'] = 'goserver' 
+    ENV['PORT'] = '8253'
+    expect(@configuration.server_url).to eq('http://goserver:8253')
   end
   it "sets the server url using default SERVER and specified PORT" do
-   ENV['SERVER'] = nil
-   ENV['PORT'] = '8253'
-   expect(@configuration.server_url).to eq('http://localhost:8253')
+    ENV['SERVER'] = nil
+    ENV['PORT'] = '8253'
+    expect(@configuration.server_url).to eq('http://localhost:8253')
+  end
+  it "sets authentication in the server url " do
+    ENV['AUTH'] = 'admin:badger'
+    ENV['PORT'] = '8253'
+    ENV['SERVER'] = 'authenticated_url'
+    expect(@configuration.server_url).to eq('http://admin:badger@authenticated_url:8253')
   end
 end

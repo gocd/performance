@@ -21,15 +21,9 @@ class Configuration
   end
   def pipelines; (1..env("NO_OF_PIPELINES", 10).to_i).map{ |i| "perf#{i}"}; end
   def agents; [*1..env("NO_OF_AGENTS", 10).to_i]; end
-  def server 
-    env('SERVER', 'localhost')
-  end
-  def port
-   env('PORT', 8153) 
-  end
-  def server_url
-    "http://#{server}:#{port}"
-  end
+  def server; env('SERVER', 'localhost'); end
+  def port; env('PORT', 8153); end
+  def server_url; "http://#{auth ? (auth + '@') : ''}#{server}:#{port}"; end
   def server_url_ssh
     env("PERF_SERVER_SSH_URL", "https://localhost:8154") 
   end
@@ -42,7 +36,7 @@ class Configuration
   def git_repository_server; env('GIT_REPOSITORY_SERVER', "localhost"); end
   def git_repos; (1..env('NO_OF_PIPELINES', 10)).map{ |i| "git-repo-#{i}"}; end
   def no_of_commits; env('NO_OF_COMMITS', 1); end
-  def auth; env('AUTH', ''); end
+  def auth; env('AUTH', nil); end
   def gocd_host; "#{server_url}/go"; end
   def initialize()
     ENV['JMETER_PATH'] = "#{jmeter_dir}/apache-jmeter-3.0/bin/"
