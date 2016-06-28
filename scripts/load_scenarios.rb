@@ -18,7 +18,6 @@
 require 'json'
 require 'nokogiri'
 require 'cgi'
-require_relative 'init'
 
 def get_scenarios
 	return JSON.parse(File.read('scripts/load_scenarios.json'))

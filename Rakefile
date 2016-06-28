@@ -18,7 +18,7 @@ require "fileutils"
 require 'json'
 require 'open-uri'
 require_relative 'scripts/load_scenarios'
-require_relative 'scripts/init'
+require './lib/configuration'
 require 'rest-client'
 require_relative 'lib/gocd'
 require 'rake/rspec'
@@ -35,11 +35,11 @@ namespace :pipeline do
       performance_pipeline << GitMaterial.new(url: "git://#{configuration.git_repository_server}/git-repo-#{pipeline}")
 
       stage = Stage.new(name: 'default')
-      performance_pipeline << stage
-
       job = Job.new(name: 'defaultJob')
       job << Task.new(type: 'exec', attributes: { command: 'ls' })
       stage << job
+
+      performance_pipeline << stage
 
       begin
         RestClient.post "#{configuration.gocd_host}/api/admin/pipelines", 
