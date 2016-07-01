@@ -27,3 +27,5 @@ tags
 *.swp
 Session.vim
 *RubyJump*
+tools
+.starscope.db

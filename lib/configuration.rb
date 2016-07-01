@@ -30,7 +30,7 @@ module Configuration
     def releases_json; 'https://download.go.cd/experimental/releases.json'; end
     def config_update_interval; env('CONFIG_UPDATE_INTERVAL', 5); end
     def scm_commit_interval; env('SCM_UPDATE_INTERVAL', 5); end
-    def jmeter_dir; env('JMETER_DIR', "/var/go"); end
+    def jmeter_dir; env('JMETER_DIR', "./tools"); end
     def server_dir; env('SERVER_DIR', "/tmp"); end
     def git_root; env("GIT_ROOT", "/tmp"); end
     def git_repos; (1..env('NO_OF_PIPELINES', 10)).map{ |i| "git-repo-#{i}"}; end

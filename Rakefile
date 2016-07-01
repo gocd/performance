@@ -21,6 +21,11 @@ require_relative 'scripts/load_scenarios'
 require 'rake/rspec'
 
 
+namespace :performance do
+  task :start => 'jmeter:prepare' do
+  end
+end
+
 task :start_stop_perf do
   begin
     prepare_jmeter_with_plugins
