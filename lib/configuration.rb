@@ -24,21 +24,22 @@ module Configuration
     def pipelines; (1..env("NO_OF_PIPELINES", 10).to_i).map{ |i| "perf#{i}"}; end
     def agents; [*1..env("NO_OF_AGENTS", 10).to_i]; end
     def git_repository_host; env('GIT_REPOSITORY_HOST', "http://localhost"); end
+    def tools_dir; Pathname.new(env('TOOLS_DIR', "./tools")); end
+    def jmeter_dir; tools_dir + "apache-jmeter"; end
+    def initialize()
+      ENV['JMETER_PATH'] = "#{jmeter_dir}/apache-jmeter-3.0/bin/"
+    end
   end
 
   class Configuration
     def releases_json; 'https://download.go.cd/experimental/releases.json'; end
     def config_update_interval; env('CONFIG_UPDATE_INTERVAL', 5); end
     def scm_commit_interval; env('SCM_UPDATE_INTERVAL', 5); end
-    def jmeter_dir; env('JMETER_DIR', "./tools"); end
     def server_dir; env('SERVER_DIR', "/tmp"); end
     def git_root; env("GIT_ROOT", "/tmp"); end
     def git_repos; (1..env('NO_OF_PIPELINES', 10)).map{ |i| "git-repo-#{i}"}; end
     def no_of_commits; env('NO_OF_COMMITS', 1); end
     def gocd_host; "#{server_url}/go"; end
-    def initialize()
-      ENV['JMETER_PATH'] = "#{jmeter_dir}/apache-jmeter-3.0/bin/"
-    end
   end
 
   class Server

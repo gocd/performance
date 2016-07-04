@@ -32,6 +32,8 @@ class Downloader
         end
         print "Verified md5: #{download[:md5]}\n"
       end
+
+      yield(download_path) if block_given?
     }
   end
 
