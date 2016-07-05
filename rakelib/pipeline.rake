@@ -11,33 +11,28 @@ namespace :pipeline do
 
   desc "Create Pipelines"
   task :create => :clean do
+    gocd_client = Client.new(gocd_server.url)
+
     setup.pipelines.each {|pipeline|
-      performance_pipeline = Pipeline.new(group: 'performance', name: "#{pipeline}")
-      performance_pipeline << GitMaterial.new(url: "#{setup.git_repository_host}/git-repo-#{pipeline}")
-
-      stage = Stage.new(name: 'default')
-      job = Job.new(name: 'defaultJob')
-      job << Task.new(type: 'exec', attributes: { command: 'ls' })
-      stage << job
-
-      performance_pipeline << stage
+      performance_pipeline = Pipeline.new(group: 'performance', name: "#{pipeline}") do |p|
+        p << GitMaterial.new(url: "#{setup.git_repository_host}/git-repo-#{pipeline}")
+        p <<  Stage.new(name: 'default') do |s|
+          s << Job.new(name: 'defaultJob') do |j|
+            j << ExecTask.new(command: 'ls')
+          end
+        end
+      end
 
       begin
-        RestClient.post "#{gocd_server.url}/api/admin/pipelines", 
-          performance_pipeline.to_json,
-          :accept =>  'application/vnd.go.cd.v1+json', 
-          :content_type =>  'application/json'
-
-        RestClient.post "#{gocd_server.url}/api/pipelines/#{performance_pipeline.name}/unpause",
-          "", :'Confirm'=> true
-
+        gocd_client.create_pipeline(performance_pipeline.to_json)
+        gocd_client.unpause_pipeline(performance_pipeline.name)
       rescue => e
         raise "Something went wrong while creating pipeline #{pipeline}. \n Server says:\n #{e.response}"
       end
     }
     p "Created pipeline(s) #{setup.pipelines.join(', ')}"
   end
-  
+
   desc "Clear pipelines"
   task :clean do
     setup.pipelines.each { |pipeline|

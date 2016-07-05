@@ -29,6 +29,7 @@ module GoCD
         instance_variable_set("@#{k}", v)
         self.class.send(:attr_reader,k)
       end
+      yield self if block_given?
     end
 
     def <<(instance)
@@ -150,4 +151,16 @@ module GoCD
   end
 
   class Task < Configuration; end
+  class ExecTask < Task
+    def default
+      {
+        type: 'exec',
+        attributes: {}
+      }
+    end
+
+    def initialize(args)
+      super(attributes: args)
+    end
+  end
 end

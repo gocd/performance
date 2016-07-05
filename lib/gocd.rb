@@ -15,5 +15,6 @@
 ##########################################################################
 
 require_relative "./gocd/pipeline.rb"
+require_relative "./gocd/client.rb"
 
 module GoCD; end

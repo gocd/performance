@@ -81,6 +81,33 @@ describe Pipeline do
     end
   end
 
+  describe 'Block initialization' do
+    before :each do
+      @pipeline = Pipeline.new(name: 'pipeline_with_block_init') do |p|
+        p << Stage.new(name: 'stage_name') do |s|
+          s << Job.new(name: 'job') do |j|
+            j << Task.new(type: 'exec', attributes: { command: 'ls' })
+          end
+        end
+      end
+    end
+
+    it 'sets the pipeline name' do
+      expect(@pipeline.name).to eq('pipeline_with_block_init')
+    end
+
+    it 'adds the stage' do
+      expect(@pipeline.stages.first[:name]).to eq('stage_name')
+    end
+
+    it 'adds the job' do
+      expect(@pipeline.stages.first[:jobs].first[:name]).to eq('job')
+    end
+
+    it 'adds the task' do
+      expect(@pipeline.stages.first[:jobs].first[:tasks].first[:type]).to eq('exec')
+    end
+  end
 end
 
 describe Stage do
@@ -141,6 +168,17 @@ describe GitMaterial do
         filter: nil,
         name: nil,
         url: "giturl"
+      }
+    })
+  end
+end
+
+describe ExecTask do
+  it 'sets the default values' do
+    expect(ExecTask.new(command: 'ls').data).to eq({
+      type: 'exec',
+      attributes: {
+        command: 'ls'
       }
     })
   end

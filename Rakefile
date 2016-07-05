@@ -28,7 +28,6 @@ end
 
 task :start_stop_perf do
   begin
-    prepare_jmeter_with_plugins
     set_agent_auto_register_key
     create_agents
     Rake::Task['pipeline:create']
