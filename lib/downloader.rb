@@ -3,6 +3,23 @@ require 'pathname'
 require 'open-uri'
 require 'digest/md5'
 require 'pry'
+require 'zip'
+
+class ZipFile
+  def initialize(path, extractor: Zip::File)
+    @path = path
+    @extractor = extractor
+  end
+
+  def extractTo(destination)
+    @extractor.open(@path) do |zip_file|
+      zip_file.each {|entry| 
+        target = Pathname.new(destination) + entry.name
+        entry.extract target  if !File.exists? target 
+      }
+    end
+  end
+end
 
 class Downloader
   attr_reader :downloads, :directory
@@ -33,7 +50,7 @@ class Downloader
         print "Verified md5: #{download[:md5]}\n"
       end
 
-      yield(download_path) if block_given?
+      yield(download_path.to_s.end_with?('.zip') ? ZipFile.new(download_path): download_path) if block_given?
     }
   end
 
@@ -44,7 +61,9 @@ class Downloader
   end
 
   def <<(download)
-    raise "url to be downloaded not specified" if !download[:url]
+    unless(download && download.is_a?(Hash) && download[:url]) 
+      raise 'Specify what you want to download as { url: \'http://location\' }' 
+    end
     self.downloads << download 
   end
 

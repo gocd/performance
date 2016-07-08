@@ -13,7 +13,9 @@ describe Downloader do
   end
 
   it "must have url" do
-    expect {@downloader << {nourl: "this is not valid"}}.to raise_error "url to be downloaded not specified"
+    expect {@downloader << {nourl: "this is not valid"}}.to raise_error(
+      'Specify what you want to download as { url: \'http://location\' }'
+    )
   end
 
   it 'raises exception when there is nothing to download' do
@@ -43,5 +45,24 @@ describe Downloader do
     expect(downloader.downloads).to include({url: 'seconddownload'})
   end
 
+  it 'checks if the value appended is a HASH or nil' do
+    expect {Downloader.new {|q| q << 'unsupported'}}.to raise_error (
+      'Specify what you want to download as { url: \'http://location\' }'
+    )  
+  end
 end
 
+describe ZipFile do
+  before :each do
+    @extractor = double('zip_file')
+    @zip_file = ZipFile.new 'file', extractor: @extractor  
+  end
+
+  it 'extracts to destination' do
+    zip_file = double('z', each:['entry'])
+    allow(@extractor).to receive(:open).and_yield(zip_file)
+    expect(@extractor).to receive(:open)
+      .with('file')
+    @zip_file.extractTo('destination')
+  end
+end

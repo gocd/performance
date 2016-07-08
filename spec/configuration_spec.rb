@@ -23,6 +23,19 @@ describe "Configuration" do
     it "sets the default git repository host" do
       expect(@setup.git_repository_host).to eq('http://localhost')
     end
+    it 'return the go full and short version' do
+      ENV['GO_VERSION'] = "16.7.0-3883"
+      expect(@setup.go_version).to eq(['16.7.0', '3883'])
+    end
+    it 'raises error of version number is missing' do
+      ENV['GO_VERSION'] = nil
+      expect{ @setup.go_version }.to raise_error { "Missing GO_VERSION environment variable" }
+    end
+    it 'raises error if the GO_VERSION is not in the right format' do
+      ENV['GO_VERSION'] = '16.0'
+      expect { @setup.go_version }.to raise_error (%{"GO_VERSION format not right, 
+      we need the version and build e.g. 16.0.0-1234"})
+    end
   end
 
   describe Configuration::Server do

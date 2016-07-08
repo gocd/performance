@@ -38,7 +38,7 @@ module GoCD
     def get_config_xml
       response = @rest_client.get "#{@base_url}/admin/configuration/file.xml"
       md5 = response.headers[:'x_cruise_config_md5']
-      raise 'MD5 of the content is missing in the header, Please make sure you are authenticated or using the right url' if !md5
+      raise 'MD5 of the content is missing in the header, Please make sure you are authenticated or using the right url' unless md5
       return response.to_str, md5
     end
 

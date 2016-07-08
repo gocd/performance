@@ -26,6 +26,15 @@ module Configuration
     def git_repository_host; env('GIT_REPOSITORY_HOST', "http://localhost"); end
     def tools_dir; Pathname.new(env('TOOLS_DIR', "./tools")); end
     def jmeter_dir; tools_dir + "apache-jmeter"; end
+    def go_version
+      raw_version = env('GO_VERSION', nil)
+
+      raise "Missing GO_VERSION environment variable" unless raw_version
+      raise %{"GO_VERSION format not right, 
+      we need the version and build e.g. 16.0.0-1234"} unless raw_version.include? '-'
+
+      raw_version.split '-'
+    end
     def initialize()
       ENV['JMETER_PATH'] = "#{jmeter_dir}/apache-jmeter-3.0/bin/"
     end

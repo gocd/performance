@@ -63,8 +63,7 @@ describe GoCD::Client do
     
     it 'raises exception if md5 is not there in the header' do
       allow(@response).to receive(:headers).and_return({})
-      expect{ @client.get_config_xml }.to raise_error { 
-         'MD5 of the content is missing in the header, Please make sure you are authenticated or using the right url' } 
+      expect{ @client.get_config_xml }.to raise_error ('MD5 of the content is missing in the header, Please make sure you are authenticated or using the right url') 
     end
   end
 
