@@ -22,7 +22,7 @@ end
 module Configuration
   class SetUp
     def pipelines; (1..env("NO_OF_PIPELINES", 10).to_i).map{ |i| "perf#{i}"}; end
-    def agents; [*1..env("NO_OF_AGENTS", 10).to_i]; end
+    def agents; (1..env("NO_OF_AGENTS", 10).to_i).map { |i| "agent-#{i}" } end
     def git_repository_host; env('GIT_REPOSITORY_HOST', "http://localhost"); end
     def tools_dir; Pathname.new(env('TOOLS_DIR', "./tools")); end
     def jmeter_dir; tools_dir + "apache-jmeter"; end

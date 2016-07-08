@@ -12,13 +12,13 @@ describe "Configuration" do
       ENV['NO_OF_PIPELINES'] = nil
       expect(@setup.pipelines).to eq(['perf1', 'perf2', 'perf3', 'perf4', 'perf5', 'perf6', 'perf7', 'perf8', 'perf9', 'perf10'])
     end
-    it "create an array on the number of agents" do
+    it "create an array of agents names" do
       ENV['NO_OF_AGENTS'] = '2'
-      expect(@setup.agents).to eq([1,2])
+      expect(@setup.agents).to eq(['agent-1', 'agent-2'])
     end
     it "defaults to 10 agents" do
       ENV['NO_OF_AGENTS'] = nil
-      expect(@setup.agents).to eq([1,2,3,4,5,6,7,8,9,10])
+      expect(@setup.agents).to eq(['agent-1', 'agent-2', 'agent-3', 'agent-4', 'agent-5', 'agent-6', 'agent-7', 'agent-8', 'agent-9', 'agent-10'])
     end
     it "sets the default git repository host" do
       expect(@setup.git_repository_host).to eq('http://localhost')

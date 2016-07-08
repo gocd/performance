@@ -24,26 +24,6 @@ def get_scenarios
 end
 
 
-def create_agents
-  go_full_version = get_go_full_version
-  version = go_full_version.split('-')[0]
-  mkdir_p('go-agents')
-  sh(%Q{wget -O go-agents/go-agent-#{go_full_version}.zip https://download.go.cd/experimental/binaries/#{go_full_version}/generic/go-agent-#{go_full_version}.zip})
-  sh("unzip go-agents/go-agent-#{go_full_version}.zip -d go-agents/")
-
-  (1..NO_OF_AGENTS).each{|i|
-    cp_r "go-agents/go-agent-#{version}" , "go-agents/agent-#{i}"
-    cp_r "scripts/autoregister.properties" ,  "go-agents/agent-#{i}/config/autoregister.properties"
-    sh("chmod +x go-agents/agent-#{i}/agent.sh; GO_SERVER=#{PERF_SERVER_URL[/http:\/\/(.*?)\:/,1]} DAEMON=Y go-agents/agent-#{i}/agent.sh > /dev/null")
-  }
-end
-
-def get_go_full_version
-  json = JSON.parse(open(RELEASES_JSON_URL).read)
-  version, release = json.sort {|a, b| a['go_full_version'] <=> b['go_full_version']}.last['go_full_version'].split('-')
-  go_full_version = "#{version}-#{release}"
-end
-
 def start_server
   go_full_version = get_go_full_version
   version = go_full_version.split('-')[0]
@@ -81,27 +61,6 @@ def stop_agents
     sh("chmod +x go-agents/agent-#{i}/stop-agent.sh; go-agents/agent-#{i}/stop-agent.sh > /dev/null")
   }
   rm_rf 'go-agents'
-end
-
-def set_agent_auto_register_key
-  response = `curl #{get_url}/admin/configuration/file.xml`
-  response_with_headers = `curl -i #{get_url}/admin/configuration/file.xml`
-  p response_with_headers
-  md5 = response_with_headers[/X-CRUISE-CONFIG-MD5: (.*?)\r/,1]
-
-  puts "Previous MD5 was: #{md5}"
-  xml = Nokogiri::XML(response)
-  xml.xpath('//server').each do |ele|
-    ele.set_attribute('agentAutoRegisterKey', 'perf-auto-register-key')
-    ele.set_attribute('jobTimeout', '60')
-  end
-  params = "md5=#{md5}&xmlFile=#{CGI::escape(xml.to_xml)}"
-  File.open(file = '/tmp/perf_config_file.xml', 'w') do |h|
-    h.write(params)
-  end
-  reply = `curl -d @#{file} -i #{get_url}/admin/configuration/file.xml`
-  puts "#{reply}\n==="
-
 end
 
 def update_config
@@ -189,57 +148,6 @@ end
 
 def config_update_loop
   pid = fork_and_loop :update_config, CONFIG_UPDATE_INTERVAL
-end
-
-def download
-  ["http://mirror.fibergrid.in/apache//jmeter/binaries/apache-jmeter-3.0.zip",
-    "http://jmeter-plugins.org/downloads/file/JMeterPlugins-Standard-1.4.0.zip",
-    "http://jmeter-plugins.org/downloads/file/JMeterPlugins-Extras-1.4.0.zip",
-    "http://jmeter-plugins.org/downloads/file/JMeterPlugins-ExtrasLibs-1.4.0.zip"].each do |url|
-
-    sh("wget -P #{JMETER_DIR}/ #{url}")
-    end
-end
-
-def extract_files
-  puts "Extract files"
-  Dir.chdir("#{JMETER_DIR}") do
-    sh("unzip apache-jmeter-3.0.zip")
-    sh("unzip JMeterPlugins-Extras-1.4.0.zip -d 1")
-    sh("unzip JMeterPlugins-ExtrasLibs-1.4.0.zip -d 2")
-    sh("unzip JMeterPlugins-Standard-1.4.0.zip -d 3")
-  end
-end
-
-def setup_plugins_for_jmeter
-  puts "Move all the plugins to jmeter"
-  Dir.chdir("#{JMETER_DIR}") do
-    [1,2,3].each do |dir_name|
-      Dir["#{dir_name}/lib/*.jar"].each{|file| FileUtils.mv file, 'apache-jmeter-3.0/lib'}
-      Dir["#{dir_name}/lib/ext/*.jar"].each{|file| FileUtils.mv file, 'apache-jmeter-3.0/lib/ext'}
-    end
-  end
-end
-
-def clean_up_directory
-  puts "Clean up directory"
-  Dir.chdir("#{JMETER_DIR}") do
-    rm_rf("*.zip")
-    [1,2,3].each do |dir_name|
-      rm_rf("#{dir_name}")
-    end
-  end
-end
-
-def prepare_jmeter_with_plugins
-  if File.directory?("#{JMETER_DIR}/apache-jmeter-3.0")
-    p "Jmeter available at #{JMETER_DIR}/apache-jmeter-3.0 is being used"
-  else
-    download
-    extract_files
-    setup_plugins_for_jmeter
-    clean_up_directory
-  end
 end
 
 def warm_up

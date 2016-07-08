@@ -2,8 +2,9 @@ require './lib/gocd'
 require './lib/downloader'
 require './lib/configuration'
 
-namespace :agent do
+namespace :agents do
   setup = Configuration::SetUp.new
+  gocd_server = Configuration::Server.new
 
   task :prepare do
     v, b = setup.go_version
@@ -16,12 +17,27 @@ namespace :agent do
       f.extractTo('go-agents')
     }
 
-#    (1..NO_OF_AGENTS).each{|i|
-#      cp_r "go-agents/go-agent-#{version}" , "go-agents/agent-#{i}"
-#      cp_r "scripts/autoregister.properties" ,  "go-agents/agent-#{i}/config/autoregister.properties"
+    setup.agents.each {|name|
+      cp_r "go-agents/go-agent-#{v}" , "go-agents/#{name}"
+      cp_r "scripts/autoregister.properties" ,  "go-agents/#{name}/config/autoregister.properties"
+    }
 #      sh("chmod +x go-agents/agent-#{i}/agent.sh; GO_SERVER=#{PERF_SERVER_URL[/http:\/\/(.*?)\:/,1]} DAEMON=Y go-agents/agent-#{i}/agent.sh > /dev/null")
-#    }
 
+  end
+
+  task :start do
+    puts 'Calling all agents'
+    setup.agents.each { |name|
+      agent_dir = "go-agents/#{name}"
+      sh %{chmod +x #{agent_dir}/agent.sh}, verbose:false
+      sh %{GO_SERVER=#{gocd_server.host} #{agent_dir}/agent.sh > #{agent_dir}/#{name}.log 2>&1 & }, verbose:false
+    }
+    puts 'All agents running'
+  end
+
+  task :stop do
+    sh %{ pkill -f go-agents }, verbose:false
+    puts 'Stopped all agents'
   end
 end
 
