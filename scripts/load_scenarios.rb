@@ -23,46 +23,6 @@ def get_scenarios
 	return JSON.parse(File.read('scripts/load_scenarios.json'))
 end
 
-
-def start_server
-  go_full_version = get_go_full_version
-  version = go_full_version.split('-')[0]
-  Dir.chdir("#{SERVER_DIR}") do
-    mkdir_p('go-server')
-    sh(%Q{wget -O go-server/go-server-#{go_full_version}.zip https://download.go.cd/experimental/binaries/#{go_full_version}/generic/go-server-#{go_full_version}.zip})
-    sh("unzip go-server/go-server-#{go_full_version}.zip -d go-server/")
-    sh("chmod +x go-server/go-server-#{version}/server.sh; DAEMON=Y go-server/go-server-#{version}/server.sh > /dev/null")
-  end
-  puts 'wait for server to come up'
-  sh("wget #{get_url}/about --waitretry=90 --retry-connrefused --quiet -O /dev/null")
-  start_jmeter_permon_agent
-end
-
-def start_jmeter_permon_agent
-  if !Dir.exists?("#{JMETER_DIR}/perfmonAgent")
-    Dir.chdir("#{JMETER_DIR}") do
-      sh(%Q{wget -O perfmonAgent.zip http://jmeter-plugins.org/downloads/file/ServerAgent-2.2.1.zip})
-      sh("unzip perfmonAgent.zip -d perfmonAgent")
-      sh("perfmonAgent/startAgent.sh 2>&1 & > /dev/null")
-      rm_rf('perfmonAgent.zip')
-    end
-  end
-end
-
-def shutdown_server
-  version = get_go_full_version.split('-')[0]
-  sh("sh scripts/stop_server.sh #{SERVER_DIR}/go-server/go-server-#{version}")
-  rm_rf("#{SERVER_DIR}/go-server")
-end
-
-def stop_agents
-  p "Stopping all agents"
-  (1..NO_OF_AGENTS).each{|i|
-    sh("chmod +x go-agents/agent-#{i}/stop-agent.sh; go-agents/agent-#{i}/stop-agent.sh > /dev/null")
-  }
-  rm_rf 'go-agents'
-end
-
 def update_config
   response = `curl #{get_url}/admin/configuration/file.xml`
   response_with_headers = `curl -i #{get_url}/admin/configuration/file.xml`

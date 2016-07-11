@@ -31,4 +31,25 @@ namespace :jmeter do
       puts "Using existing Jmeter installation at #{setup.jmeter_dir}"
     end
   end
+
+  task :agent do
+    if !Dir.exists?(setup.jmeter_dir)
+      Dir.chdir(setup.jmeter_dir) do
+        Downloader.new {|q|
+          q.add 'http://jmeter-plugins.org/downloads/file/ServerAgent-2.2.1.zip'
+        }.start {|agent_zip|
+          agent_zip.extractTo('perf_mon_agent')
+        }
+        sh("perf_mon_agent/startAgent.sh 2>&1 & > /dev/null")
+      end
+    end
+  end
+
+  task :clean do
+    rm_rf('jmeter.jmx')
+    rm_rf('jmeter.log')
+    rm_rf('custom.log')
+    rm_rf('perf.jtl')
+    rm_rf('jmeter.jtl')
+  end
 end

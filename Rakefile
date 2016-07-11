@@ -22,7 +22,7 @@ require 'rake/rspec'
 
 
 namespace :performance do
-  task :start => 'jmeter:prepare' do
+  task :prepare => 'jmeter:prepare' do
   end
 end
 
@@ -42,11 +42,6 @@ task :start_stop_perf do
     stop_agents
     git_cleanup
   end
-end
-
-task :create_agents do
-  set_agent_auto_register_key
-  create_agents
 end
 
 task :start_server do

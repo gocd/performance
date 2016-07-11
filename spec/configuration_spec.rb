@@ -36,6 +36,16 @@ describe "Configuration" do
       expect { @setup.go_version }.to raise_error (%{"GO_VERSION format not right, 
       we need the version and build e.g. 16.0.0-1234"})
     end
+    it 'gets the config save interval and number of config saves' do
+      ENV['CONFIG_SAVE_INTERVAL'] = '10'
+      ENV['NUMBER_OF_CONFIG_SAVES'] = '20'
+      expect(@setup.config_save_duration).to eq({ interval:10, times:20 })
+    end
+    it 'sets the default config save interval and number of config saves' do
+      ENV['CONFIG_SAVE_INTERVAL'] = nil
+      ENV['NUMBER_OF_CONFIG_SAVES'] = nil
+      expect(@setup.config_save_duration).to eq({ interval: 5, times: 30 })
+    end
   end
 
   describe Configuration::Server do

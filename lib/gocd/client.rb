@@ -24,16 +24,13 @@ module GoCD
     end
 
     def set_auto_register_key(key)
-      config, md5 = get_config_xml
-
-      xml = @nokogiri::XML config
-
-      xml.xpath('//server').each do |ele|
-        ele.set_attribute('agentAutoRegisterKey', key)
-      end
-
-      set_config_xml xml.to_xml, md5
+      set_server_attribute('agentAutoRegisterKey', key)
     end
+
+    def set_job_timeout(timeout)
+      set_server_attribute('jobTimeout', timeout)
+    end
+
 
     def get_config_xml
       response = @rest_client.get "#{@base_url}/admin/configuration/file.xml"
@@ -46,6 +43,19 @@ module GoCD
       @rest_client.post "#{@base_url}/admin/configuration/file.xml",
         xmlFile: xml,
         md5: md5
+    end
+
+    private
+    def set_server_attribute(attribute, value)
+      config, md5 = get_config_xml
+
+      xml = @nokogiri::XML config
+
+      xml.xpath('//server').each do |ele|
+        ele.set_attribute(attribute, value)
+      end
+
+      set_config_xml xml.to_xml, md5
     end
   end
 end

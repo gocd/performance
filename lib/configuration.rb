@@ -38,6 +38,9 @@ module Configuration
     def initialize()
       ENV['JMETER_PATH'] = "#{jmeter_dir}/apache-jmeter-3.0/bin/"
     end
+    def config_save_duration
+      return {interval: env('CONFIG_SAVE_INTERVAL', 5).to_i, times: env('NUMBER_OF_CONFIG_SAVES', 30).to_i} 
+    end
   end
 
   class Configuration

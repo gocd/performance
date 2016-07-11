@@ -99,4 +99,24 @@ describe GoCD::Client do
     end
   end
 
+  describe :set_job_timeout do
+    before :each do
+      xml = %{ <server jobTimeout="60" }
+      response = double('response', to_str: xml)
+      allow(response).to receive(:headers).and_return({'x_cruise_config_md5': 'md5'})
+      allow(@rest_client).to receive(:get) { response }
+    end
+
+    it 'posts to the right end point' do
+      expectedXml = %{<?xml version="1.0"?>\n<server jobTimeout="61"/>\n}
+
+      expect(@rest_client).to receive(:post)
+        .with("http://localhost:8153/go/admin/configuration/file.xml", 
+      xmlFile: expectedXml, 
+      md5: 'md5')
+
+      @client.set_job_timeout 61
+    end
+  end
+
 end

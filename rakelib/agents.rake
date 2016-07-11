@@ -21,7 +21,6 @@ namespace :agents do
       cp_r "go-agents/go-agent-#{v}" , "go-agents/#{name}"
       cp_r "scripts/autoregister.properties" ,  "go-agents/#{name}/config/autoregister.properties"
     }
-#      sh("chmod +x go-agents/agent-#{i}/agent.sh; GO_SERVER=#{PERF_SERVER_URL[/http:\/\/(.*?)\:/,1]} DAEMON=Y go-agents/agent-#{i}/agent.sh > /dev/null")
 
   end
 
