@@ -55,7 +55,7 @@ def create_git_repos
     sh("touch #{git_repo}/file")
     sh("cd #{git_repo}; git add .")
     sh("cd #{git_repo}; git commit -m 'simple checkin' --author 'foo <foo@bar.com>'")
-    puts "Creating repository #{git_repo}"
+   puts "Creating repository #{git_repo}"
   end
   start_git_server
 end

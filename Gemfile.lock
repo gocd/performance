@@ -14,10 +14,12 @@ GEM
     diff-lcs (1.2.5)
     domain_name (0.5.20160128)
       unf (>= 0.0.5, < 1.0.0)
+    ffi (1.9.14-java)
     http-cookie (1.0.2)
       domain_name (~> 0.5)
     i18n (0.7.0)
     json (1.8.3)
+    json (1.8.3-java)
     json_builder (3.1.7)
       activesupport (>= 2.0.0)
       json
@@ -28,10 +30,17 @@ GEM
     netrc (0.11.0)
     nokogiri (1.6.7.2)
       mini_portile2 (~> 2.0.0.rc2)
+    nokogiri (1.6.7.2-java)
+    process_builder (1.1.0)
     pry (0.10.3)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
+    pry (0.10.3-java)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
+      spoon (~> 0.0)
     rake (10.4.2)
     rake-rspec (0.0.2)
       rake (~> 10.0)
@@ -58,20 +67,26 @@ GEM
       rest-client
     rubyzip (1.2.0)
     slop (3.6.0)
+    spoon (0.0.4)
+      ffi
     thread_safe (0.3.5)
+    thread_safe (0.3.5-java)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
     unf (0.1.4)
       unf_ext
+    unf (0.1.4-java)
     unf_ext (0.0.7.2)
 
 PLATFORMS
+  java
   ruby
 
 DEPENDENCIES
   assert_json
   deep_merge
   json_builder
+  process_builder
   pry
   rake
   rake-rspec

@@ -31,7 +31,6 @@ module GoCD
       set_server_attribute('jobTimeout', timeout)
     end
 
-
     def get_config_xml
       response = @rest_client.get "#{@base_url}/admin/configuration/file.xml"
       md5 = response.headers[:'x_cruise_config_md5']
@@ -43,6 +42,10 @@ module GoCD
       @rest_client.post "#{@base_url}/admin/configuration/file.xml",
         xmlFile: xml,
         md5: md5
+    end
+
+    def get_support_page
+      @rest_client.get "#{@base_url}/api/support"
     end
 
     private

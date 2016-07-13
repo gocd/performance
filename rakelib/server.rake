@@ -1,5 +1,9 @@
 require './lib/configuration'
 require './lib/gocd'
+require './lib/looper'
+require 'rest-client'
+require 'bundler'
+require 'process_builder'
 
 namespace :server do
   gocd_server = Configuration::Server.new
@@ -24,11 +28,30 @@ namespace :server do
 
     server_dir = "go-server/go-server-#{v}" 
 
-    sh %{ chmod +x #{server_dir}/server.sh }, verbose:false
-    sh %{ #{server_dir}/server.sh > #{server_dir}/server.out.log 2>&1 & }, verbose: false
+    Bundler.with_clean_env do
+      ProcessBuilder.build('sh', 'server.sh') {|p|
+        p.environment = gocd_server.environment
+        puts 'Environment variables'
+        p.environment.each {|key,value|
+          puts "#{key}=#{value}"
+        }
+        p.directory = server_dir
+        p.redirection[:err] = 'go-server.startup.out.log'
+        p.redirection[:out] = 'go-server.startup.out.log'
+      }.spawn
+    end
 
-    puts 'Waiting for server to come up'
-    sh("wget #{get_url}/about --waitretry=90 --retry-connrefused --quiet -O /dev/null")
+    puts 'Waiting for server start up'
+    server_is_running = false 
+    Looper.run(interval:10, times: 9) {
+      begin 
+        gocd_client.get_support_page
+        server_is_running = true
+      rescue
+      end
+    } 
+
+    raise "Couldn't start GoCD server at #{v}-#{b} at #{server_dir}" unless server_is_running
     puts 'The servers up and running'
   end
 

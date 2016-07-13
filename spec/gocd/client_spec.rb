@@ -9,6 +9,12 @@ describe GoCD::Client do
     @pipeline = GoCD::Pipeline.new(name: 'pipeline')
   end
 
+  it 'gets the support page' do
+    expect(@rest_client).to receive(:get)
+      .with("http://localhost:8153/go/api/support")
+    @client.get_support_page
+  end
+
   describe :create_pipeline do
     it 'posts to the right end point' do
       expect(@rest_client).to receive(:post)
