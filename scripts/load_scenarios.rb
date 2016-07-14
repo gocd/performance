@@ -23,53 +23,6 @@ def get_scenarios
 	return JSON.parse(File.read('scripts/load_scenarios.json'))
 end
 
-def update_config
-  response = `curl #{get_url}/admin/configuration/file.xml`
-  response_with_headers = `curl -i #{get_url}/admin/configuration/file.xml`
-  p response_with_headers
-  md5 = response_with_headers[/X-CRUISE-CONFIG-MD5: (.*?)\r/,1]
-
-  puts "Previous MD5 was: #{md5}"
-  if response.include? 'jobTimeout="61"'
-    response.gsub!(/jobTimeout="61"/, 'jobTimeout="60"')
-  else
-    response.gsub!(/jobTimeout="60"/, 'jobTimeout="61"')
-  end
-  params = "md5=#{md5}&xmlFile=#{CGI::escape(response)}"
-  File.open(file = '/tmp/perf_config_file.xml', 'w') do |h|
-    h.write(params)
-  end
-  reply = `curl -i #{get_url}/admin/configuration/file.xml -d @#{file}`
-  puts "#{reply}\n==="
-end
-
-def setup_git_repo
-  create_git_repos
-end
-
-def create_git_repos
-  GIT_REPOS.each do |repo_name|
-    git_repo = "#{GIT_ROOT}/#{repo_name}"
-    sh("git init #{git_repo}")
-    sh("cd #{git_repo}; touch .git/git-daemon-export-ok")
-    sh("touch #{git_repo}/file")
-    sh("cd #{git_repo}; git add .")
-    sh("cd #{git_repo}; git commit -m 'simple checkin' --author 'foo <foo@bar.com>'")
-   puts "Creating repository #{git_repo}"
-  end
-  start_git_server
-end
-
-def start_git_server
-  sh("git daemon --base-path=#{GIT_ROOT} --detach --syslog --export-all")
-end
-
-def git_cleanup
-  GIT_REPOS.each do |repo_name|
-    rm_rf "#{GIT_ROOT}/#{repo_name}"
-  end
-end
-
 def checkin_git_repo
   Dir.chdir "#{GIT_ROOT}" do
     GIT_REPOS.each do |repo_name|
@@ -91,23 +44,9 @@ def cleanup
   rm_rf('jmeter.jtl')
 end
 
-def fork_and_loop command, sleep_time
-  pid = fork do
-    while true
-      send(command)
-      sleep(sleep_time)
-    end
-  end
-  return pid
-end
-
 def scm_commit_loop
   setup_git_repo
   pid = fork_and_loop :checkin_git_repo , SCM_COMMIT_INTERVAL
-end
-
-def config_update_loop
-  pid = fork_and_loop :update_config, CONFIG_UPDATE_INTERVAL
 end
 
 def warm_up

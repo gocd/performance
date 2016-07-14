@@ -42,7 +42,7 @@ module Configuration
       return {interval: env('CONFIG_SAVE_INTERVAL', 5).to_i, times: env('NUMBER_OF_CONFIG_SAVES', 30).to_i} 
     end
     def git_root; env("GIT_ROOT", "gitrepos"); end
-    def git_repos; (1..number_of_pipelines.to_i).map{ |i| "git-repo-#{i}"}; end
+    def git_repos; (1..number_of_pipelines.to_i).map{ |i| "#{git_root}/git-repo-#{i}"}; end
 
     private 
     def number_of_pipelines; env("NO_OF_PIPELINES", 10); end

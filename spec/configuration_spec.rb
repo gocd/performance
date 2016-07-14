@@ -56,7 +56,7 @@ describe "Configuration" do
     end
     it 'generates git repo names based on the number of pipelines' do
       ENV['NO_OF_PIPELINES'] ='3' 
-      expect(@setup.git_repos).to eq(['git-repo-1', 'git-repo-2', 'git-repo-3'])
+      expect(@setup.git_repos).to eq(['gitrepos/git-repo-1', 'gitrepos/git-repo-2', 'gitrepos/git-repo-3'])
     end
   end
 
