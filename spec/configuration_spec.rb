@@ -46,6 +46,16 @@ describe "Configuration" do
       ENV['NUMBER_OF_CONFIG_SAVES'] = nil
       expect(@setup.config_save_duration).to eq({ interval: 5, times: 30 })
     end
+    it 'gets the git commit interval and number of config saves' do
+      ENV['GIT_COMMIT_INTERVAL'] = '10'
+      ENV['NUMBER_OF_COMMITS'] = '20'
+      expect(@setup.git_commit_duration).to eq({ interval:10, times:20 })
+    end
+    it 'sets the default git commit interval and number of config saves' do
+      ENV['GIT_COMMIT_INTERVAL'] = nil
+      ENV['NUMBER_OF_COMMITS'] = nil
+      expect(@setup.git_commit_duration).to eq({ interval: 5, times: 30 })
+    end
     it 'sets the GIT_ROOT' do
       ENV['GIT_ROOT'] = 'gitroot'
       expect(@setup.git_root).to eq('gitroot')

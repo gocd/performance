@@ -43,6 +43,9 @@ module Configuration
     end
     def git_root; env("GIT_ROOT", "gitrepos"); end
     def git_repos; (1..number_of_pipelines.to_i).map{ |i| "#{git_root}/git-repo-#{i}"}; end
+    def git_commit_duration
+      return {interval: env('GIT_COMMIT_INTERVAL', 5).to_i, times: env('NUMBER_OF_COMMITS', 30).to_i} 
+    end
 
     private 
     def number_of_pipelines; env("NO_OF_PIPELINES", 10); end
@@ -54,7 +57,6 @@ module Configuration
     def scm_commit_interval; env('SCM_UPDATE_INTERVAL', 5); end
     def server_dir; env('SERVER_DIR', "/tmp"); end
     def git_repos; (1..env('NO_OF_PIPELINES', 10)).map{ |i| "git-repo-#{i}"}; end
-    def no_of_commits; env('NO_OF_COMMITS', 1); end
     def gocd_host; "#{server_url}/go"; end
   end
 

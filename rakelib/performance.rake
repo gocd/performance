@@ -20,4 +20,22 @@ namespace :performance do
       } 
     end
   end
+
+  namespace :git do
+    task :update => 'git:prepare' do
+      duration = setup.git_commit_duration
+
+      Looper::run(duration) {
+        setup.git_repos.each do |repo|
+          verbose false do
+            cd repo do
+              time = Time.now
+              File.write("file", time.to_f)
+              sh("git add .;git commit -m 'This is commit at #{time.rfc2822}' --author 'foo <foo@bar.com>'")
+            end
+          end
+        end
+      }
+    end
+  end
 end
