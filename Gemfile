@@ -22,6 +22,8 @@ gem 'rest-client'
 gem 'assert_json'
 gem 'json_builder'
 gem 'deep_merge'
-gem 'pry'
 gem 'rubyzip'
 gem 'process_builder'
+gem 'pry', require: false
+gem 'guard-rspec', require: false
+gem 'rubocop', require: false
