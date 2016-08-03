@@ -67,6 +67,12 @@ describe "Configuration" do
       ENV['NO_OF_PIPELINES'] ='3' 
       expect(@setup.git_repos).to eq(['gitrepos/git-repo-1', 'gitrepos/git-repo-2', 'gitrepos/git-repo-3'])
     end
+    it 'sets the jmeter directory' do
+      expect(@setup.jmeter_dir.to_s).to eq('./tools/apache-jmeter-3.0')
+    end
+    it 'sets the jmeter bin directory' do
+      expect(@setup.jmeter_bin.to_s).to eq('./tools/apache-jmeter-3.0/bin/')
+    end
   end
 
   describe Configuration::Server do

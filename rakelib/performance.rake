@@ -125,7 +125,7 @@ namespace :performance do
         filename: 'perf.jtl',
         xml: true
 
-      end.run(path: ENV['JMETER_PATH'],
+      end.run(path: setup.jmeter_bin,
               file: 'jmeter.jmx',
               log: 'jmeter.log',
               properties: {"jmeter.save.saveservice.output_format" => "xml"}, gui: false)

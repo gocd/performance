@@ -5,6 +5,7 @@ namespace :jmeter do
   setup = Configuration::SetUp.new
 
   task :prepare => :download do
+    chmod '+x', setup.jmeter_bin + 'jmeter'
   end
 
   task :download do

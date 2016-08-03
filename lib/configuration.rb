@@ -39,7 +39,11 @@ module Configuration
     end
 
     def jmeter_dir
-      tools_dir + 'apache-jmeter'
+      tools_dir + 'apache-jmeter-3.0'
+    end
+
+    def jmeter_bin
+      jmeter_dir + 'bin/'
     end
 
     def go_version
@@ -52,10 +56,6 @@ module Configuration
       end
 
       raw_version.split '-'
-    end
-
-    def initialize
-      ENV['JMETER_PATH'] = "#{jmeter_dir}/apache-jmeter-3.0/bin/"
     end
 
     def config_save_duration
