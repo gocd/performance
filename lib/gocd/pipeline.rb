@@ -20,14 +20,18 @@ require 'deep_merge'
 
 module GoCD
   class Configuration
-    def default; {} ; end
+
+    def default
+      {}
+    end
+
     attr_reader :data
 
     def initialize(args = {})
       @data = default.deep_merge!(args)
-      @data.each do |k,v|
+      @data.each do |k, v|
         instance_variable_set("@#{k}", v)
-        self.class.send(:attr_reader,k)
+        self.class.send(:attr_reader, k)
       end
       yield self if block_given?
     end
@@ -67,10 +71,10 @@ module GoCD
       pipeline = self
 
       JSONBuilder::Compiler.generate do
-        group pipeline.group 
+        group pipeline.group
         pipeline do
           name pipeline.name
-          materials pipeline.materials 
+          materials pipeline.materials
           environment_variables pipeline.environment_variables
           stages pipeline.stages
         end
@@ -83,12 +87,12 @@ module GoCD
     def default
       {
         type: 'git',
-        attributes: { 
+        attributes: {
           auto_update: true,
           destination: nil,
           filter: nil,
           name: nil,
-          url: ""
+          url: ''
         }
       }
     end
@@ -99,7 +103,9 @@ module GoCD
   end
 
   class EnvironmentVariable < Configuration
-    def default; {secure: false }; end
+    def default
+      { secure: false }
+    end
   end
 
   class Parameter < Configuration; end
@@ -107,9 +113,9 @@ module GoCD
   class Stage < Configuration
     def default
       {
-        name: "",
+        name: '',
         approval: {
-          type: "success",
+          type: 'success',
           authorization: {
             roles: [],
             users: []
@@ -125,22 +131,22 @@ module GoCD
 
     def <<(instance)
       super(instance)
-      self.jobs << instance.data if instance.is_a? Job 
+      self.jobs << instance.data if instance.is_a? Job
     end
   end
 
   class Job < Configuration
     def default
-      { 
-        name: "",
+      {
+        name: '',
         artifacts: [],
         environment_variables: [],
         properties: nil,
-        resources:[],
+        resources: [],
         run_count_instance: nil,
         tabs: [],
         tasks: [],
-        timeout:0
+        timeout: 0
         }
     end
 

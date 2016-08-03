@@ -10,20 +10,21 @@ namespace :server do
   gocd_client = GoCD::Client.new gocd_server.url
   setup = Configuration::SetUp.new
 
-  task :prepare do
+  task :prepare => 'server:stop' do
     v, b = setup.go_version
 
-    mkdir_p('go-server')
+    rm_rf 'go-server' 
+    mkdir_p 'go-server' 
 
     Downloader.new('go-server') {|q|
       q.add "https://download.go.cd/experimental/binaries/#{v}-#{b}/generic/go-server-#{v}-#{b}.zip"
     }.start { |f|
-      f.extractTo('go-server')
+      f.extract_to('go-server')
     }
 
   end
 
-  task :start do
+  task :start => 'server:stop' do
     v, b = setup.go_version
 
     server_dir = "go-server/go-server-#{v}" 
@@ -45,7 +46,7 @@ namespace :server do
     server_is_running = false 
     Looper.run(interval:10, times: 9) {
       begin 
-        gocd_client.get_support_page
+        gocd_client.support_page
         server_is_running = true
       rescue
       end
@@ -56,12 +57,11 @@ namespace :server do
   end
 
   task :stop do
-    sh %{ pkill -f go-server }, verbose:false
+    sh %{ pkill -f go-server || true }, verbose:false
     puts 'Stopped server'
   end
 
   task :auto_register do
-    gocd_client.set_auto_register_key 'perf-auto-register-key'
+    gocd_client.auto_register_key 'perf-auto-register-key'
   end
-
 end

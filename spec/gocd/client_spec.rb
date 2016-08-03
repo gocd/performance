@@ -12,7 +12,7 @@ describe GoCD::Client do
   it 'gets the support page' do
     expect(@rest_client).to receive(:get)
       .with("http://localhost:8153/go/api/support")
-    @client.get_support_page
+    @client.support_page
   end
 
   describe :create_pipeline do
@@ -43,12 +43,12 @@ describe GoCD::Client do
       expect(@rest_client).to receive(:post)
         .with("http://localhost:8153/go/api/pipelines/pipeline/unpause",
       "",
-      :'Confirm' => true)
+      confirm: true)
       @client.unpause_pipeline(@pipeline.name) 
     end
   end
 
-  describe :get_config_xml do
+  describe :config_xml do
 
     before :each do
       @response = double('response', to_str: '<xml/>')
@@ -59,28 +59,28 @@ describe GoCD::Client do
       allow(@response).to receive(:headers).and_return({'x_cruise_config_md5': 'md5'})
       expect(@rest_client).to receive(:get)
         .with("http://localhost:8153/go/admin/configuration/file.xml")
-      @client.get_config_xml
+      @client.config_xml
     end
 
     it 'gets the xml and md5' do
       allow(@response).to receive(:headers).and_return({'x_cruise_config_md5': 'md5'})
-      expect(@client.get_config_xml).to eq(['<xml/>', 'md5'])
+      expect(@client.config_xml).to eq(['<xml/>', 'md5'])
     end
     
     it 'raises exception if md5 is not there in the header' do
       allow(@response).to receive(:headers).and_return({})
-      expect{ @client.get_config_xml }.to raise_error ('MD5 of the content is missing in the header, Please make sure you are authenticated or using the right url') 
+      expect{ @client.config_xml }.to raise_error ('Failed to get config, check authentication')
     end
   end
 
-  describe :set_config_xml do
+  describe :save_config_xml do
     it 'posts to the right end point' do
       expect(@rest_client).to receive(:post)
         .with("http://localhost:8153/go/admin/configuration/file.xml", 
       xmlFile: '<xml/>', 
       md5: 'md5')
       
-      @client.set_config_xml('<xml/>', 'md5')
+      @client.save_config_xml('<xml/>', 'md5')
     end
 
   end
@@ -101,7 +101,7 @@ describe GoCD::Client do
       xmlFile: expectedXml, 
       md5: 'md5')
 
-      @client.set_auto_register_key 'key'
+      @client.auto_register_key 'key'
     end
   end
 
@@ -121,7 +121,7 @@ describe GoCD::Client do
       xmlFile: expectedXml, 
       md5: 'md5')
 
-      @client.set_job_timeout 61
+      @client.job_timeout 61
     end
   end
 

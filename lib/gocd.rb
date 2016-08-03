@@ -14,7 +14,9 @@
 # limitations under the License.
 ##########################################################################
 
-require_relative "./gocd/pipeline.rb"
-require_relative "./gocd/client.rb"
+require_relative './gocd/pipeline.rb'
+require_relative './gocd/client.rb'
 
-module GoCD; end
+# Namespace for GoCD releated class and functions
+module GoCD
+end

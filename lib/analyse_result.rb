@@ -15,8 +15,8 @@
 # limitations under the License.
 ##########################################################################
 
-require  'nokogiri'
-xml_doc = Nokogiri::XML(File.open("jmeter.jtl"))
+require 'nokogiri'
+xml_doc = Nokogiri::XML(File.open('jmeter.jtl'))
 xml_doc.xpath('//failure').each do |failure_attribute|
   if failure_attribute.text == 'true'
     puts failure_attribute.parent.parent

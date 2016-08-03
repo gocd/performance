@@ -19,34 +19,12 @@ require 'json'
 require 'nokogiri'
 require 'cgi'
 
-def get_scenarios
-	return JSON.parse(File.read('scripts/load_scenarios.json'))
-end
-
-def checkin_git_repo
-  Dir.chdir "#{GIT_ROOT}" do
-    GIT_REPOS.each do |repo_name|
-      git_repo = "#{GIT_ROOT}/#{repo_name}"
-      (1..NO_OF_COMMITS).each do |i|
-        sh("(cd #{git_repo}; echo #{rand(10**24-10)+10} > file;)")
-        sh("cd #{git_repo}; git add .;git commit -m 'This is commit #{i}' --author 'foo <foo@bar.com>'")
-      end
-    end
-  end
-end
-
-
 def cleanup
   rm_rf('jmeter.jmx')
   rm_rf('jmeter.log')
   rm_rf('custom.log')
   rm_rf('perf.jtl')
   rm_rf('jmeter.jtl')
-end
-
-def scm_commit_loop
-  setup_git_repo
-  pid = fork_and_loop :checkin_git_repo , SCM_COMMIT_INTERVAL
 end
 
 def warm_up

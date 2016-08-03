@@ -63,6 +63,6 @@ describe ZipFile do
     allow(@extractor).to receive(:open).and_yield(zip_file)
     expect(@extractor).to receive(:open)
       .with('file')
-    @zip_file.extractTo('destination')
+    @zip_file.extract_to('destination')
   end
 end

@@ -33,8 +33,7 @@ describe "Configuration" do
     end
     it 'raises error if the GO_VERSION is not in the right format' do
       ENV['GO_VERSION'] = '16.0'
-      expect { @setup.go_version }.to raise_error (%{"GO_VERSION format not right, 
-      we need the version and build e.g. 16.0.0-1234"})
+      expect { @setup.go_version }.to raise_error ('Wrong GO_VERSION format use 16.X.X-xxxx')
     end
     it 'gets the config save interval and number of config saves' do
       ENV['CONFIG_SAVE_INTERVAL'] = '10'

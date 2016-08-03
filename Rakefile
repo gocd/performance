@@ -28,11 +28,6 @@ end
 
 task :start_stop_perf do
   begin
-    create_agents
-    Rake::Task['pipeline:create']
-    cleanup
-    @scm_pid = scm_commit_loop
-    @config_pid = config_update_loop
     warm_up
     ruby "scripts/run_test.rb"
   ensure
@@ -42,12 +37,4 @@ task :start_stop_perf do
     stop_agents
     git_cleanup
   end
-end
-
-task :start_server do
-  start_server
-end
-
-task :shutdown_server do
-  shutdown_server
 end
