@@ -23,7 +23,7 @@ module Configuration
   # Setup configuration
   class SetUp
     def pipelines
-      (1..number_of_pipelines.to_i).map { |i| "perf#{i}" }
+      (1..number_of_pipelines.to_i).map { |i| "gocd.perf#{i}" }
     end
 
     def agents

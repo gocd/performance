@@ -6,11 +6,11 @@ describe "Configuration" do
     end
     it "creates an array of performance pipeline names" do
       ENV['NO_OF_PIPELINES'] = '3'
-      expect(@setup.pipelines).to eq(['perf1', 'perf2', 'perf3'])
+      expect(@setup.pipelines).to eq(['gocd.perf1', 'gocd.perf2', 'gocd.perf3'])
     end
     it "defaults to 10 pipelines when the environment variable is not set" do
       ENV['NO_OF_PIPELINES'] = nil
-      expect(@setup.pipelines).to eq(['perf1', 'perf2', 'perf3', 'perf4', 'perf5', 'perf6', 'perf7', 'perf8', 'perf9', 'perf10'])
+      expect(@setup.pipelines).to eq(['gocd.perf1', 'gocd.perf2', 'gocd.perf3', 'gocd.perf4', 'gocd.perf5', 'gocd.perf6', 'gocd.perf7', 'gocd.perf8', 'gocd.perf9', 'gocd.perf10'])
     end
     it "create an array of agents names" do
       ENV['NO_OF_AGENTS'] = '2'
