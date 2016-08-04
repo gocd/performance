@@ -1,18 +1,14 @@
 class Scenario
-  attr_reader :name, :url, :count, :rampup, :duration, :response_code
 
-  def initialize(name,
-                 url: nil,
-                 count: 1,
-                 rampup: 1,
-                 duration: 30,
-                 response_code: 200)
+  attr_accessor :name, :url, :count, :rampup, :duration, :response_code
+
+  def initialize(name, url)
     @name = name
     @url = url
-    @count = count
-    @rampup = rampup
-    @duration = duration
-    @response_code = response_code
+    @count = 1
+    @rampup = 1
+    @duration = 30
+    @response_code = 200
   end
 end
 
