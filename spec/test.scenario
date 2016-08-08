@@ -1,0 +1,4 @@
+scenario do
+  name 'test'
+  url '/url'
+end
