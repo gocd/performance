@@ -21,6 +21,10 @@ class Scenario
       super(method_name, *arguments, &block)
     end
   end
+
+  def threads
+    { count: @count, rampup: @rampup, duration:@duration  }
+  end
 end
 
 class Scenarios

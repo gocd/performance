@@ -40,6 +40,9 @@ describe :scenario do
   it 'sets default response_code' do
     expect(@scenario.response_code).to eq(200)
   end
+  it 'sets the thread information' do
+    expect(@scenario.threads).to eq({ count:1, rampup:1 , duration:30 })
+  end
 end
 
 describe :scenarios do

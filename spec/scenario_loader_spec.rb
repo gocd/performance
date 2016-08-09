@@ -7,17 +7,17 @@ describe ScenarioLoader do
 
   describe :read do
     before(:example) do
-      @loader = ScenarioLoader.new('./spec')
-      @loader.send :parse, 'test' 
+      loader = ScenarioLoader.new('./spec')
+      @scenarios = loader.send :parse, 'test.scenario' 
     end
     it 'reads all scenarios_cache in the test file' do
-      expect(@loader.scenarios_cache['test'].list.count).to eq(1)
+      expect(@scenarios.list.count).to eq(1)
     end
     it 'sets the name of the scenario' do
-      expect(@loader.scenarios_cache['test'].list.first.name).to eq('test') 
+      expect(@scenarios.list.first.name).to eq('test') 
     end
     it 'sets the url of the scenario' do
-      expect(@loader.scenarios_cache['test'].list.first.url).to eq('/url') 
+      expect(@scenarios.list.first.url).to eq('/url') 
     end
   end
 end

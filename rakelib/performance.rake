@@ -2,6 +2,7 @@ require './lib/gocd'
 require './lib/configuration'
 require './lib/looper'
 require 'ruby-jmeter'
+require './lib/scenario_loader'
 
 namespace :performance do
   go_server = Configuration::Server.new
@@ -38,6 +39,11 @@ namespace :performance do
         end
       }
     end
+  end
+
+  task :dashboard do
+    loader = ScenarioLoader.new('./scenarios')
+    loader.run 'dashboard', go_server.url
   end
 
   namespace :scenarios do
