@@ -3,6 +3,7 @@ require './lib/configuration'
 require './lib/looper'
 require 'ruby-jmeter'
 require './lib/scenario_loader'
+require 'process_builder'
 
 namespace :performance do
   go_server = Configuration::Server.new
