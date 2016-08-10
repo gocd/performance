@@ -9,17 +9,18 @@ namespace :agents do
   task :prepare => 'agents:stop' do
     v, b = setup.go_version
 
-    rm_rf 'go-agents'
-    mkdir_p 'go-agents' 
+    agents_dir = setup.agents_install_dir
+    rm_rf agents_dir
+    mkdir_p agents_dir
 
-    Downloader.new('go-agents') {|q|
+    Downloader.new(agents_dir) {|q|
       q.add "https://download.go.cd/experimental/binaries/#{v}-#{b}/generic/go-agent-#{v}-#{b}.zip"
     }.start { |f|
-      f.extract_to('go-agents')
+      f.extract_to(agents_dir)
     }
 
     setup.agents.each {|name|
-      cp_r "go-agents/go-agent-#{v}" , "go-agents/#{name}"
+      cp_r "#{agents_dir}/go-agent-#{v}" , "#{agents_dir}/#{name}"
     }
 
   end
@@ -27,8 +28,8 @@ namespace :agents do
   task :start => ['agents:stop', 'server:auto_register'] do
     puts 'Calling all agents'
     setup.agents.each { |name|
-      agent_dir = "go-agents/#{name}"
-      cp_r "scripts/autoregister.properties" ,  "go-agents/#{name}/config/autoregister.properties"
+      agent_dir = "#{setup.agents_install_dir}/#{name}"
+      cp_r "scripts/autoregister.properties" ,  "#{agent_dir}/config/autoregister.properties"
       sh %{chmod +x #{agent_dir}/agent.sh}, verbose:false
       sh %{GO_SERVER=#{gocd_server.host} #{agent_dir}/agent.sh > #{agent_dir}/#{name}.log 2>&1 & }, verbose:false
     }

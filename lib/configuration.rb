@@ -34,6 +34,14 @@ module Configuration
       env('GIT_REPOSITORY_HOST', 'http://localhost')
     end
 
+    def server_install_dir
+      Pathname.new(env('SERVER_INSTALL_DIR', '.')) + 'go-server'
+    end
+
+    def agents_install_dir
+      Pathname.new(env('AGENTS_INSTALL_DIR', '.')) + 'go-agents'
+    end
+
     def tools_dir
       Pathname.new(env('TOOLS_DIR', './tools'))
     end

@@ -13,13 +13,14 @@ namespace :server do
   task :prepare => 'server:stop' do
     v, b = setup.go_version
 
-    rm_rf 'go-server' 
-    mkdir_p 'go-server' 
+    server_dir = setup.server_install_dir
+    rm_rf "#{server_dir}"
+    mkdir_p "#{server_dir}"
 
-    Downloader.new('go-server') {|q|
+    Downloader.new("#{server_dir}") {|q|
       q.add "https://download.go.cd/experimental/binaries/#{v}-#{b}/generic/go-server-#{v}-#{b}.zip"
     }.start { |f|
-      f.extract_to('go-server')
+      f.extract_to("#{server_dir}")
     }
 
   end
@@ -27,7 +28,7 @@ namespace :server do
   task :start => 'server:stop' do
     v, b = setup.go_version
 
-    server_dir = "go-server/go-server-#{v}" 
+    server_dir = "#{setup.server_install_dir}/go-server-#{v}"
 
     Bundler.with_clean_env do
       ProcessBuilder.build('sh', 'server.sh') {|p|

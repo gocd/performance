@@ -59,10 +59,31 @@ describe "Configuration" do
       ENV['GIT_ROOT'] = 'gitroot'
       expect(@setup.git_root).to eq('gitroot')
     end
-    it 'sets the /tmp folder as the default GIT_ROOT' do
+    it 'sets the gitrepos folder as the default GIT_ROOT' do
       ENV['GIT_ROOT'] = nil
       expect(@setup.git_root).to eq('gitrepos')
     end
+
+    it 'sets the SERVER_INSTALL_DIR' do
+      ENV['SERVER_INSTALL_DIR'] = '/tmp'
+      expect(@setup.server_install_dir.to_s).to eq('/tmp/go-server')
+    end
+
+    it 'sets the current working dir as the default SERVER_INSTALL_DIR' do
+      ENV['SERVER_INSTALL_DIR'] = nil
+      expect(@setup.server_install_dir.to_s).to eq('go-server')
+    end
+
+    it 'sets the AGENTS_INSTALL_DIR' do
+      ENV['AGENTS_INSTALL_DIR'] = '/tmp'
+      expect(@setup.agents_install_dir.to_s).to eq('/tmp/go-agents')
+    end
+
+    it 'sets the current working dir as the default AGENTS_INSTALL_DIR' do
+      ENV['AGENTS_INSTALL_DIR'] = nil
+      expect(@setup.agents_install_dir.to_s).to eq('go-agents')
+    end
+
     it 'generates git repo names based on the number of pipelines' do
       ENV['NO_OF_PIPELINES'] ='3' 
       expect(@setup.git_repos).to eq(['gitrepos/git-repo-1', 'gitrepos/git-repo-2', 'gitrepos/git-repo-3'])
