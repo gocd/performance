@@ -24,7 +24,9 @@ namespace :git do
       sh("git daemon --base-path=#{setup.git_root} --detach --syslog --export-all")
     end
     task :stop do
-      sh 'pkill -f git-daemon'
+      sh 'pkill -f git-daemon' do |ok, res|
+        puts 'Stopped git daemons' if ok
+      end
     end
   end
 

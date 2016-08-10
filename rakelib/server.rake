@@ -58,8 +58,11 @@ namespace :server do
   end
 
   task :stop do
-    sh %{ pkill -f go-server || true }, verbose:false
-    puts 'Stopped server'
+    verbose false do
+      sh %{ pkill -f go-server } do |ok, res|
+        puts 'Stopped server' if ok
+      end
+    end
   end
 
   task :auto_register do

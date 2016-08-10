@@ -37,8 +37,11 @@ namespace :agents do
   end
 
   task :stop do
-    sh %{ pkill -f go-agents || true }, verbose:false
-    puts 'Stopped all agents'
+    verbose false do
+      sh %{ pkill -f go-agents } do |ok, res|
+        puts 'Stopped all agents' if ok
+      end
+    end
   end
 end
 
