@@ -24,6 +24,3 @@ gem 'json_builder'
 gem 'deep_merge'
 gem 'rubyzip'
 gem 'process_builder'
-gem 'pry', require: false
-gem 'guard-rspec', require: false
-gem 'rubocop', require: false

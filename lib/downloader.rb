@@ -2,7 +2,6 @@ require 'uri'
 require 'pathname'
 require 'open-uri'
 require 'digest/md5'
-require 'pry'
 require 'zip'
 
 # Zip file extractor

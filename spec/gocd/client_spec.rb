@@ -1,6 +1,5 @@
 require './lib/gocd'
 require 'rest-client'
-require 'pry'
 
 describe GoCD::Client do
   before(:each) do
