@@ -19,7 +19,7 @@ namespace :performance do
         timeout = 60 + rand(9)
 
         puts "Setting job timeout to #{timeout}"
-        gocd_client.set_job_timeout timeout
+        gocd_client.job_timeout timeout
       } 
     end
   end
@@ -42,7 +42,7 @@ namespace :performance do
     end
   end
 
-  task :dashboard do
+  task :dashboard => 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
     loader.run 'dashboard', go_server.url
   end
