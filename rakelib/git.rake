@@ -19,8 +19,8 @@ namespace :git do
     end
   end
 
-  task :daemon do
-    task :start do
+  namespace :daemon do
+    task :start => 'git:prepare' do
       sh("git daemon --base-path=#{setup.git_root} --detach --syslog --export-all")
     end
     task :stop do
