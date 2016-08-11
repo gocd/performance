@@ -37,21 +37,28 @@ class ScenarioLoader
   end
 
   def generate_reports(reports_dir)
-    generate_report(reports_dir, 'ResponseTimesDistribution')
+    types = %w(ResponseTimesDistribution ResponseTimesOverTime ResponseTimesPercentiles ResponseCodesPerSecond PerfMon ThreadsStateOverTime BytesThroughputOverTime HitsPerSecond ThroughputVsThreads TimesVsThreads)
+    types.each do |type_of_graph|
+      generate_report(reports_dir, type_of_graph, 'png')
+      generate_report(reports_dir, type_of_graph, 'csv')
+    end
+    ['AggregateReport', 'SynthesisReport'].each do |type|
+      generate_report(reports_dir, type, 'csv')
+    end
   end
 
-  def generate_report(reports_dir, type)
+  def generate_report(reports_dir, type_of_graph, type_of_report)
     process = ProcessBuilder.build('java', 
                                    '-jar',
                                    "#{@setup.jmeter_dir}/lib/ext/CMDRunner.jar",
                                    '--tool',
                                    'Reporter',
-                                   '--generate-png',
-                                   "#{reports_dir}/#{type}.png",
+                                   "--generate-#{type_of_report}",
+                                   "#{reports_dir}/#{type_of_graph}.#{type_of_report}",
                                    '--input-jtl',
                                    "#{reports_dir}/jmeter.jtl",
                                    '--plugin-type',
-                                   type)
+                                   type_of_graph)
     Process.wait(process.spawn)
   end
 end
