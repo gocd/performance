@@ -1,6 +1,9 @@
 require './lib/scenario'
 require 'ruby-jmeter'
 require './lib/configuration'
+require 'nokogiri'
+require 'fileutils'
+include FileUtils
 
 class ScenarioLoader
   attr_reader :path
@@ -45,6 +48,25 @@ class ScenarioLoader
     ['AggregateReport', 'SynthesisReport'].each do |type|
       generate_report(reports_dir, type, 'csv')
     end
+    consolidate_reports reports_dir 
+  end
+
+  def consolidate_reports(reports_dir)
+    builder = Nokogiri::HTML::Builder.new do |doc|
+      doc.html {
+        doc.body {
+          cd reports_dir do
+            Dir.glob('*.png') do |file|
+              title = File.basename(file, '.*')
+              doc.img src: file, alt: title, title: title
+            end
+          end
+        }
+      }
+    end
+    open("#{reports_dir}/index.html", 'w') do |file|
+      file << builder.to_html
+    end
   end
 
   def generate_report(reports_dir, type_of_graph, type_of_report)
@@ -62,4 +84,3 @@ class ScenarioLoader
     Process.wait(process.spawn)
   end
 end
-
