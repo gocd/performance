@@ -78,7 +78,7 @@ module Configuration
     end
 
     def git_repos
-      pipelines.map { |i| "#{git_root}/-#{i}" }
+      pipelines.map { |i| "#{git_root}/git-repo-#{i}" }
     end
 
     def git_commit_duration
