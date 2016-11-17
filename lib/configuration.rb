@@ -31,7 +31,7 @@ module Configuration
     end
 
     def git_repository_host
-      env('GIT_REPOSITORY_HOST', 'http://localhost')
+      env('GIT_REPOSITORY_HOST', 'git://localhost')
     end
 
     def server_install_dir
@@ -78,7 +78,7 @@ module Configuration
     end
 
     def git_repos
-      (1..number_of_pipelines.to_i).map { |i| "#{git_root}/git-repo-#{i}" }
+      pipelines.map { |i| "#{git_root}/-#{i}" }
     end
 
     def git_commit_duration
@@ -111,10 +111,6 @@ module Configuration
 
     def server_dir
       env('SERVER_DIR', '/tmp')
-    end
-
-    def git_repos
-      (1..env('NO_OF_PIPELINES', 10)).map { |i| "git-repo-#{i}" }
     end
 
     def gocd_host
