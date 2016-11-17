@@ -35,7 +35,7 @@ module GoCD
 
     def get_agent_id(idx)
       agents = JSON.parse(open("#{@base_url}/api/agents",'Accept' => 'application/vnd.go.cd.v4+json').read)
-      agents['_embedded']['agents'][idx]['uuid']
+      agents['_embedded']['agents'][idx-1]['uuid']
     end
 
     def auto_register_key(key)
