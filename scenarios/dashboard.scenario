@@ -1,4 +1,0 @@
-scenario do
-  name 'dashboard'
-  url '/pipelines'
-end

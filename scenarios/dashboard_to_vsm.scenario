@@ -1,0 +1,12 @@
+# Scenario : Users visit dashboard -> check for pipeline history -> visit vsm pages
+scenario do
+  name 'pipeline edit page'
+  count 40
+  rampup 2
+  duration 600
+  loop do
+    url '/pipelines'
+    url '/tab/pipeline/history/<pipeline>'
+    url '/pipelines/value_stream_map/<pipeline>/<pipelinecount>'
+  end
+end

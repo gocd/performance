@@ -1,5 +1,8 @@
 require 'rest-client'
 require 'nokogiri'
+require 'open-uri'
+require 'timeout'
+require 'json'
 
 module GoCD
   class Client
@@ -22,6 +25,16 @@ module GoCD
       @rest_client.post("#{@base_url}/api/pipelines/#{name}/unpause",
                         '',
                         confirm: true)
+    end
+
+    def get_pipeline_count(name)
+      history = JSON.parse(open("#{@base_url}/api/pipelines/#{name}/history/0",'Confirm' => 'true').read)
+      history["pipelines"][0]["counter"]
+    end
+
+    def get_agent_id(idx)
+      agents = JSON.parse(open("#{@base_url}/api/agents",'Accept' => 'application/vnd.go.cd.v4+json').read)
+      agents['_embedded']['agents'][idx]['uuid']
     end
 
     def auto_register_key(key)

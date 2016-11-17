@@ -11,7 +11,7 @@ class ScenarioLoader
   def initialize(path)
     @path = path
     @scenarios_cache = {}
-    @setup = Configuration::SetUp.new 
+    @setup = Configuration::SetUp.new
   end
 
   def run(name, base_url)
@@ -21,8 +21,14 @@ class ScenarioLoader
     test do
       parse("#{name}.scenario").list.each do |scenario|
         threads scenario.threads do
-          visit name: scenario.name, url: base_url + scenario.url
-          assert equals: scenario.response_code, test_field: 'Assertion.response_code'
+          scenario.loops.each do |jloop|
+            loops jloop.loopcount do
+              jloop.url_list.each do |url|
+                visit name: scenario.name, url: base_url + url
+                assert equals: scenario.response_code, test_field: 'Assertion.response_code'
+              end
+            end
+          end
         end
       end
     end.run(path: @setup.jmeter_bin,
@@ -33,7 +39,7 @@ class ScenarioLoader
     generate_reports(reports_dir)
   end
 
-  private 
+  private
 
   def parse(scenario_file)
     scenarios("#{@path}/#{scenario_file}")
@@ -48,7 +54,7 @@ class ScenarioLoader
     ['AggregateReport', 'SynthesisReport'].each do |type|
       generate_report(reports_dir, type, 'csv')
     end
-    consolidate_reports reports_dir 
+    consolidate_reports reports_dir
   end
 
   def consolidate_reports(reports_dir)
@@ -70,7 +76,7 @@ class ScenarioLoader
   end
 
   def generate_report(reports_dir, type_of_graph, type_of_report)
-    process = ProcessBuilder.build('java', 
+    process = ProcessBuilder.build('java',
                                    '-jar',
                                    "#{@setup.jmeter_dir}/lib/ext/CMDRunner.jar",
                                    '--tool',

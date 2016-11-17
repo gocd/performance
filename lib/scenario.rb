@@ -1,3 +1,6 @@
+require 'pry'
+require './lib/configuration'
+
 class Scenario
 
   def initialize
@@ -7,6 +10,7 @@ class Scenario
     @rampup = 1
     @duration = 30
     @response_code = 200
+    @loops=[]
   end
 
   def method_missing(method_name, *arguments, &block)
@@ -23,7 +27,60 @@ class Scenario
   end
 
   def threads
-    { count: @count, rampup: @rampup, duration:@duration  }
+    { count: @count, rampup: @rampup, duration: @duration  }
+  end
+
+  def add(loop)
+    @loops << loop
+  end
+
+  def loop(&block)
+    instance = Loop.new
+    instance.instance_eval(&block)
+    add(instance)
+  end
+end
+
+class Loop
+
+  attr_reader :url_list
+
+  def initialize
+    @loopcount = 1
+    @url_list=[]
+    @setup = Configuration::SetUp.new
+    @server = Configuration::Server.new
+    @gocd_client = GoCD::Client.new @server.url
+  end
+
+  def url(arg)
+    @url_list << actual_url(arg)
+  end
+
+  def count(arg)
+    @loopcount = arg
+  end
+
+  def loopcount
+    {count: @loopcount}
+  end
+
+  def actual_url(url)
+    pipeline = @setup.pipelines[rand(@setup.pipelines.length)]
+    pipeline_count = @gocd_client.get_pipeline_count(pipeline)
+    agent = @gocd_client.get_agent_id(rand(@setup.agents.length))
+
+    substitutes = { pipeline: pipeline, pipelinecount: pipeline_count, comparewith: pipeline_count-1, stage: 'default',  stagecount: '1', job: 'default_job' ,  jobcount: '1', agentid: agent}
+    substitutes.each_key do |key|
+      url.gsub!(/\<[^<>]*?\>/){|place_holders|
+        if place_holders[1..-2].eql?(key.to_s)
+          substitutes[key]
+        else
+          place_holders
+        end
+        }
+      end
+   url
   end
 end
 
@@ -47,6 +104,6 @@ end
 
 def scenarios(file)
   instance = Scenarios.new
-  instance.instance_eval IO.read(file) 
+  instance.instance_eval IO.read(file)
   return instance
 end

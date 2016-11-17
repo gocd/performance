@@ -4,10 +4,11 @@ require './lib/looper'
 require 'ruby-jmeter'
 require './lib/scenario_loader'
 require 'process_builder'
+require 'pry'
 
 namespace :performance do
   go_server = Configuration::Server.new
-  setup = Configuration::SetUp.new 
+  setup = Configuration::SetUp.new
 
   gocd_client = GoCD::Client.new go_server.url
 
@@ -15,12 +16,12 @@ namespace :performance do
     task :update do
       duration = setup.config_save_duration
       puts "Saving config by setting the job timeout in a loop #{duration}"
-      Looper::run(duration) { 
+      Looper::run(duration) {
         timeout = 60 + rand(9)
 
         puts "Setting job timeout to #{timeout}"
         gocd_client.job_timeout timeout
-      } 
+      }
     end
   end
 
@@ -42,9 +43,34 @@ namespace :performance do
     end
   end
 
-  task :dashboard => 'jmeter:prepare' do
+  task :dashboard_to_job_instance => 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
-    loader.run 'dashboard', go_server.url
+    loader.run 'dashboard_to_job_instance', go_server.url
+  end
+
+  task :dashboard_to_vsm => 'jmeter:prepare' do
+    loader = ScenarioLoader.new('./scenarios')
+    loader.run 'dashboard_to_vsm', go_server.url
+  end
+
+  task :dashboard_to_pipeline_edit => 'jmeter:prepare' do
+    loader = ScenarioLoader.new('./scenarios')
+    loader.run 'dashboard_to_pipeline_edit', go_server.url
+  end
+
+  task :dashboard_to_compare => 'jmeter:prepare' do
+    loader = ScenarioLoader.new('./scenarios')
+    loader.run 'dashboard_to_compare', go_server.url
+  end
+
+  task :agents_to_jobs_history => 'jmeter:prepare' do
+    loader = ScenarioLoader.new('./scenarios')
+    loader.run 'agents_to_jobs_history', go_server.url
+  end
+
+  task :admin_pages => 'jmeter:prepare' do
+    loader = ScenarioLoader.new('./scenarios')
+    loader.run 'admin_pages', go_server.url
   end
 
   namespace :scenarios do
@@ -62,7 +88,7 @@ namespace :performance do
                 assert equals: scenario["response_code"], test_field: 'Assertion.response_code'
                 extract json: '$._embedded.pipeline_groups[0]._embedded.pipelines[0]._links.settings_path.href',
                   name: 'general'
-                extract json: '$._embedded.pipeline_groups[0]._embedded.pipelines[0]._links.self.href', 
+                extract json: '$._embedded.pipeline_groups[0]._embedded.pipelines[0]._links.self.href',
                   name: 'history'
                 extract json: '$._embedded.pipeline_groups[0]._embedded.pipelines[0]._embedded.instances[0]._links.self.href', name: 'stage'
                 extract json: '$._embedded.pipeline_groups[0]._embedded.pipelines[0]._embedded.instances[0]._links.history_url.href', name: 'stage_history'
