@@ -28,6 +28,7 @@ module GoCD
     end
 
     def get_pipeline_count(name)
+      p "#{@base_url}/api/pipelines/#{name}/history/0"
       history = JSON.parse(open("#{@base_url}/api/pipelines/#{name}/history/0",'Confirm' => 'true').read)
       history["pipelines"][0]["counter"]
     end
