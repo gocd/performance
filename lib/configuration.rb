@@ -31,7 +31,7 @@ module Configuration
     end
 
     def thread_groups
-      (1..env('NO_OF_THREAD_GROUPS', 10).to_i).map { |i| i }
+      (1..env('NO_OF_THREAD_GROUPS', 10).to_i).to_a
     end
 
     def git_repository_host
