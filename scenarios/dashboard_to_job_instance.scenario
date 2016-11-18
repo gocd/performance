@@ -1,12 +1,12 @@
 # Scenario : Users visit dashboard -> visit stage instance -> visit job instance
 scenario do
   name 'job details page'
-  count 40
-  rampup 5
+  count 4
+  rampup 4
   duration 600
   loop do
     url '/pipelines'
-    url '/pipelines/<pipeline>/<pipelinecount>/<stage>/<stagecount>'
-    url '/pipelines/<pipeline>/<pipelinecount>/<stage>/<stagecount>/<job>'
+    url '/pipelines/%{pipeline}/%{pipelinecount}/%{stage}/%{stagecount}'
+    url '/tab/build/detail/%{pipeline}/%{pipelinecount}/%{stage}/%{stagecount}/%{job}'
   end
 end

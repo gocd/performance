@@ -20,12 +20,14 @@ class ScenarioLoader
 
     test do
       parse("#{name}.scenario").list.each do |scenario|
-        threads scenario.threads do
-          scenario.loops.each do |jloop|
-            loops jloop.loopcount do
-              jloop.url_list.each do |url|
-                visit name: scenario.name, url: base_url + url
-                assert equals: scenario.response_code, test_field: 'Assertion.response_code'
+        @setup.thread_groups.each do |tg|
+          threads scenario.threads do
+            scenario.loops.each do |jloop|
+              loops jloop.loopcount do
+                jloop.url_list.each do |url_value|
+                  visit name: scenario.name, url: "#{base_url}#{jloop.actual_url(url_value)}"
+                  assert equals: scenario.response_code, test_field: 'Assertion.response_code'
+                end
               end
             end
           end
@@ -36,7 +38,7 @@ class ScenarioLoader
             log: "#{reports_dir}/jmeter.log",
             jtl: "#{reports_dir}/jmeter.jtl",
             properties: {"jmeter.save.saveservice.output_format" => "xml"}, gui: false)
-    generate_reports(reports_dir)
+    #generate_reports(reports_dir)
   end
 
   private

@@ -54,7 +54,7 @@ class Loop
   end
 
   def url(arg)
-    @url_list << actual_url(arg)
+    @url_list << arg
   end
 
   def count(arg)
@@ -65,22 +65,11 @@ class Loop
     {count: @loopcount}
   end
 
-  def actual_url(url)
+  def actual_url(tmp)
     pipeline = @setup.pipelines[rand(@setup.pipelines.length)]
     pipeline_count = @gocd_client.get_pipeline_count(pipeline)
     agent = @gocd_client.get_agent_id(rand(@setup.agents.length))
-
-    substitutes = { pipeline: pipeline, pipelinecount: pipeline_count, comparewith: pipeline_count-1, stage: 'default',  stagecount: '1', job: 'default_job' ,  jobcount: '1', agentid: agent}
-    substitutes.each_key do |key|
-      url.gsub!(/\<[^<>]*?\>/){|place_holders|
-        if place_holders[1..-2].eql?(key.to_s)
-          substitutes[key]
-        else
-          place_holders
-        end
-        }
-      end
-   url
+    tmp % { pipeline: pipeline, pipelinecount: pipeline_count, comparewith: pipeline_count-1, stage: 'default',  stagecount: '1', job: 'default_job' ,  jobcount: '1', agentid: agent}
   end
 end
 
