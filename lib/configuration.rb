@@ -129,7 +129,7 @@ module Configuration
     end
 
     def host
-      env('GOCD_HOST', 'localhost')
+      env('GOCD_HOST', '127.0.0.1')
     end
 
     def port

@@ -73,6 +73,11 @@ namespace :performance do
     loader.run 'admin_pages', go_server.url
   end
 
+  task :monitor => 'jmeter:prepare' do
+    loader = ScenarioLoader.new('./scenarios')
+    loader.monitor 'perf_mon', go_server.host, go_server.url
+  end
+
   namespace :scenarios do
     task :run => 'jmeter:prepare' do
       test do

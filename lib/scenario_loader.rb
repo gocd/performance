@@ -41,14 +41,59 @@ class ScenarioLoader
     generate_reports(reports_dir)
   end
 
+  def monitor(name, host, base_url)
+    reports_dir = "reports/#{name}"
+    FileUtils.mkdir_p reports_dir
+
+    test do
+      step  name: 'stepping thread group example',
+        total_threads: 20,
+        initial_delay: 10,
+        start_threads: 2,
+        add_threads: 3,
+        start_every: 10,
+        stop_threads: 5,
+        stop_every: 5,
+        flight_time: 480,
+        rampup: 2 do
+        visit name: "support api", url: "#{base_url}api/support"
+      end
+      perfmon_collector name: 'Perfmon Metrics Collector',
+        nodes: [{
+        server: "#{host}",
+        port: 4444,
+        metric: 'JMX',
+        parameters: "url=#{host}\\:4711:gc-time"
+      },{
+        server: "#{host}",
+        port: 4444,
+        metric: 'JMX',
+        parameters: "url=#{host}\\:4711:memory-usage"
+      }],
+      filename: "#{reports_dir}/jmeter.jtl",
+      xml: true
+    end.run(path: @setup.jmeter_bin,
+            file: "#{reports_dir}/jmeter.jmx",
+            log: "#{reports_dir}/jmeter.log",
+            properties: {"jmeter.save.saveservice.output_format" => "xml"}, gui: false)
+    generate_perfmon_report(reports_dir)
+  end
+
   private
 
   def parse(scenario_file)
     scenarios("#{@path}/#{scenario_file}")
   end
 
+  def generate_perfmon_report(reports_dir)
+    generate_report(reports_dir, "PerfMon", 'png')
+    generate_report(reports_dir, "PerfMon", 'csv')
+
+    consolidate_reports reports_dir
+  end
+
   def generate_reports(reports_dir)
-    types = %w(ResponseTimesDistribution ResponseTimesOverTime ResponseTimesPercentiles ResponseCodesPerSecond PerfMon ThreadsStateOverTime BytesThroughputOverTime HitsPerSecond ThroughputVsThreads TimesVsThreads)
+    types = %w(ResponseTimesDistribution ResponseTimesOverTime ResponseTimesPercentiles ResponseCodesPerSecond ThreadsStateOverTime BytesThroughputOverTime HitsPerSecond ThroughputVsThreads TimesVsThreads)
     types.each do |type_of_graph|
       generate_report(reports_dir, type_of_graph, 'png')
       generate_report(reports_dir, type_of_graph, 'csv')

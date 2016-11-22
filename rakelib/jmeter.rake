@@ -34,15 +34,17 @@ namespace :jmeter do
   end
 
   task :agent do
-    if !Dir.exists?(setup.jmeter_dir)
-      Dir.chdir(setup.jmeter_dir) do
-        Downloader.new {|q|
-          q.add 'http://jmeter-plugins.org/downloads/file/ServerAgent-2.2.1.zip'
-        }.start {|agent_zip|
-          agent_zip.extract_to('perf_mon_agent')
-        }
-        sh("perf_mon_agent/startAgent.sh 2>&1 & > /dev/null")
-      end
+    perfmon_dir = setup.tools_dir + "perfmon"
+    mkdir_p perfmon_dir if !Dir.exists? perfmon_dir
+
+    Downloader.new(perfmon_dir) {|q|
+      q.add 'http://jmeter-plugins.org/downloads/file/ServerAgent-2.2.1.zip'
+    }.start {|agent_zip|
+      agent_zip.extract_to("#{perfmon_dir}")
+    }
+    Dir.chdir(perfmon_dir) do
+      chmod '+x', 'startAgent.sh'
+      sh("./startAgent.sh 2>&1 & > /dev/null")
     end
   end
 
