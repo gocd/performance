@@ -54,7 +54,7 @@ class ScenarioLoader
         start_every: 10,
         stop_threads: 5,
         stop_every: 5,
-        flight_time: 480,
+        flight_time: 600,
         rampup: 2 do
         visit name: "support api", url: "#{base_url}api/support"
       end
@@ -93,7 +93,7 @@ class ScenarioLoader
   end
 
   def generate_reports(reports_dir)
-    types = %w(ResponseTimesDistribution ResponseTimesOverTime ResponseTimesPercentiles ResponseCodesPerSecond ThreadsStateOverTime BytesThroughputOverTime HitsPerSecond ThroughputVsThreads TimesVsThreads)
+    types = %w(ResponseTimesDistribution ResponseTimesPercentiles ResponseCodesPerSecond HitsPerSecond)
     types.each do |type_of_graph|
       generate_report(reports_dir, type_of_graph, 'png')
       generate_report(reports_dir, type_of_graph, 'csv')
