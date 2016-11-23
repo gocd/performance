@@ -1,7 +1,7 @@
 # Scenario : Users visit all admin pages
 
 scenario do
-  count 10
+  count 4
   rampup 5
   duration 600
   name 'environments'
@@ -10,7 +10,7 @@ scenario do
   end
 end
 scenario do
-  count 10
+  count 4
   rampup 5
   duration 600
   name 'pipelines'
@@ -19,7 +19,7 @@ scenario do
   end
 end
 scenario do
-  count 10
+  count 4
   rampup 5
   duration 600
   name 'templates'
@@ -28,7 +28,7 @@ scenario do
   end
 end
 scenario do
-  count 10
+  count 4
   rampup 5
   duration 600
   name 'users'
@@ -37,7 +37,7 @@ scenario do
   end
 end
 scenario do
-  count 10
+  count 4
   rampup 5
   duration 600
   name 'server configuration'
@@ -46,7 +46,7 @@ scenario do
   end
 end
 scenario do
-  count 10
+  count 4
   rampup 5
   duration 600
   name 'server messages'
@@ -55,7 +55,7 @@ scenario do
   end
 end
 scenario do
-  count 10
+  count 4
   rampup 5
   duration 600
   name 'cctray'
