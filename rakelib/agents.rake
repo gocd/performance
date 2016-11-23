@@ -20,7 +20,7 @@ namespace :agents do
     }
 
     setup.agents.each {|name|
-      cp_r "#{agents_dir}/go-agent-#{v}" , "#{agents_dir}/#{name}"
+      cp_r "#{agents_dir}/go-agent-#{v}/." , "#{agents_dir}/#{name}"
     }
 
   end
