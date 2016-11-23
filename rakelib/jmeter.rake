@@ -33,7 +33,7 @@ namespace :jmeter do
     end
   end
 
-  task :agent do
+  task :agent => :stop_agent do
     perfmon_dir = setup.tools_dir + "perfmon"
     mkdir_p perfmon_dir if !Dir.exists? perfmon_dir
 
@@ -45,6 +45,14 @@ namespace :jmeter do
     Dir.chdir(perfmon_dir) do
       chmod '+x', 'startAgent.sh'
       sh("./startAgent.sh 2>&1 & > /dev/null")
+    end
+  end
+
+  task :stop_agent do
+    verbose false do
+      sh %{ pkill -f startAgent.sh } do |ok, res|
+        puts 'Stopped all Jmeter server agents' if ok
+      end
     end
   end
 

@@ -58,6 +58,10 @@ module Configuration
       jmeter_dir + 'bin/'
     end
 
+    def download_url
+      env('DOWNLOAD_URL', 'https://download.go.cd/experimental')
+    end
+
     def go_version
       raw_version = env('GO_VERSION', nil)
 

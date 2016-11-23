@@ -18,7 +18,7 @@ namespace :server do
     mkdir_p "#{server_dir}"
 
     Downloader.new("#{server_dir}") {|q|
-      q.add "https://download.go.cd/experimental/binaries/#{v}-#{b}/generic/go-server-#{v}-#{b}.zip"
+      q.add "#{setup.download_url}/binaries/#{v}-#{b}/generic/go-server-#{v}-#{b}.zip"
     }.start { |f|
       f.extract_to("#{server_dir}")
     }
@@ -44,14 +44,14 @@ namespace :server do
     end
 
     puts 'Waiting for server start up'
-    server_is_running = false 
+    server_is_running = false
     Looper.run(interval:10, times: 9) {
-      begin 
+      begin
         gocd_client.support_page
         server_is_running = true
       rescue
       end
-    } 
+    }
 
     raise "Couldn't start GoCD server at #{v}-#{b} at #{server_dir}" unless server_is_running
     puts 'The servers up and running'

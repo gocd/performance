@@ -14,7 +14,7 @@ namespace :agents do
     mkdir_p agents_dir
 
     Downloader.new(agents_dir) {|q|
-      q.add "https://download.go.cd/experimental/binaries/#{v}-#{b}/generic/go-agent-#{v}-#{b}.zip"
+      q.add "#{setup.download_url}/binaries/#{v}-#{b}/generic/go-agent-#{v}-#{b}.zip"
     }.start { |f|
       f.extract_to(agents_dir)
     }
@@ -44,4 +44,3 @@ namespace :agents do
     end
   end
 end
-
