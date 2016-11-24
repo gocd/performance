@@ -32,6 +32,7 @@ namespace :agents do
       cp_r "scripts/autoregister.properties" ,  "#{agent_dir}/config/autoregister.properties"
       sh %{chmod +x #{agent_dir}/agent.sh}, verbose:false
       sh %{GO_SERVER=#{gocd_server.host} #{agent_dir}/agent.sh > #{agent_dir}/#{name}.log 2>&1 & }, verbose:false
+      sleep 20
     }
     puts 'All agents running'
   end
