@@ -53,6 +53,9 @@ namespace :jmeter do
       sh %{ pkill -f startAgent.sh } do |ok, res|
         puts 'Stopped all Jmeter server agents' if ok
       end
+      sh %{ pkill -f PerfMonAgent } do |ok, res|
+        puts 'Stopped all Jmeter PerfMonAgent' if ok
+      end
     end
   end
 
