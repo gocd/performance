@@ -22,6 +22,7 @@ class ScenarioLoader
       parse("#{name}.scenario").list.each do |scenario|
         @setup.thread_groups.each do |tg|
           threads scenario.threads do
+            constant_throughput_timer value: 3.0
             scenario.loops.each do |jloop|
               loops jloop.loopcount do
                 jloop.url_list.each do |url_value|
