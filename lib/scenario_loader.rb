@@ -70,6 +70,11 @@ class ScenarioLoader
         port: 4444,
         metric: 'JMX',
         parameters: "url=#{host}\\:4711:memory-usage"
+      },{
+        server: "#{host}",
+        port: 4444,
+        metric: 'CPU',
+        parameters: 'name=node#1:label=cpu-node'
       }],
       filename: "#{reports_dir}/jmeter.jtl",
       xml: true
