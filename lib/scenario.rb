@@ -4,11 +4,12 @@ require './lib/configuration'
 class Scenario
 
   def initialize
+    @setup = Configuration::SetUp.new
     @name = ''
     @url = ''
     @count = 1
     @rampup = 1
-    @duration = 30
+    @duration = @setup.load_test_duration
     @response_code = 200
     @loops=[]
   end

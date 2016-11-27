@@ -55,7 +55,7 @@ class ScenarioLoader
         start_every: 10,
         stop_threads: 5,
         stop_every: 5,
-        flight_time: 600,
+        flight_time: @setup.load_test_duration,
         rampup: 2 do
         visit name: "support api", url: "#{base_url}api/support"
       end

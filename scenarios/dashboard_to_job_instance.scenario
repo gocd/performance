@@ -3,7 +3,6 @@ scenario do
   name 'job details page'
   count 4
   rampup 100
-  duration 600
   loop do
     url '/pipelines'
     url '/pipelines/%{pipeline}/%{pipelinecount}/%{stage}/%{stagecount}'

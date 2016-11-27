@@ -3,7 +3,6 @@ scenario do
   name 'pipeline edit page'
   count 4
   rampup 100
-  duration 600
   loop do
     url '/pipelines'
     url '/admin/pipelines/%{pipeline}/general'

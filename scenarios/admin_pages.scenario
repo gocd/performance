@@ -30,7 +30,6 @@ end
 scenario do
   count 2
   rampup 100
-  duration 600
   name 'users'
   loop do
     url '/admin/users'
@@ -39,7 +38,6 @@ end
 scenario do
   count 2
   rampup 100
-  duration 600
   name 'server configuration'
   loop do
     url '/admin/config/server'
@@ -48,7 +46,6 @@ end
 scenario do
   count 2
   rampup 100
-  duration 600
   name 'server messages'
   loop do
     url '/server/messages.json'
@@ -57,7 +54,6 @@ end
 scenario do
   count 2
   rampup 100
-  duration 600
   name 'cctray'
   loop do
     url '/cctray.xml'

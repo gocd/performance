@@ -3,7 +3,7 @@ require 'rest-client'
 require './lib/gocd'
 
 include GoCD
-include Configuration 
+include Configuration
 
 namespace :pipeline do
   setup = SetUp.new
@@ -37,8 +37,8 @@ namespace :pipeline do
   task :clean do
     setup.pipelines.each { |pipeline|
       begin
-      RestClient.delete "#{gocd_server.url}/api/admin/pipelines/#{pipeline}", 
-        :accept =>  'application/vnd.go.cd.v1+json'
+      RestClient.delete "#{gocd_server.url}/api/admin/pipelines/#{pipeline}",
+        :accept =>  'application/vnd.go.cd.v3+json'
       rescue RestClient::ResourceNotFound
       end
     }

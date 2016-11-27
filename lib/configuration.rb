@@ -34,6 +34,10 @@ module Configuration
       (1..env('NO_OF_THREAD_GROUPS', 10).to_i).to_a
     end
 
+    def load_test_duration
+      env('LOAD_TEST_DURATION', '600').to_i
+    end
+
     def git_repository_host
       env('GIT_REPOSITORY_HOST', 'git://localhost')
     end
@@ -76,7 +80,7 @@ module Configuration
 
     def config_save_duration
       {
-        interval: env('CONFIG_SAVE_INTERVAL', 5).to_i,
+        interval: env('CONFIG_SAVE_INTERVAL', 20).to_i,
         times: env('NUMBER_OF_CONFIG_SAVES', 30).to_i
       }
     end
