@@ -62,6 +62,10 @@ module Configuration
       jmeter_dir + 'bin/'
     end
 
+    def tee_dir
+      Pathname.new(Dir.pwd+'/tools/TEE-CLC-14.0.3')
+    end
+
     def download_url
       env('DOWNLOAD_URL', 'https://download.go.cd/experimental')
     end
@@ -99,6 +103,39 @@ module Configuration
         times: env('NUMBER_OF_COMMITS', 30).to_i
       }
     end
+
+    def tfs_commit_duration
+      {
+        interval: env('TFS_COMMIT_INTERVAL', 60).to_i,
+        times: env('NUMBER_OF_TFS_COMMITS', 3).to_i
+      }
+    end
+
+    def tee_path
+      tee_dir + "tf"
+    end
+
+    def tfs_user
+        env('TFS_USER', 'go.tfs.user@gmail.com')
+    end
+
+    def tfs_pwd
+      pwd = env('TFS_PWD', nil)
+      raise 'Missing TFS_PWD environment variable' unless pwd
+      pwd
+    end
+
+    def tfs_url
+      env('TFS_URL', 'https://go-tfs-user.visualstudio.com')
+    end
+
+    def materials_ratio
+      {
+        git: 100,
+        tfs: 0
+      }
+    end
+
 
     private
 
