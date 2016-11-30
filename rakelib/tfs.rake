@@ -1,6 +1,5 @@
 require './lib/configuration.rb'
 require 'rest-client'
-require 'Json'
 
 namespace :tfs do
   setup = Configuration::SetUp.new
