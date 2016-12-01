@@ -33,7 +33,7 @@ namespace :performance do
       duration = setup.git_commit_duration
 
       Looper::run(duration) {
-        git.git_repos.each do |repo|
+        git.repos.each do |repo|
           verbose false do
             cd repo do
               time = Time.now

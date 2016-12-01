@@ -45,6 +45,7 @@ namespace :pipeline do
     }
   end
 
+#TODO: Improve the code
   def get_material(pipeline)
     pc = pipeline.gsub(/[^0-9]/, '').to_i
     git = Material::Git.new

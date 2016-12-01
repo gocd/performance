@@ -107,7 +107,7 @@ module Configuration
     def tfs_commit_duration
       {
         interval: env('TFS_COMMIT_INTERVAL', 60).to_i,
-        times: env('NUMBER_OF_TFS_COMMITS', 3).to_i
+        times: env('NUMBER_OF_TFS_COMMITS', 2).to_i
       }
     end
 
@@ -131,8 +131,9 @@ module Configuration
 
     def materials_ratio
       {
-        git: 100,
-        tfs: 0
+        #TODO: Make these ratio as environment variables
+        git: 90,
+        tfs: 10
       }
     end
 
