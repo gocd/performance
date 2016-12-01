@@ -1,4 +1,5 @@
 require './lib/configuration.rb'
+require './lib/material'
 
 namespace :git do
   setup = Configuration::SetUp.new
