@@ -131,9 +131,8 @@ module Configuration
 
     def materials_ratio
       {
-        #TODO: Make these ratio as environment variables
-        git: 90,
-        tfs: 10
+        git: env('GIT_MATERIAL_RATIO', 90),
+        tfs: env('TFS_MATERIAL_RATIO', 10)
       }
     end
 

@@ -2,10 +2,11 @@ require './lib/configuration.rb'
 
 namespace :git do
   setup = Configuration::SetUp.new
+  git = Material::Git.new
 
   task :prepare => :clean do
     puts "Initializing git repositories, with an initial commit"
-    setup.git_repos.each do |repo|
+    git.repos.each do |repo|
       verbose false do
         mkdir_p repo
         cd repo do
