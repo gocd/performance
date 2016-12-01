@@ -48,7 +48,7 @@ namespace :tfs do
       Downloader.new(download_dir) { |q|
         q.add "https://fmtgocddl01.go.cd/local/TEE-CLC-14.0.3.zip"
       }.start {|file|
-        file.extract_to(setup.tools_dir)
+        file.extract_to(setup.tee_dir)
       }
     end
   end
