@@ -6,7 +6,7 @@ require './lib/looper'
 namespace :agents do
   setup = Configuration::SetUp.new
   gocd_server = Configuration::Server.new
-  gocd_client = GoCD::Client.new
+  gocd_client = GoCD::Client.new gocd_server.url
 
   task :prepare => 'agents:stop' do
     v, b = setup.go_version
@@ -43,6 +43,10 @@ namespace :agents do
       raise "All agents are not up as expected. Please check the agent node"
     end
     puts 'All agents running'
+  end
+
+  task :dummy do
+    p gocd_client.get_agents_count
   end
 
   task :stop do
