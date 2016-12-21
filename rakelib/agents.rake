@@ -36,17 +36,13 @@ namespace :agents do
       sh %{GO_SERVER=#{gocd_server.host} #{agent_dir}/agent.sh > #{agent_dir}/#{name}.log 2>&1 & }, verbose:false
       sleep 20
     }
-    Looper::run({interval:10, times:30}) {
+    Looper::run({interval:10, times:60}) {
       break if gocd_client.get_agents_count == setup.agents.length
     }
     if gocd_client.get_agents_count != setup.agents.length
       raise "All agents are not up as expected. Please check the agent node"
     end
     puts 'All agents running'
-  end
-
-  task :dummy do
-    p gocd_client.get_agents_count
   end
 
   task :stop do
