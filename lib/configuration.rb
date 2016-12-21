@@ -15,7 +15,10 @@
 # limitations under the License.
 ##########################################################################
 
-def env(variable, default)
+RELEASES_JSON_URL = 'https://download.go.cd/experimental/releases.json'
+
+def env(variable, default=nil)
+  default = yield if block_given?
   ENV[variable] || default
 end
 
@@ -71,9 +74,10 @@ module Configuration
     end
 
     def go_version
-      raw_version = env('GO_VERSION', nil)
-
-      raise 'Missing GO_VERSION environment variable' unless raw_version
+      raw_version = env('GO_VERSION') do
+          json = JSON.parse(open(RELEASES_JSON_URL).read)
+          json.sort {|a, b| a['go_full_version'] <=> b['go_full_version']}.last['go_full_version']
+      end
 
       unless raw_version.include? '-'
         raise 'Wrong GO_VERSION format use 16.X.X-xxxx'
