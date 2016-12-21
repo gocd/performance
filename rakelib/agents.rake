@@ -36,7 +36,7 @@ namespace :agents do
       sh %{GO_SERVER=#{gocd_server.host} #{agent_dir}/agent.sh > #{agent_dir}/#{name}.log 2>&1 & }, verbose:false
       sleep 20
     }
-    Looper::run({interval:10, times:60}) {
+    Looper::run({interval:10, times:120}) {
       break if gocd_client.get_agents_count == setup.agents.length
     }
     if gocd_client.get_agents_count != setup.agents.length
