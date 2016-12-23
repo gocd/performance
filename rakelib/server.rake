@@ -23,6 +23,7 @@ namespace :server do
       f.extract_to("#{server_dir}")
     }
 
+    mkdir_p "#{server_dir}/plugins/external/"
     cp "#{setup.plugin_src_dir}", "#{server_dir}/plugins/external/"
 
   end
