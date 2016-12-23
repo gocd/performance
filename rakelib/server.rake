@@ -24,7 +24,7 @@ namespace :server do
     }
 
     mkdir_p "#{server_dir}/plugins/external/"
-    cp "#{setup.plugin_src_dir}", "#{server_dir}/plugins/external/"
+    cp "#{setup.plugin_src_dir}", "#{server_dir}/go-server-#{v}/plugins/external/"
 
   end
 
