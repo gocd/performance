@@ -8,6 +8,7 @@ include Configuration
 
 namespace :pipeline do
   @setup = SetUp.new
+  @distributor = Material::Distributor.new
   gocd_server = Server.new
 
   desc "Create Pipelines"
@@ -16,7 +17,9 @@ namespace :pipeline do
 
     @setup.pipelines.each {|pipeline|
       performance_pipeline = Pipeline.new(group: 'performance', name: "#{pipeline}") do |p|
-        p << get_material(pipeline)
+        @distributor.material_for(pipeline).each{|material|
+          p << material
+        }
         p <<  Stage.new(name: 'default') do |s|
           s << Job.new(name: 'defaultJob') do |j|
             j << ExecTask.new(command: 'ls')
@@ -36,7 +39,7 @@ namespace :pipeline do
 
   desc "Clear pipelines"
   task :clean do
-    @setup.pipelines.each { |pipeline|
+    @setup.pipelines.reverse_each { |pipeline|
       begin
       RestClient.delete "#{gocd_server.url}/api/admin/pipelines/#{pipeline}",
         :accept =>  'application/vnd.go.cd.v3+json'
@@ -45,17 +48,4 @@ namespace :pipeline do
     }
   end
 
-#TODO: Improve the code
-  def get_material(pipeline)
-    pc = pipeline.gsub(/[^0-9]/, '').to_i
-    git = Material::Git.new
-    tfs = Material::Tfs.new
-    if pc.between?(git.begin,git.end)
-      material = GitMaterial.new(url: "#{@setup.git_repository_host}/git-repo-#{pipeline}")
-    end
-    if pc.between?(tfs.begin,tfs.end)
-      material = TfsMaterial.new(url: "#{@setup.tfs_url}/defaultcollection", username: @setup.tfs_user, password: @setup.tfs_pwd, project_path: "$/go-perf-#{pc-git.end}")
-    end
-    material
-  end
 end

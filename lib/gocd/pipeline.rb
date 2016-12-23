@@ -124,6 +124,24 @@ module GoCD
     end
   end
 
+  class DependencyMaterial < Material
+    def default
+      {
+        type: 'dependency',
+        attributes: {
+          name: 'dependency',
+          pipeline: '',
+          stage: 'default',
+          auto_update: true
+        }
+      }
+    end
+
+    def initialize(args)
+      super(attributes: args)
+    end
+  end
+
   class EnvironmentVariable < Configuration
     def default
       { secure: false }

@@ -47,4 +47,24 @@ module Material
     end
 
   end
+
+  class Distributor
+
+    def initialize
+      @setup = SetUp.new
+      @git = Material::Git.new
+      @tfs = Material::Tfs.new
+    end
+
+    def material_for(pipeline)
+      suffix = pipeline.gsub(/[^0-9]/, '').to_i
+      material = []
+      material.push(GitMaterial.new(url: "#{@setup.git_repository_host}/git-repo-#{pipeline}")) if suffix.between?(@git.begin,@git.end)
+      material.push(TfsMaterial.new(url: "#{@setup.tfs_url}/defaultcollection", username: @setup.tfs_user, password: @setup.tfs_pwd, project_path: "$/go-perf-#{suffix-@git.end}")) if suffix.between?(@tfs.begin,@tfs.end)
+      material.push(DependencyMaterial.new(pipeline:"#{pipeline.gsub(/[^a-zA-Z.]/, '')}#{suffix-1}", name:"dependency1")) if [3,4,5,7,8,9].include?(suffix % 10)
+      material.push(DependencyMaterial.new(pipeline:"#{pipeline.gsub(/[^a-zA-Z.]/, '')}#{suffix-2}", name:"dependency2")) if [0,3,7,6].include?(suffix % 10)
+      material
+    end
+
+  end
 end
