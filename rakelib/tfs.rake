@@ -47,9 +47,9 @@ namespace :tfs do
       puts "Downloading and setting up Team Explorer ErveryWhere"
       Downloader.new(download_dir) { |q|
         q.add "https://fmtgocddl01.go.cd/local/TEE-CLC-14.0.3.zip"
-      }.start {|file|
-        file.extract_to(setup.tee_dir)
-      }
+      }.start
+      sh "unzip #{download_dir}/TEE-CLC-14.0.3.zip -d #{setup.tools_dir}"
+
     end
   end
 
