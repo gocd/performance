@@ -23,6 +23,8 @@ namespace :server do
       f.extract_to("#{server_dir}")
     }
 
+    cp "#{setup.plugin_src_dir}", "#{server_dir}/plugins/external/"
+
   end
 
   task :start => 'server:stop' do

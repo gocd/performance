@@ -74,6 +74,11 @@ describe "Configuration" do
       expect(@setup.server_install_dir.to_s).to eq('go-server')
     end
 
+    it 'sets the PLUGIN_SRC_DIR' do
+      ENV['PLUGIN_SRC_DIR'] = 'sample/plugin/dir'
+      expect(@setup.plugin_src_dir.to_s).to eq('sample/plugin/dir')
+    end
+
     it 'sets the AGENTS_INSTALL_DIR' do
       ENV['AGENTS_INSTALL_DIR'] = '/tmp'
       expect(@setup.agents_install_dir.to_s).to eq('/tmp/go-agents')

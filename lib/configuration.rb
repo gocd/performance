@@ -50,6 +50,10 @@ module Configuration
       Pathname.new(env('AGENTS_INSTALL_DIR', '.')) + 'go-agents'
     end
 
+    def plugin_src_dir
+      Pathname.new(env('PLUGIN_SRC_DIR', ''))
+    end
+
     def tools_dir
       Pathname.new(env('TOOLS_DIR', './tools'))
     end
