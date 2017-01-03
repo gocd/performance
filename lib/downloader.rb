@@ -37,7 +37,7 @@ class Downloader
       uri = URI.parse(download[:url])
       file, path = extract_file_and_path(download[:url])
 
-      print "Downloading #{file}"
+      print "Downloading #{file} from #{uri}"
       File.open(path, 'w+') do |f|
         IO.copy_stream(open(uri, 'rb'), f)
       end
