@@ -15,7 +15,7 @@
 # limitations under the License.
 ##########################################################################
 
-RELEASES_JSON_URL = 'https://download.go.cd/experimental/releases.json'
+RELEASES_JSON_URL = 'https://download.gocd.io/experimental/releases.json'
 
 def env(variable, default=nil)
   default = yield if block_given?
@@ -70,7 +70,7 @@ module Configuration
     end
 
     def download_url
-      env('DOWNLOAD_URL', 'https://download.go.cd/experimental')
+      env('DOWNLOAD_URL', 'https://download.gocd.io/experimental')
     end
 
     def go_version
@@ -151,7 +151,7 @@ module Configuration
   # Setup configuration
   class Configuration
     def releases_json
-      'https://download.go.cd/experimental/releases.json'
+      'https://download.gocd.io/experimental/releases.json'
     end
 
     def config_update_interval
