@@ -23,7 +23,9 @@ namespace :server do
       f.extract_to("#{server_dir}")
     }
 
+    puts "Should we be including the plugin: #{setup.include_plugin}"
     if (setup.include_plugin == 'Y')
+      puts 'Copying the plugin'
       mkdir_p "#{server_dir}/go-server-#{v}/plugins/external/"
       cp "#{setup.plugin_src_dir}", "#{server_dir}/go-server-#{v}/plugins/external/"
     end
