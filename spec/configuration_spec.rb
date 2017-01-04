@@ -1,4 +1,4 @@
-require './lib/configuration.rb' 
+require './lib/configuration.rb'
 describe "Configuration" do
   describe Configuration::SetUp do
     before(:each) do
@@ -79,6 +79,10 @@ describe "Configuration" do
       expect(@setup.plugin_src_dir.to_s).to eq('sample/plugin/dir')
     end
 
+    it 'defauts to N for INCLUDE_PLUGIN' do
+      expect(@setup.include_plugin.to_s).to eq('N')
+    end
+
     it 'sets the AGENTS_INSTALL_DIR' do
       ENV['AGENTS_INSTALL_DIR'] = '/tmp'
       expect(@setup.agents_install_dir.to_s).to eq('/tmp/go-agents')
@@ -90,7 +94,7 @@ describe "Configuration" do
     end
 
     it 'generates git repo names based on the number of pipelines' do
-      ENV['NO_OF_PIPELINES'] ='3' 
+      ENV['NO_OF_PIPELINES'] ='3'
       expect(@setup.git_repos).to eq(['gitrepos/git-repo-1', 'gitrepos/git-repo-2', 'gitrepos/git-repo-3'])
     end
     it 'sets the jmeter directory' do
@@ -111,7 +115,7 @@ describe "Configuration" do
       expect(@server.base_url).to eq('http://goserver:8153')
     end
     it "sets the server base url from SERVER and PORT environment variables" do
-      ENV['GOCD_HOST'] = 'goserver' 
+      ENV['GOCD_HOST'] = 'goserver'
       ENV['GO_SERVER_PORT'] = '8253'
       expect(@server.base_url).to eq('http://goserver:8253')
     end
@@ -127,7 +131,7 @@ describe "Configuration" do
       expect(@server.base_url).to eq('http://admin:badger@authenticated_url:8253')
     end
     it 'sets the secure port' do
-      ENV['GO_SERVER_SSL_PORT'] = '8254' 
+      ENV['GO_SERVER_SSL_PORT'] = '8254'
       expect(@server.secure_port).to eq('8254')
     end
     it 'sets the default secure port' do
@@ -136,7 +140,7 @@ describe "Configuration" do
     end
     it "sets the url" do
      ENV['AUTH'] = nil
-     ENV['GO_SERVER_PORT'] = '8153' 
+     ENV['GO_SERVER_PORT'] = '8153'
      ENV['GOCD_HOST'] = "host"
      expect(@server.url).to eq('http://host:8153/go')
     end
@@ -146,13 +150,13 @@ describe "Configuration" do
       ENV['GO_SERVER_SSL_PORT']= 'secureport'
       ENV['SERVER_MEM']= 'memory'
       ENV['SERVER_MAX_MEM']= 'max_memory'
-      expect(@server.environment).to eq({ 
+      expect(@server.environment).to eq({
         "GO_SERVER_SYSTEM_PROPERTIES" => 'properties',
         "GO_SERVER_PORT" => 'port',
         "GO_SERVER_SSL_PORT" => 'secureport',
         "SERVER_MEM" => 'memory',
         "SERVER_MAX_MEM" => 'max_memory'
-      }) 
+      })
     end
   end
 end
