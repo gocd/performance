@@ -53,8 +53,8 @@ module Configuration
       Pathname.new(env('AGENTS_INSTALL_DIR', '.')) + 'go-agents'
     end
 
-    def include_plugin
-      Pathname.new(env('INCLUDE_PLUGIN', 'N'))
+    def include_plugins?
+      env('INCLUDE_PLUGINS').equal?('Y')
     end
 
     def plugin_src_dir

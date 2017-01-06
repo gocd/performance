@@ -79,8 +79,8 @@ describe "Configuration" do
       expect(@setup.plugin_src_dir.to_s).to eq('sample/plugin/dir')
     end
 
-    it 'defauts to N for INCLUDE_PLUGIN' do
-      expect(@setup.include_plugin.to_s).to eq('N')
+    it 'defauts to false for INCLUDE_PLUGINS' do
+      expect(@setup.include_plugins?).to eq(false)
     end
 
     it 'sets the AGENTS_INSTALL_DIR' do
