@@ -19,18 +19,18 @@ describe GoCD::Client do
       expect(@rest_client).to receive(:post)
         .with("http://localhost:8153/go/api/admin/pipelines",
       @pipeline.to_json,
-      :accept => 'application/vnd.go.cd.v1+json',
+      :accept => 'application/vnd.go.cd.v3+json',
       :content_type => 'application/json')
 
       @client.create_pipeline(@pipeline.to_json)
     end
-    
+
     it 'sets the base_url' do
       client = GoCD::Client.new('base_url', rest_client:@rest_client)
       expect(@rest_client).to receive(:post)
         .with("base_url/api/admin/pipelines",
       @pipeline.to_json,
-      :accept => 'application/vnd.go.cd.v1+json',
+      :accept => 'application/vnd.go.cd.v3+json',
       :content_type => 'application/json')
 
       client.create_pipeline(@pipeline.to_json)
@@ -43,7 +43,7 @@ describe GoCD::Client do
         .with("http://localhost:8153/go/api/pipelines/pipeline/unpause",
       "",
       confirm: true)
-      @client.unpause_pipeline(@pipeline.name) 
+      @client.unpause_pipeline(@pipeline.name)
     end
   end
 
@@ -65,7 +65,7 @@ describe GoCD::Client do
       allow(@response).to receive(:headers).and_return({'x_cruise_config_md5': 'md5'})
       expect(@client.config_xml).to eq(['<xml/>', 'md5'])
     end
-    
+
     it 'raises exception if md5 is not there in the header' do
       allow(@response).to receive(:headers).and_return({})
       expect{ @client.config_xml }.to raise_error ('Failed to get config, check authentication')

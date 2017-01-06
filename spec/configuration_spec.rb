@@ -21,15 +21,11 @@ describe "Configuration" do
       expect(@setup.agents).to eq(['agent-1', 'agent-2', 'agent-3', 'agent-4', 'agent-5', 'agent-6', 'agent-7', 'agent-8', 'agent-9', 'agent-10'])
     end
     it "sets the default git repository host" do
-      expect(@setup.git_repository_host).to eq('http://localhost')
+      expect(@setup.git_repository_host).to eq('git://localhost')
     end
     it 'return the go full and short version' do
       ENV['GO_VERSION'] = "16.7.0-3883"
       expect(@setup.go_version).to eq(['16.7.0', '3883'])
-    end
-    it 'raises error of version number is missing' do
-      ENV['GO_VERSION'] = nil
-      expect{ @setup.go_version }.to raise_error { "Missing GO_VERSION environment variable" }
     end
     it 'raises error if the GO_VERSION is not in the right format' do
       ENV['GO_VERSION'] = '16.0'
@@ -43,7 +39,7 @@ describe "Configuration" do
     it 'sets the default config save interval and number of config saves' do
       ENV['CONFIG_SAVE_INTERVAL'] = nil
       ENV['NUMBER_OF_CONFIG_SAVES'] = nil
-      expect(@setup.config_save_duration).to eq({ interval: 5, times: 30 })
+      expect(@setup.config_save_duration).to eq({ interval: 20, times: 30 })
     end
     it 'gets the git commit interval and number of config saves' do
       ENV['GIT_COMMIT_INTERVAL'] = '10'
@@ -95,7 +91,7 @@ describe "Configuration" do
 
     it 'generates git repo names based on the number of pipelines' do
       ENV['NO_OF_PIPELINES'] ='3'
-      expect(@setup.git_repos).to eq(['gitrepos/git-repo-1', 'gitrepos/git-repo-2', 'gitrepos/git-repo-3'])
+      expect(@setup.git_repos).to eq(['gitrepos/git-repo-gocd.perf1', 'gitrepos/git-repo-gocd.perf2', 'gitrepos/git-repo-gocd.perf3'])
     end
     it 'sets the jmeter directory' do
       expect(@setup.jmeter_dir.to_s).to eq('./tools/apache-jmeter-3.0')
@@ -122,7 +118,7 @@ describe "Configuration" do
     it "sets the server base url using default SERVER and specified PORT" do
       ENV['GOCD_HOST'] = nil
       ENV['GO_SERVER_PORT'] = '8253'
-      expect(@server.base_url).to eq('http://localhost:8253')
+      expect(@server.base_url).to eq('http://127.0.0.1:8253')
     end
     it "sets authentication in the server base url " do
       ENV['AUTH'] = 'admin:badger'
