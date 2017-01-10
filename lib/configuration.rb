@@ -54,7 +54,7 @@ module Configuration
     end
 
     def include_plugins?
-      env('INCLUDE_PLUGINS').equal?('Y')
+      env('INCLUDE_PLUGINS')=='Y'
     end
 
     def plugin_src_dir
