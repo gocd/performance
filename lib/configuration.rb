@@ -95,9 +95,10 @@ module Configuration
     end
 
     def config_save_duration
+      interval = env('CONFIG_SAVE_INTERVAL', 20).to_i
       {
-        interval: env('CONFIG_SAVE_INTERVAL', 20).to_i,
-        times: env('NUMBER_OF_CONFIG_SAVES', 30).to_i
+        interval: interval,
+        times: load_test_duration/interval
       }
     end
 
@@ -110,9 +111,10 @@ module Configuration
     end
 
     def git_commit_duration
+      interval = env('GIT_COMMIT_INTERVAL', 5).to_i
       {
-        interval: env('GIT_COMMIT_INTERVAL', 5).to_i,
-        times: env('NUMBER_OF_COMMITS', 30).to_i
+        interval: interval,
+        times: load_test_duration/interval
       }
     end
 
