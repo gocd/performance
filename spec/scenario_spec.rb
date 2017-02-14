@@ -31,7 +31,7 @@ describe :scenario do
     expect(@scenario.duration).to eq(10)
   end
   it 'sets default duration' do
-    expect(@scenario.duration).to eq(30)
+    expect(@scenario.duration).to eq(600)
   end
   it 'has response code' do
     @scenario.response_code 500
@@ -41,7 +41,7 @@ describe :scenario do
     expect(@scenario.response_code).to eq(200)
   end
   it 'sets the thread information' do
-    expect(@scenario.threads).to eq({ count:1, rampup:1 , duration:30 })
+    expect(@scenario.threads).to eq({ count:1, rampup:1 , duration:600 })
   end
 end
 
