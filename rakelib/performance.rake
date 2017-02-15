@@ -38,7 +38,7 @@ namespace :performance do
             cd repo do
               time = Time.now
               File.write("file", time.to_f)
-              sh("git add .;git commit -m 'This is commit at #{time.rfc2822}' --author 'foo <foo@bar.com>'")
+              sh("git add .;git commit -m 'This is commit at #{time.rfc2822}' --author 'foo <foo@bar.com>'; git gc;")
             end
           end
         end
