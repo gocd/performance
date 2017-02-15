@@ -29,7 +29,7 @@ namespace :performance do
   end
 
   namespace :git do
-    task :update => 'git:daemon:start' do
+    task :update do
       duration = setup.git_commit_duration
 
       Looper::run(duration) {
