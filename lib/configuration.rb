@@ -22,15 +22,15 @@ def env(variable, default=nil)
   ENV[variable] || default
 end
 
+def run_soak_test
+  env('RUN_SOAK_TEST', 'NO').upcase == 'YES' ? true : false
+end
+
 def run_config(variable, load=nil, soak=nil)
   (ENV[variable]) || (run_soak_test ? soak : load)
 end
 
 module Configuration
-
-  def run_soak_test
-    env('RUN_SOAK_TEST', 'NO').upcase == 'YES' ? true : false
-  end
 
   # Setup configuration
   class SetUp
