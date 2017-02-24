@@ -8,9 +8,9 @@ describe "Configuration" do
       ENV['NO_OF_PIPELINES'] = '3'
       expect(@setup.pipelines).to eq(['gocd.perf1', 'gocd.perf2', 'gocd.perf3'])
     end
-    it "defaults to 10 pipelines when the environment variable is not set" do
+    it "defaults to 75 pipelines when the environment variable is not set" do
       ENV['NO_OF_PIPELINES'] = nil
-      expect(@setup.pipelines).to eq(['gocd.perf1', 'gocd.perf2', 'gocd.perf3', 'gocd.perf4', 'gocd.perf5', 'gocd.perf6', 'gocd.perf7', 'gocd.perf8', 'gocd.perf9', 'gocd.perf10'])
+      expect(@setup.pipelines.count).to eq(750)
     end
     it "create an array of agents names" do
       ENV['NO_OF_AGENTS'] = '2'
@@ -18,7 +18,7 @@ describe "Configuration" do
     end
     it "defaults to 10 agents" do
       ENV['NO_OF_AGENTS'] = nil
-      expect(@setup.agents).to eq(['agent-1', 'agent-2', 'agent-3', 'agent-4', 'agent-5', 'agent-6', 'agent-7', 'agent-8', 'agent-9', 'agent-10'])
+      expect(@setup.agents.count).to eq(75)
     end
     it "sets the default git repository host" do
       expect(@setup.git_repository_host).to eq('git://localhost')
@@ -39,7 +39,7 @@ describe "Configuration" do
     it 'sets the default config save interval and number of config saves' do
       ENV['CONFIG_SAVE_INTERVAL'] = nil
       ENV['LOAD_TEST_DURATION'] = nil
-      expect(@setup.config_save_duration).to eq({ interval: 20, times: 30 })
+      expect(@setup.config_save_duration).to eq({ interval: 30, times: 40 })
     end
     it 'gets the git commit interval and number of config saves' do
       ENV['GIT_COMMIT_INTERVAL'] = '10'
@@ -49,7 +49,7 @@ describe "Configuration" do
     it 'sets the default git commit interval and number of config saves' do
       ENV['GIT_COMMIT_INTERVAL'] = nil
       ENV['LOAD_TEST_DURATION'] = nil
-      expect(@setup.git_commit_duration).to eq({ interval: 5, times: 120 })
+      expect(@setup.git_commit_duration).to eq({ interval: 10, times: 120 })
     end
     it 'sets the GIT_ROOT' do
       ENV['GIT_ROOT'] = 'gitroot'
@@ -91,7 +91,7 @@ describe "Configuration" do
 
     it 'generates git repo names based on the number of pipelines' do
       ENV['NO_OF_PIPELINES'] ='3'
-      expect(@setup.git_repos).to eq(['gitrepos/git-repo-gocd.perf1', 'gitrepos/git-repo-gocd.perf2', 'gitrepos/git-repo-gocd.perf3'])
+      expect(@setup.git_repos).to eq(["git-repo-common", 'gitrepos/git-repo-gocd.perf1', 'gitrepos/git-repo-gocd.perf2', 'gitrepos/git-repo-gocd.perf3'])
     end
     it 'sets the jmeter directory' do
       expect(@setup.jmeter_dir.to_s).to eq('./tools/apache-jmeter-3.0')

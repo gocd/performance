@@ -1,5 +1,5 @@
 ##########################################################################
-# Copyright 2016 ThoughtWorks, Inc.
+# Copyright 2017 ThoughtWorks, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ describe Pipeline do
   it 'sets the group and name' do
     pipeline = Pipeline.new(group: 'perfgroup', name: 'name')
     assert_json(pipeline.to_json) do
-      has :group, 'perfgroup' 
+      has :group, 'perfgroup'
       has :pipeline do
         has :name, 'name'
       end
@@ -70,10 +70,10 @@ describe Pipeline do
     pipeline = Pipeline.new(name: 'pipeline_with_stage' )
     pipeline << Stage.new(name: "stage_name" )
 
-    assert_json(pipeline.to_json) do 
+    assert_json(pipeline.to_json) do
       has :pipeline do
         has :stages do
-          item 0 do 
+          item 0 do
             has :name, 'stage_name'
           end
         end
@@ -138,7 +138,7 @@ end
 
 describe Job do
   it 'sets default values' do
-    expect(Job.new(name: 'defaultJob').data).to eq({ 
+    expect(Job.new(name: 'defaultJob').data).to eq({
         name: "defaultJob",
         artifacts: [],
         environment_variables: [],
@@ -162,9 +162,9 @@ describe GitMaterial do
   it 'sets default values' do
     expect(GitMaterial.new(url: 'giturl').data).to eq({
       type: 'git',
-      attributes: { 
+      attributes: {
         auto_update: true,
-        destination: nil,
+        destination: '',
         filter: nil,
         name: nil,
         url: "giturl"

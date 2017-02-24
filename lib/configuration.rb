@@ -23,7 +23,7 @@ def env(variable, default=nil)
 end
 
 def run_config(variable, load=nil, soak=nil)
-  ENV[variable] || run_soak_test ? soak : load
+  (ENV[variable]) || (run_soak_test ? soak : load)
 end
 
 module Configuration
