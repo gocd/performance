@@ -27,12 +27,13 @@ def run_config(variable, load=nil, soak=nil)
 end
 
 module Configuration
+
+  def run_soak_test
+    env('RUN_SOAK_TEST', 'NO').upcase == 'YES' ? true : false
+  end
+
   # Setup configuration
   class SetUp
-
-    def run_soak_test
-      env('RUN_SOAK_TEST', 'NO').upcase == 'YES' ? true : false
-    end
 
     def pipelines
       (1..number_of_pipelines.to_i).map { |i| "gocd.perf#{i}" }
