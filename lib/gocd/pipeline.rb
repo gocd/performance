@@ -89,7 +89,7 @@ module GoCD
         type: 'git',
         attributes: {
           auto_update: true,
-          destination: nil,
+          destination: '',
           filter: nil,
           name: nil,
           url: ''

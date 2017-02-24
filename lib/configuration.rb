@@ -22,23 +22,32 @@ def env(variable, default=nil)
   ENV[variable] || default
 end
 
+def run_config(variable, load=nil, soak=nil)
+  ENV[variable] || run_soak_test ? soak : load
+end
+
 module Configuration
   # Setup configuration
   class SetUp
+
+    def run_soak_test
+      env('RUN_SOAK_TEST', 'NO').upcase == 'YES' ? true : false
+    end
+
     def pipelines
       (1..number_of_pipelines.to_i).map { |i| "gocd.perf#{i}" }
     end
 
     def agents
-      (1..env('NO_OF_AGENTS', 10).to_i).map { |i| "agent-#{i}" }
+      (1..env('NO_OF_AGENTS', 75).to_i).map { |i| "agent-#{i}" }
     end
 
     def thread_groups
-      (1..env('NO_OF_THREAD_GROUPS', 10).to_i).to_a
+      (1..run_config('NO_OF_THREAD_GROUPS', 4, 1).to_i).to_a
     end
 
     def load_test_duration
-      env('LOAD_TEST_DURATION', '600').to_i
+      run_config('LOAD_TEST_DURATION', '1200','86400').to_i
     end
 
     def git_repository_host
@@ -95,7 +104,7 @@ module Configuration
     end
 
     def config_save_duration
-      interval = env('CONFIG_SAVE_INTERVAL', 20).to_i
+      interval = env('CONFIG_SAVE_INTERVAL', 30).to_i
       {
         interval: interval,
         times: load_test_duration/interval
@@ -107,11 +116,12 @@ module Configuration
     end
 
     def git_repos
-      pipelines.map { |i| "#{git_root}/git-repo-#{i}" }
+      repos = pipelines.map { |i| "#{git_root}/git-repo-#{i}" }
+      repos.insert(0,'git-repo-common')
     end
 
     def git_commit_duration
-      interval = env('GIT_COMMIT_INTERVAL', 5).to_i
+      interval = env('GIT_COMMIT_INTERVAL', 10).to_i
       {
         interval: interval,
         times: load_test_duration/interval
@@ -154,7 +164,7 @@ module Configuration
     private
 
     def number_of_pipelines
-      env('NO_OF_PIPELINES', 10)
+      env('NO_OF_PIPELINES', 750)
     end
   end
 
@@ -165,11 +175,11 @@ module Configuration
     end
 
     def config_update_interval
-      env('CONFIG_UPDATE_INTERVAL', 5)
+      env('CONFIG_UPDATE_INTERVAL', 30)
     end
 
     def scm_commit_interval
-      env('SCM_UPDATE_INTERVAL', 5)
+      env('SCM_UPDATE_INTERVAL', 10)
     end
 
     def server_dir
@@ -216,8 +226,8 @@ module Configuration
         'GO_SERVER_SYSTEM_PROPERTIES' => env('GO_SERVER_SYSTEM_PROPERTIES', ''),
         'GO_SERVER_PORT' => port,
         'GO_SERVER_SSL_PORT' => secure_port,
-        'SERVER_MEM' => env('SERVER_MEM', '6g'),
-        'SERVER_MAX_MEM' => env('SERVER_MAX_MEM', '8g')
+        'SERVER_MEM' => run_config('SERVER_MEM', '4g', '2g'),
+        'SERVER_MAX_MEM' => run_config('SERVER_MAX_MEM', '6g', '4g')
       }
     end
   end
