@@ -116,11 +116,6 @@ module Configuration
       env('GIT_ROOT', 'gitrepos')
     end
 
-    def git_repos
-      repos = pipelines.map { |i| "#{git_root}/git-repo-#{i}" }
-      repos.insert(0,'git-repo-common')
-    end
-
     def git_commit_duration
       interval = env('GIT_COMMIT_INTERVAL', 10).to_i
       {

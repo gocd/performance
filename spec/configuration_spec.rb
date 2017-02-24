@@ -89,10 +89,6 @@ describe "Configuration" do
       expect(@setup.agents_install_dir.to_s).to eq('go-agents')
     end
 
-    it 'generates git repo names based on the number of pipelines' do
-      ENV['NO_OF_PIPELINES'] ='3'
-      expect(@setup.git_repos).to eq(["git-repo-common", 'gitrepos/git-repo-gocd.perf1', 'gitrepos/git-repo-gocd.perf2', 'gitrepos/git-repo-gocd.perf3'])
-    end
     it 'sets the jmeter directory' do
       expect(@setup.jmeter_dir.to_s).to eq('./tools/apache-jmeter-3.0')
     end

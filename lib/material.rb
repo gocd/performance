@@ -14,7 +14,8 @@ module Material
 
   class Git < Config
     def repos
-      (self.begin..self.end).map {|i| "#{@setup.git_root}/git-repo-gocd.perf#{i}"}
+      repo = (self.begin..self.end).map {|i| "#{@setup.git_root}/git-repo-gocd.perf#{i}"}
+      repo.insert(0,'git-repo-common')
     end
 
     def end
