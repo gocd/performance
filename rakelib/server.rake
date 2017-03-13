@@ -33,7 +33,7 @@ namespace :server do
       puts "Copying the addons"
       mkdir_p "#{server_dir}/go-server-#{v}/addons/"
       mkdir_p "#{server_dir}/go-server-#{v}/config/"
-      cp "#{setup.addons_src_dir}/.", "#{server_dir}/go-server-#{v}/addons/"
+      cp_r "#{setup.addons_src_dir}/.", "#{server_dir}/go-server-#{v}/addons/"
       open("#{server_dir}/go-server-#{v}/config/postgresqldb.properties", 'w') do |f|
         f.puts('db.host=localhost')
         f.puts('db.port=5432')
