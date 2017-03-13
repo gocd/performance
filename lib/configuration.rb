@@ -67,6 +67,14 @@ module Configuration
       env('INCLUDE_PLUGINS')=='Y'
     end
 
+    def include_addons?
+      env('INCLUDE_ADDONS')=='Y'
+    end
+
+    def addons_src_dir
+      Pathname.new(env('ADDONS_SRC_DIR', './addons'))
+    end
+
     def plugin_src_dir
       Pathname.new(env('PLUGIN_SRC_DIR', ''))
     end

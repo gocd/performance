@@ -29,6 +29,20 @@ namespace :server do
       cp "#{setup.plugin_src_dir}", "#{server_dir}/go-server-#{v}/plugins/external/"
     end
 
+    if setup.include_addons?
+      puts "Copying the addons"
+      mkdir_p "#{server_dir}/go-server-#{v}/addons/"
+      mkdir_p "#{server_dir}/go-server-#{v}/config/"
+      cp "#{setup.addons_src_dir}/.", "#{server_dir}/go-server-#{v}/addons/"
+      open("#{server_dir}/go-server-#{v}/config/postgresqldb.properties", 'w') do |f|
+        f.puts('db.host=localhost')
+        f.puts('db.port=5432')
+        f.puts('db.name=cruise')
+        f.puts('db.user=go')
+        f.puts('db.password=go')
+      end
+    end
+
   end
 
   task :start => 'server:stop' do
