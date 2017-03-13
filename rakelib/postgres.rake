@@ -6,7 +6,7 @@ require 'etc'
 namespace :postgres do
 
   task :start => 'postgres:stop' do
-    sh(%Q{dropdb -U go cruise})
+    sh("dropdb -U go cruise || true")
     sh(%Q{createdb -U go cruise})
   end
 
