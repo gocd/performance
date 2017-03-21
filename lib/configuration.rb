@@ -99,6 +99,10 @@ module Configuration
       env('DOWNLOAD_URL', 'https://download.gocd.io/experimental')
     end
 
+    def agent_identifier
+      env('AGENT_IDENTIFIER', 'perf_on_h2')
+    end
+
     def go_version
       raw_version = env('GO_VERSION') do
           json = JSON.parse(open(RELEASES_JSON_URL).read)

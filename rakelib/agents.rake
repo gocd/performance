@@ -39,7 +39,7 @@ namespace :agents do
     Looper::run({interval:10, times:120}) {
       break if gocd_client.get_agents_count == setup.agents.length
     }
-    if gocd_client.get_agents_count != setup.agents.length
+    if gocd_client.get_agents_count >= setup.agents.length
       raise "All agents are not up as expected. Please check the agent node"
     end
     puts 'All agents running'
@@ -47,7 +47,7 @@ namespace :agents do
 
   task :stop do
     verbose false do
-      sh %{ pkill -f go-agents } do |ok, res|
+      sh %{ pkill -f #{setup.agent_identifier} } do |ok, res|
         puts 'Stopped all agents' if ok
       end
     end
