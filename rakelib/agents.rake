@@ -37,10 +37,10 @@ namespace :agents do
       sleep 20
     }
     Looper::run({interval:10, times:120}) {
-      break if gocd_client.get_agents_count == setup.agents.length
+      break if gocd_client.get_agents_count >= setup.agents.length
     }
-    if gocd_client.get_agents_count >= setup.agents.length
-      raise "All agents are not up as expected. Please check the agent node"
+    if gocd_client.get_agents_count < setup.agents.length
+      raise "All agents are not up as expected. Expected agents #{setup.agents.length} and actual is #{gocd_client.get_agents_count}"
     end
     puts 'All agents running'
   end
