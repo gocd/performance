@@ -47,7 +47,7 @@ namespace :agents do
 
   task :stop do
     verbose false do
-      sh %{ pkill -f #{setup.agent_identifier} } do |ok, res|
+      sh %{ pkill -f #{gocd_server.host} } do |ok, res|
         puts 'Stopped all agents' if ok
       end
     end
