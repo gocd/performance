@@ -1,4 +1,4 @@
-#GoCD Performance tests
+# GoCD Performance tests
 
 This script is used for performance test of GoCD server and agents. 
 
