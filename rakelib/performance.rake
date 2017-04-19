@@ -6,6 +6,7 @@ require 'ruby-jmeter'
 require './lib/scenario_loader'
 require 'process_builder'
 require 'pry'
+require 'json'
 
 namespace :performance do
   go_server = Configuration::Server.new
@@ -14,6 +15,7 @@ namespace :performance do
   tfs = Material::Tfs.new
 
   gocd_client = GoCD::Client.new go_server.url
+
 
   namespace :config do
     task :update do
@@ -111,6 +113,18 @@ namespace :performance do
   task :monitor => 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
     loader.monitor 'perf_mon', go_server.host, go_server.url
+  end
+
+  task :support_api do
+    if(setup.load_test_duration.to_i > setup.support_api_interval.to_i)
+      mkdir_p 'support_response'
+      Looper::run({interval:setup.support_api_interval.to_i, times:setup.load_test_duration.to_i/setup.support_api_interval.to_i}) {
+        response = RestClient.get("#{go_server.url}/api/support")
+        File.open("support_response/response_#{Time.now.to_s}.json","w") do |f|
+          f.write(JSON.pretty_generate(JSON.parse(response.body)))
+        end
+      }
+    end
   end
 
 end

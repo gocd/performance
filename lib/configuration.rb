@@ -55,6 +55,10 @@ module Configuration
       env('GIT_REPOSITORY_HOST', 'git://localhost')
     end
 
+    def support_api_interval
+      env('SUPPORT_API_INTERVAL', '3600')
+    end
+
     def server_install_dir
       Pathname.new(env('SERVER_INSTALL_DIR', '.')) + 'go-server'
     end

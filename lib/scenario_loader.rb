@@ -47,18 +47,20 @@ class ScenarioLoader
     FileUtils.mkdir_p reports_dir
 
     test do
-      step  name: 'stepping thread group example',
-        total_threads: 20,
-        initial_delay: 10,
-        start_threads: 2,
-        add_threads: 3,
-        start_every: 10,
-        stop_threads: 5,
-        stop_every: 5,
-        flight_time: @setup.load_test_duration,
-        rampup: 2 do
-        visit name: "support api", url: "#{base_url}api/support"
-      end
+      # Removing this support api calls since this may be creating un-real load on the server.
+      # Will have to include the support call 1/hr using a seperate monitor task and capture the state
+    #  step  name: 'Support API calls using stepping thread group',
+    #    total_threads: 20,
+    #    initial_delay: 10,
+    #    start_threads: 2,
+    #    add_threads: 3,
+    #    start_every: 10,
+    #    stop_threads: 5,
+    #    stop_every: 5,
+    #    flight_time: @setup.load_test_duration,
+    #    rampup: 2 do
+    #    visit name: "support api", url: "#{base_url}api/support"
+    #  end
       perfmon_collector name: 'Perfmon Metrics Collector',
         nodes: [{
         server: "#{host}",
