@@ -203,6 +203,16 @@ module Configuration
     end
   end
 
+  class Agent
+    def startup_args
+      env('GO_AGENT_SYSTEM_PROPERTIES', '')
+    end
+
+    def should_enable_debug_logging
+      env('ENABLE_AGENT_DEBUG_LOGS', 'N') == 'Y'
+    end
+  end
+
   # Go server configuration
   class Server
     def auth
