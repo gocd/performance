@@ -34,14 +34,22 @@ namespace :agents do
   end
 
   task :start => ['agents:stop', 'server:auto_register'] do
+    agent_config = Configuration::Agent.new
     puts 'Calling all agents'
     setup.agents.each { |name|
       agent_dir = "#{setup.agents_install_dir}/#{name}"
       mkdir_p "#{agent_dir}/config/"
       cp_r "scripts/autoregister.properties" ,  "#{agent_dir}/config/autoregister.properties"
-      cp_r "scripts/agent-log4j.properties" ,  "#{agent_dir}/config/agent-log4j.properties"
+      log4j_file = "#{agent_dir}/config/agent-log4j.properties"
+      cp_r "scripts/agent-log4j.properties" ,  log4j_file
+      if agent_config.should_enable_debug_logging
+        text = File.read(log4j_file)
+        updated_contents = text.gsub(/log4j.logger.com.thoughtworks.go=.*/, "log4j.logger.com.thoughtworks.go=DEBUG")
+        .gsub(/log4j.appender.FILE.MaxBackupIndex=.*/, "log4j.appender.FILE.MaxBackupIndex=30")
+        File.open(log4j_file, "w") {|file| file.puts updated_contents }
+      end
       cd agent_dir do
-        sh %{java -jar agent.jar -serverUrl https://#{gocd_server.host}:#{gocd_server.secure_port}/go > #{name}.log 2>&1 & }, verbose:false
+        sh %{java #{agent_config.startup_args} -jar agent.jar -serverUrl https://#{gocd_server.host}:#{gocd_server.secure_port}/go > #{name}.log 2>&1 & }, verbose:false
         sleep 20
       end
     }
