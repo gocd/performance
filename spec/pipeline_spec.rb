@@ -167,7 +167,8 @@ describe GitMaterial do
         destination: '',
         filter: nil,
         name: nil,
-        url: "giturl"
+        url: "giturl",
+        shallow_clone: true
       }
     })
   end
