@@ -4,6 +4,7 @@ require './lib/gocd'
 require './lib/downloader'
 require './lib/configuration'
 require './lib/looper'
+require 'parallel'
 
 namespace :agents do
   setup = Configuration::SetUp.new
@@ -24,7 +25,7 @@ namespace :agents do
       }
     }.start
 
-    setup.agents.each {|name|
+    Parallel.each(setup.agents, :in_processes => 5) {|name|
       mkdir_p "#{agents_dir}/#{name}/"
       %w{agent.jar tfs-impl.jar agent-plugins.zip}.each{|file|
         cp_r "#{agents_dir}/#{file}" , "#{agents_dir}/#{name}/"
@@ -36,7 +37,7 @@ namespace :agents do
   task :start => ['agents:stop', 'server:auto_register'] do
     agent_config = Configuration::Agent.new
     puts 'Calling all agents'
-    setup.agents.each { |name|
+    Parallel.each(setup.agents, :in_processes => 5) { |name|
       agent_dir = "#{setup.agents_install_dir}/#{name}"
       mkdir_p "#{agent_dir}/config/"
       cp_r "scripts/autoregister.properties" ,  "#{agent_dir}/config/autoregister.properties"

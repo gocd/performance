@@ -3,6 +3,7 @@ require 'ruby-jmeter'
 require './lib/configuration'
 require 'nokogiri'
 require 'fileutils'
+require 'pry'
 include FileUtils
 
 class ScenarioLoader
@@ -22,7 +23,65 @@ class ScenarioLoader
       parse("#{name}.scenario").list.each do |scenario|
         @setup.thread_groups.each do |tg|
           threads scenario.threads do
-            constant_throughput_timer value: 3.0
+            constant_throughput_timer value: 30.0
+            scenario.loops.each do |jloop|
+              loops jloop.loopcount do
+                jloop.url_list.each do |url_value|
+                  visit name: scenario.name, url: "#{base_url}#{jloop.actual_url(url_value)}"
+                  assert equals: scenario.response_code, test_field: 'Assertion.response_code'
+                end
+              end
+            end
+          end
+        end
+      end
+    end.run(path: @setup.jmeter_bin,
+            file: "#{reports_dir}/jmeter.jmx",
+            log: "#{reports_dir}/jmeter.log",
+            jtl: "#{reports_dir}/jmeter.jtl",
+            properties: {"jmeter.save.saveservice.output_format" => "xml"}, gui: false)
+    generate_reports(reports_dir)
+  end
+
+  def run_all(base_url)
+    reports_dir = "reports/all"
+    FileUtils.mkdir_p reports_dir
+
+    test do
+      Dir.glob("#{@path}/*.scenario") do |file|
+        parse(File.basename file).list.each do |scenario|
+          @setup.thread_groups.each do |tg|
+            threads scenario.threads do
+              constant_throughput_timer value: 30.0
+              scenario.loops.each do |jloop|
+                loops jloop.loopcount do
+                  jloop.url_list.each do |url_value|
+                    visit name: scenario.name, url: "#{base_url}#{jloop.actual_url(url_value)}"
+                    assert equals: scenario.response_code, test_field: 'Assertion.response_code'
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
+    end.jmx(path: @setup.jmeter_bin,
+            file: "#{reports_dir}/jmeter.jmx",
+            log: "#{reports_dir}/jmeter.log",
+            jtl: "#{reports_dir}/jmeter.jtl",
+            properties: {"jmeter.save.saveservice.output_format" => "xml"}, gui: false)
+    #generate_reports(reports_dir)
+  end
+
+  def spike(name, base_url)
+    reports_dir = "reports/#{name}"
+    FileUtils.mkdir_p reports_dir
+
+    test do
+      parse("#{name}.scenario").list.each do |scenario|
+        @setup.thread_groups.each do |tg|
+          threads scenario.threads do
+            synchronizing_timer groupSize: 100
             scenario.loops.each do |jloop|
               loops jloop.loopcount do
                 jloop.url_list.each do |url_value|
@@ -47,20 +106,18 @@ class ScenarioLoader
     FileUtils.mkdir_p reports_dir
 
     test do
-      # Removing this support api calls since this may be creating un-real load on the server.
-      # Will have to include the support call 1/hr using a seperate monitor task and capture the state
-    #  step  name: 'Support API calls using stepping thread group',
-    #    total_threads: 20,
-    #    initial_delay: 10,
-    #    start_threads: 2,
-    #    add_threads: 3,
-    #    start_every: 10,
-    #    stop_threads: 5,
-    #    stop_every: 5,
-    #    flight_time: @setup.load_test_duration,
-    #    rampup: 2 do
-    #    visit name: "support api", url: "#{base_url}api/support"
-    #  end
+      step  name: 'About page call using stepping thread group',
+        total_threads: 1,
+        initial_delay: 10,
+        start_threads: 1,
+        add_threads: 0,
+        start_every: 1,
+        stop_threads: 1,
+        stop_every: 1,
+        flight_time: @setup.load_test_duration,
+        rampup: 1 do
+        visit name: "About page", url: "#{base_url}about"
+      end
       perfmon_collector name: 'Perfmon Metrics Collector',
         nodes: [{
         server: "#{host}",

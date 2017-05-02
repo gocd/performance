@@ -92,7 +92,8 @@ module GoCD
           destination: '',
           filter: nil,
           name: nil,
-          url: ''
+          url: '',
+          shallow_clone: true
         }
       }
     end
