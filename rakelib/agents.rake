@@ -15,7 +15,9 @@ namespace :agents do
     v, b = setup.go_version
 
     agents_dir = setup.agents_install_dir
-    rm_rf agents_dir
+    Parallel.each(setup.agents, :in_processes => 5) {|name|
+      rm_rf "#{agents_dir}/#{name}/"
+    }
     mkdir_p agents_dir
 
     Downloader.new(agents_dir) {|q|

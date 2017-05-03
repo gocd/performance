@@ -70,7 +70,7 @@ class ScenarioLoader
             log: "#{reports_dir}/jmeter.log",
             jtl: "#{reports_dir}/jmeter.jtl",
             properties: {"jmeter.save.saveservice.output_format" => "xml"}, gui: false)
-    #generate_reports(reports_dir)
+    generate_reports(reports_dir)
   end
 
   def spike(name, base_url)
