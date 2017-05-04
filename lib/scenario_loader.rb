@@ -107,10 +107,10 @@ class ScenarioLoader
 
     test do
       step  name: 'About page call using stepping thread group',
-        total_threads: 1,
+        total_threads: 10,
         initial_delay: 10,
         start_threads: 1,
-        add_threads: 0,
+        add_threads: 1,
         start_every: 1,
         stop_threads: 1,
         stop_every: 1,

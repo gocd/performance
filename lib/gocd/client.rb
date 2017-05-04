@@ -29,7 +29,11 @@ module GoCD
 
     def get_pipeline_count(name)
       history = JSON.parse(open("#{@base_url}/api/pipelines/#{name}/history/0",'Confirm' => 'true').read)
-      history["pipelines"][0]["counter"]
+      begin
+        history["pipelines"][0]["counter"]
+      rescue => e
+        "retry"
+      end
     end
 
     def get_agent_id(idx)

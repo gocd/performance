@@ -1,5 +1,6 @@
 require 'pry'
 require './lib/configuration'
+require './lib/looper'
 
 class Scenario
 
@@ -52,6 +53,7 @@ class Loop
     @setup = Configuration::SetUp.new
     @server = Configuration::Server.new
     @gocd_client = GoCD::Client.new @server.url
+
   end
 
   def url(arg)
@@ -67,8 +69,20 @@ class Loop
   end
 
   def actual_url(tmp)
-    pipeline = @setup.pipelines[rand(@setup.pipelines.length)]
-    pipeline_count = @gocd_client.get_pipeline_count(pipeline)
+    pipeline_count = ''
+    pipeline = ''
+    begin
+      Timeout.timeout(5) do
+        while(true) do
+          sleep 1
+          pipeline = @setup.pipelines[rand(@setup.pipelines.length)]
+          pipeline_count = @gocd_client.get_pipeline_count(pipeline)
+          break if pipeline_count != "retry"
+        end
+      end
+    rescue Timeout::Error
+      raise "Failed to get a pipeline run to generate a url to hit. Please check the server."
+    end
     agent = @gocd_client.get_agent_id(rand(@setup.agents.length))
     tmp % { pipeline: pipeline, pipelinecount: pipeline_count, comparewith: pipeline_count-1, stage: 'default',  stagecount: '1', job: 'default_job' ,  jobcount: '1', agentid: agent}
   end

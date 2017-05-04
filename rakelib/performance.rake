@@ -34,7 +34,7 @@ namespace :performance do
     task :update do
       duration = setup.git_commit_duration
 
-      Looper::run(duration) {
+      Looper::time_out(duration) {
         git.repos.each do |repo|
           verbose false do
             cd repo do
@@ -56,7 +56,7 @@ namespace :performance do
       login = "#{setup.tfs_user},#{setup.tfs_pwd}"
       tee_clc = setup.tee_path
 
-      Looper::run(duration) {
+      Looper::time_out(duration) {
         tfs.project_paths.each do |project_path|
           verbose false do
             mkdir_p tmp_dir
@@ -130,7 +130,7 @@ namespace :performance do
       mkdir_p 'support_response'
       Looper::run({interval:setup.support_api_interval.to_i, times:setup.load_test_duration.to_i/setup.support_api_interval.to_i}) {
         response = RestClient.get("#{go_server.url}/api/support")
-        File.open("support_response/response_#{Time.now.to_s}.json","w") do |f|
+        File.open("support_response/response_#{Time.now.strftime("%d_%b_%Y_%H_%M_%S").to_s}.json","w") do |f|
           f.write(JSON.pretty_generate(JSON.parse(response.body)))
         end
       }
