@@ -65,7 +65,7 @@ class ScenarioLoader
           end
         end
       end
-    end.jmx(path: @setup.jmeter_bin,
+    end.run(path: @setup.jmeter_bin,
             file: "#{reports_dir}/jmeter.jmx",
             log: "#{reports_dir}/jmeter.log",
             jtl: "#{reports_dir}/jmeter.jtl",

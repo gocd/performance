@@ -1,6 +1,6 @@
 # Scenario : Users visit dashboard -> check for pipeline history -> visit vsm pages
 scenario do
-  name 'pipeline edit page'
+  name 'vsm page'
   count 4
   rampup 100
   loop do
