@@ -172,6 +172,10 @@ module Configuration
       }
     end
 
+    def failure_tolrance_rate
+      env('FAILURE_TOLERANCE_RATE', '5').to_i
+    end
+
 
     private
 

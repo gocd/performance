@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 ##########################################################################
-# Copyright 2016 ThoughtWorks, Inc.
+# Copyright 2017 ThoughtWorks, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,10 +16,23 @@
 ##########################################################################
 
 require 'nokogiri'
-xml_doc = Nokogiri::XML(File.open('jmeter.jtl'))
-xml_doc.xpath('//failure').each do |failure_attribute|
-  if failure_attribute.text == 'true'
-    puts failure_attribute.parent.parent
-    exit 1
+require './lib/configuration'
+require 'pry'
+
+class AnalyzeResult
+
+  def initialize(file)
+    @report_file = file
+    @setup = Configuration::SetUp.new
+  end
+
+  def tolerable?()
+    xml_doc = Nokogiri::XML(File.open(@report_file)).xpath('//httpSample/assertionResult/failure')
+    total_failures = 0
+    xml_doc.each do |failure_attribute|
+      total_failures = total_failures+1 if failure_attribute.text == 'true'
+    end
+    binding.pry
+    (total_failures.to_f/xml_doc.count.to_f)*100 <= @setup.failure_tolrance_rate.to_f
   end
 end

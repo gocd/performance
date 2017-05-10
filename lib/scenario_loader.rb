@@ -1,6 +1,7 @@
 require './lib/scenario'
 require 'ruby-jmeter'
 require './lib/configuration'
+require './lib/analyze_result'
 require 'nokogiri'
 require 'fileutils'
 require 'pry'
@@ -15,7 +16,7 @@ class ScenarioLoader
     @setup = Configuration::SetUp.new
   end
 
-  def run(name, base_url)
+  def run(name, base_url, spike=false)
     reports_dir = "reports/#{name}"
     FileUtils.mkdir_p reports_dir
 
@@ -24,6 +25,7 @@ class ScenarioLoader
         @setup.thread_groups.each do |tg|
           threads scenario.threads do
             constant_throughput_timer value: 30.0
+            synchronizing_timer groupSize: 100 if spike == true
             scenario.loops.each do |jloop|
               loops jloop.loopcount do
                 jloop.url_list.each do |url_value|
@@ -41,6 +43,7 @@ class ScenarioLoader
             jtl: "#{reports_dir}/jmeter.jtl",
             properties: {"jmeter.save.saveservice.output_format" => "xml"}, gui: false)
     generate_reports(reports_dir)
+    assert_test(reports_dir)
   end
 
   def run_all(base_url)
@@ -71,6 +74,7 @@ class ScenarioLoader
             jtl: "#{reports_dir}/jmeter.jtl",
             properties: {"jmeter.save.saveservice.output_format" => "xml"}, gui: false)
     generate_reports(reports_dir)
+    assert_test(reports_dir)
   end
 
   def spike(name, base_url)
@@ -99,6 +103,7 @@ class ScenarioLoader
             jtl: "#{reports_dir}/jmeter.jtl",
             properties: {"jmeter.save.saveservice.output_format" => "xml"}, gui: false)
     generate_reports(reports_dir)
+    assert_test(reports_dir)
   end
 
   def monitor(name, host, base_url)
@@ -167,6 +172,10 @@ class ScenarioLoader
       generate_report(reports_dir, type, 'csv')
     end
     consolidate_reports reports_dir
+  end
+
+  def assert_test(reports_dir)
+      raise "HTTP Response assertion failed more than the tolerable level, Please check the reports" unless AnalyzeResult.new("#{reports_dir}/jmeter.jtl").tolerable?()
   end
 
   def consolidate_reports(reports_dir)
