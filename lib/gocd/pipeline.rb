@@ -49,7 +49,7 @@ module GoCD
     def default
       {
         group: nil,
-        enable_pipeline_locking: true,
+        enable_pipeline_locking: false,
         environment_variables: [],
         label_template: '${COUNT}',
         materials: [],
@@ -74,6 +74,7 @@ module GoCD
         group pipeline.group
         pipeline do
           name pipeline.name
+          enable_pipeline_locking true
           materials pipeline.materials
           environment_variables pipeline.environment_variables
           stages pipeline.stages
