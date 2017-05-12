@@ -49,7 +49,7 @@ module GoCD
     def default
       {
         group: nil,
-        enable_pipeline_locking: false,
+        enable_pipeline_locking: true,
         environment_variables: [],
         label_template: '${COUNT}',
         materials: [],
