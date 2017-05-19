@@ -56,7 +56,7 @@ module Configuration
     end
 
     def support_api_interval
-      env('SUPPORT_API_INTERVAL', '3600')
+      env('SUPPORT_API_INTERVAL', '1800')
     end
 
     def server_install_dir
