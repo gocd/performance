@@ -62,7 +62,7 @@ module GoCD
     end
 
     def config_xml
-      response = @rest_client.get "#{@base_url}/admin/configuration/file.xml"
+      response = @rest_client.get "#{@base_url}/admin/configuration/file.xml", {Authorization: @auth_header}
       md5 = response.headers[:x_cruise_config_md5]
 
       unless md5
@@ -83,9 +83,10 @@ module GoCD
     end
 
     def set_auth_config
-      config, md5 = config_xml
+      response = @rest_client.get "#{@base_url}/admin/configuration/file.xml"
+      md5 = response.headers[:x_cruise_config_md5]
 
-      xml = @nokogiri::XML config
+      xml = @nokogiri::XML response.to_str
 
       security = Nokogiri::XML::Node.new("security",xml)
       authConfigs = Nokogiri::XML::Node.new("authConfigs",security)
