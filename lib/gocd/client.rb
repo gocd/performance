@@ -62,24 +62,32 @@ module GoCD
     end
 
     def config_xml
-      response = @rest_client.get "#{@base_url}/admin/configuration/file.xml", {Authorization: @auth_header}
-      md5 = response.headers[:x_cruise_config_md5]
+      res = @rest_client.get("#{@base_url}/admin/configuration/file.xml"){|response, request, result, &block|
+              if response.code == 302
+                @rest_client.get "#{@base_url}/admin/configuration/file.xml", {Authorization: @auth_header}
+              else
+                response
+              end
+            }
+      md5 = res.headers[:x_cruise_config_md5]
 
       unless md5
         raise 'Failed to get config, check authentication'
       end
 
-      return response.to_str, md5
+      return res.to_str, md5
     end
 
     def save_config_xml(xml, md5)
-      @rest_client.post("#{@base_url}/admin/configuration/file.xml",
-                        xmlFile: xml,
-                        md5: md5, Authorization: @auth_header)
+      @rest_client.post("#{@base_url}/admin/configuration/file.xml",xmlFile: xml, md5: md5) { |response, request, result, &block|
+        if response.code == 302
+          @rest_client.post("#{@base_url}/admin/configuration/file.xml",{xmlFile: xml, md5: md5}, Authorization: @auth_header)
+        end
+      }
     end
 
     def support_page
-      @rest_client.get "#{@base_url}/api/support"
+      @rest_client.get "#{@base_url}/api/support", {Authorization: @auth_header}
     end
 
     def set_auth_config
