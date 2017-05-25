@@ -49,7 +49,7 @@ module GoCD
     end
 
     def get_agents_count()
-      agents = JSON.parse(open("#{@base_url}/api/agents",'Accept' => 'application/vnd.go.cd.v4+json', http_basic_authentication: ["admin", "badger"]).read)
+      agents = JSON.parse(open("#{@base_url}/api/agents",'Accept' => 'application/vnd.go.cd.v4+json').read)
       agents['_embedded']['agents'].length
     end
 
