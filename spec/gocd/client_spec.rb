@@ -6,6 +6,7 @@ describe GoCD::Client do
     @rest_client = double('rest_client')
     @client = GoCD::Client.new(rest_client: @rest_client)
     @pipeline = GoCD::Pipeline.new(name: 'pipeline')
+    @auth_header = "Basic #{Base64.encode64(['admin', 'badger'].join(':'))}"
   end
 
   it 'gets the support page' do
@@ -20,7 +21,7 @@ describe GoCD::Client do
         .with("http://localhost:8153/go/api/admin/pipelines",
       @pipeline.to_json,
       :accept => 'application/vnd.go.cd.v3+json',
-      :content_type => 'application/json')
+      :content_type => 'application/json', Authorization: @auth_header)
 
       @client.create_pipeline(@pipeline.to_json)
     end
@@ -31,7 +32,7 @@ describe GoCD::Client do
         .with("base_url/api/admin/pipelines",
       @pipeline.to_json,
       :accept => 'application/vnd.go.cd.v3+json',
-      :content_type => 'application/json')
+      :content_type => 'application/json', Authorization: @auth_header)
 
       client.create_pipeline(@pipeline.to_json)
     end
@@ -42,7 +43,7 @@ describe GoCD::Client do
       expect(@rest_client).to receive(:post)
         .with("http://localhost:8153/go/api/pipelines/pipeline/unpause",
       "",
-      confirm: true)
+      confirm: true, Authorization: @auth_header)
       @client.unpause_pipeline(@pipeline.name)
     end
   end
@@ -75,10 +76,10 @@ describe GoCD::Client do
   describe :save_config_xml do
     it 'posts to the right end point' do
       expect(@rest_client).to receive(:post)
-        .with("http://localhost:8153/go/admin/configuration/file.xml", 
-      xmlFile: '<xml/>', 
-      md5: 'md5')
-      
+        .with("http://localhost:8153/go/admin/configuration/file.xml",
+      xmlFile: '<xml/>',
+      md5: 'md5', Authorization: @auth_header)
+
       @client.save_config_xml('<xml/>', 'md5')
     end
 
@@ -96,9 +97,9 @@ describe GoCD::Client do
       expectedXml = %{<?xml version="1.0"?>\n<server agentAutoRegisterKey="key"/>\n}
 
       expect(@rest_client).to receive(:post)
-        .with("http://localhost:8153/go/admin/configuration/file.xml", 
-      xmlFile: expectedXml, 
-      md5: 'md5')
+        .with("http://localhost:8153/go/admin/configuration/file.xml",
+      xmlFile: expectedXml,
+      md5: 'md5', Authorization: @auth_header)
 
       @client.auto_register_key 'key'
     end
@@ -116,9 +117,9 @@ describe GoCD::Client do
       expectedXml = %{<?xml version="1.0"?>\n<server jobTimeout="61"/>\n}
 
       expect(@rest_client).to receive(:post)
-        .with("http://localhost:8153/go/admin/configuration/file.xml", 
-      xmlFile: expectedXml, 
-      md5: 'md5')
+        .with("http://localhost:8153/go/admin/configuration/file.xml",
+      xmlFile: expectedXml,
+      md5: 'md5', Authorization: @auth_header)
 
       @client.job_timeout 61
     end
