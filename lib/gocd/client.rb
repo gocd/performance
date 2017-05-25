@@ -90,6 +90,10 @@ module GoCD
       @rest_client.get "#{@base_url}/api/support", {Authorization: @auth_header}
     end
 
+    def about_page
+      @rest_client.get "#{@base_url}/about"
+    end
+
     def set_auth_config
       response = @rest_client.get "#{@base_url}/admin/configuration/file.xml"
       md5 = response.headers[:x_cruise_config_md5]

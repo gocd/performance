@@ -67,7 +67,7 @@ namespace :server do
     server_is_running = false
     Looper.run(interval:10, times: 9) {
       begin
-        gocd_client.support_page
+        gocd_client.about_page
         server_is_running = true
       rescue
       end
