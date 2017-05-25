@@ -75,6 +75,8 @@ namespace :server do
 
     raise "Couldn't start GoCD server at #{v}-#{b} at #{server_dir}" unless server_is_running
     puts 'The servers up and running'
+
+    gocd_client.set_auth_config
   end
 
   task :stop do

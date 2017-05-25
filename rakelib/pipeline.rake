@@ -44,10 +44,10 @@ namespace :pipeline do
 
   desc "Clear pipelines"
   task :clean do
+    gocd_client = Client.new(gocd_server.url)
     @setup.pipelines.reverse_each { |pipeline|
       begin
-      RestClient.delete "#{gocd_server.url}/api/admin/pipelines/#{pipeline}",
-        :accept =>  'application/vnd.go.cd.v3+json'
+        gocd_client.delete_pipeline(pipeline)
       rescue RestClient::ResourceNotFound
       end
     }

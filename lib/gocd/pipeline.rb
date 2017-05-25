@@ -74,7 +74,7 @@ module GoCD
         group pipeline.group
         pipeline do
           name pipeline.name
-          enable_pipeline_locking true
+          enable_pipeline_locking false
           materials pipeline.materials
           environment_variables pipeline.environment_variables
           stages pipeline.stages

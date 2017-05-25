@@ -26,11 +26,17 @@ class ScenarioLoader
           threads scenario.threads do
             constant_throughput_timer value: 30.0
             synchronizing_timer groupSize: 100 if spike == true
+            cookies clear_each_iteration: false
+            cache clear_each_iteration: false
+            with_browser :chrome
+            post name: 'Security Check', url: "#{base_url}/auth/security_check",
+                raw_body: 'j_username=admin&j_password=badger'
             scenario.loops.each do |jloop|
               loops jloop.loopcount do
                 jloop.url_list.each do |url_value|
-                  visit name: scenario.name, url: "#{base_url}#{jloop.actual_url(url_value)}"
-                  assert equals: scenario.response_code, test_field: 'Assertion.response_code'
+                  visit name: scenario.name, url: "#{base_url}#{jloop.actual_url(url_value)}" do
+                    assert equals: scenario.response_code, test_field: 'Assertion.response_code'
+                  end
                 end
               end
             end

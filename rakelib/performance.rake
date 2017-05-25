@@ -105,6 +105,7 @@ namespace :performance do
     loader.run 'agents_to_jobs_history', go_server.url
   end
 
+
   task :dashboard_page_spike => 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
     loader.spike 'pipeline_dashboard', go_server.url
