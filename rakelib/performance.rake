@@ -130,7 +130,7 @@ namespace :performance do
     if(setup.load_test_duration.to_i > setup.support_api_interval.to_i)
       mkdir_p 'support_response'
       Looper::run({interval:setup.support_api_interval.to_i, times:setup.load_test_duration.to_i/setup.support_api_interval.to_i}) {
-        response = RestClient.get("#{go_server.url}/api/support")
+        response = gocd_client.support_page
         File.open("support_response/response_#{Time.now.strftime("%d_%b_%Y_%H_%M_%S").to_s}.json","w") do |f|
           f.write(JSON.pretty_generate(JSON.parse(response.body)))
         end
