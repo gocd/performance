@@ -124,6 +124,38 @@ module GoCD
 
     end
 
+    def set_ldap_auth_config(ldap_ip)
+      config, md5 = config_xml
+      xml = @nokogiri::XML config
+
+      ldap_config = "<authConfig id=\"ldap_authentication_plugin\" pluginId=\"cd.go.authentication.ldap\">
+                  <property>
+                      <key>Url</key>
+                      <value>ldap://#{ldap_ip}</value>
+                  </property>
+                  <property>
+                      <key>ManagerDN</key>
+                      <value/>
+                  </property>
+                  <property>
+                      <key>SearchBases</key>
+                      <value>ou=People,dc=tests,dc=com
+                      </value>
+                  </property>
+                  <property>
+                      <key>UserLoginFilter</key>
+                      <value>(uid={0})</value>
+                  </property>
+                  <property>
+                      <key>Password</key>
+                  </property>
+              </authConfig>"
+
+      xml.xpath('//authConfigs').first.add_child ldap_config
+
+      save_config_xml xml.to_xml, md5
+    end
+
     private
 
     def server_attribute(attribute, value)

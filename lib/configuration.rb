@@ -176,6 +176,9 @@ module Configuration
       env('FAILURE_TOLERANCE_RATE', '5').to_i
     end
 
+    def ldap_server_ip
+      env('LDAP_SERVER_IP', 'localhost')
+    end
 
     private
 
@@ -201,6 +204,8 @@ module Configuration
     def server_dir
       env('SERVER_DIR', '/tmp')
     end
+
+
 
     def gocd_host
       "#{server_url}/go"
