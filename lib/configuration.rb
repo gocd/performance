@@ -47,6 +47,10 @@ module Configuration
       (1..run_config('NO_OF_THREAD_GROUPS', 4, 1).to_i).to_a
     end
 
+    def throughput_per_minute
+      env('THROUGHPUT_PER_MINUTE', '90')
+    end
+
     def load_test_duration
       run_config('LOAD_TEST_DURATION', '1200','86400').to_i
     end
