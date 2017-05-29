@@ -22,15 +22,17 @@ class ScenarioLoader
 
     test do
       parse("#{name}.scenario").list.each do |scenario|
+        cookies
+        cache
+        with_browser :chrome
         @setup.thread_groups.each do |tg|
           threads scenario.threads do
             constant_throughput_timer value: 30.0
             synchronizing_timer groupSize: 100 if spike == true
-            cookies
-            cache
-            with_browser :chrome
-            post name: 'Security Check', url: "#{base_url}/auth/security_check",
-                raw_body: 'j_username=admin&j_password=badger'
+            Once do
+              post name: 'Security Check', url: "#{base_url}/auth/security_check",
+                  raw_body: 'j_username=admin&j_password=badger'
+            end
             scenario.loops.each do |jloop|
               loops jloop.loopcount do
                 jloop.url_list.each do |url_value|
