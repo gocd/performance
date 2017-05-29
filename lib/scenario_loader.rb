@@ -26,8 +26,8 @@ class ScenarioLoader
           threads scenario.threads do
             constant_throughput_timer value: 30.0
             synchronizing_timer groupSize: 100 if spike == true
-            cookies clear_each_iteration: false
-            cache clear_each_iteration: false
+            cookies
+            cache
             with_browser :chrome
             post name: 'Security Check', url: "#{base_url}/auth/security_check",
                 raw_body: 'j_username=admin&j_password=badger'
