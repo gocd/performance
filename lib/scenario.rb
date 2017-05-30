@@ -72,12 +72,12 @@ class Loop
     pipeline_count = ''
     pipeline = ''
     begin
-      Timeout.timeout(5) do
+      Timeout.timeout(30) do
         while(true) do
-          sleep 1
           pipeline = @setup.pipelines[rand(@setup.pipelines.length)]
           pipeline_count = @gocd_client.get_pipeline_count(pipeline)
           break if pipeline_count != "retry"
+          sleep 1
         end
       end
     rescue Timeout::Error
