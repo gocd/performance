@@ -80,7 +80,7 @@ namespace :server do
 
   task :setup_auth do
     gocd_client.set_auth_config
-    gocd_client.set_ldap_auth_config(setup.ldap_server_ip)
+    #gocd_client.set_ldap_auth_config(setup.ldap_server_ip)
   end
 
   task :stop do
