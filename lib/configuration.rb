@@ -48,7 +48,7 @@ module Configuration
     end
 
     def throughput_per_minute
-      env('THROUGHPUT_PER_MINUTE', '90')
+      env('THROUGHPUT_PER_MINUTE', '90').to_f
     end
 
     def load_test_duration

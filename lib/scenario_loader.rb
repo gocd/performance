@@ -18,6 +18,7 @@ class ScenarioLoader
 
   def run(name, base_url, spike=false)
     reports_dir = "reports/#{name}"
+    throughput = @setup.throughput_per_minute
     FileUtils.mkdir_p reports_dir
 
     test do
@@ -27,7 +28,7 @@ class ScenarioLoader
         with_browser :chrome
         @setup.thread_groups.each do |tg|
           threads scenario.threads do
-            constant_throughput_timer value: @setup.throughput_per_minute.to_f
+            constant_throughput_timer value: throughput
             synchronizing_timer groupSize: 100 if spike == true
             Once do
               post name: 'Security Check', url: "#{base_url}/auth/security_check",
@@ -36,7 +37,7 @@ class ScenarioLoader
             scenario.loops.each do |jloop|
               loops jloop.loopcount do
                 jloop.url_list.each do |url_value|
-                  visit name: scenario.name, url: "#{base_url}#{jloop.actual_url(url_value)}" do
+                  visit name: scenario.name, url: "#{base_url}#{jloop.actual_url(url_value)}" do 
                     assert equals: scenario.response_code, test_field: 'Assertion.response_code'
                   end
                 end
