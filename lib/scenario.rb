@@ -72,7 +72,7 @@ class Loop
     pipeline_count = ''
     pipeline = ''
     begin
-      Timeout.timeout(30) do
+      Timeout.timeout(60) do
         while(true) do
           pipeline = @setup.pipelines[rand(@setup.pipelines.length)]
           pipeline_count = @gocd_client.get_pipeline_count(pipeline)

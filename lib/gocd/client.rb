@@ -95,10 +95,8 @@ module GoCD
     end
 
     def set_auth_config
-      response = @rest_client.get "#{@base_url}/admin/configuration/file.xml"
-      md5 = response.headers[:x_cruise_config_md5]
-
-      xml = @nokogiri::XML response.to_str
+      config, md5 = config_xml
+      xml = @nokogiri::XML config
 
       security = Nokogiri::XML::Node.new("security",xml)
       authConfigs = Nokogiri::XML::Node.new("authConfigs",security)
@@ -118,15 +116,17 @@ module GoCD
       security.add_child authConfigs
 
       xml.search("//server").first.add_child security
-      @rest_client.post("#{@base_url}/admin/configuration/file.xml",
-                        xmlFile: xml.to_xml,
-                        md5: md5)
+
+      save_config_xml xml.to_xml, md5
 
     end
 
     def set_ldap_auth_config(ldap_ip)
-      config, md5 = config_xml
-      xml = @nokogiri::XML config
+
+      response = @rest_client.get "#{@base_url}/admin/configuration/file.xml"
+      md5 = response.headers[:x_cruise_config_md5]
+
+      xml = @nokogiri::XML response.to_str
 
       ldap_config = "<authConfig id=\"ldap_authentication_plugin\" pluginId=\"cd.go.authentication.ldap\">
                   <property>
@@ -152,8 +152,10 @@ module GoCD
               </authConfig>"
 
       xml.xpath('//authConfigs').first.add_child ldap_config
+      @rest_client.post("#{@base_url}/admin/configuration/file.xml",
+                        xmlFile: xml.to_xml,
+                        md5: md5)
 
-      save_config_xml xml.to_xml, md5
     end
 
     private
