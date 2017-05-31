@@ -98,7 +98,7 @@ module GoCD
       config, md5 = config_xml
       xml = @nokogiri::XML config
 
-      authConfig = Nokogiri::XML::Node.new("authConfig",authConfigs)
+      authConfig = Nokogiri::XML::Node.new("authConfig",xml)
       authConfig['id'] = 'pwd_file'
       authConfig['pluginId'] = 'cd.go.authentication.passwordfile'
       property = Nokogiri::XML::Node.new("property",authConfig)
