@@ -24,12 +24,7 @@ namespace :pipeline do
           s << Job.new(name: 'defaultJob') do |j|
             j << ExecTask.new(command: 'ls')
           end
-        end
-        p <<  Stage.new(name: 'default1') do |s|
-          s << Job.new(name: 'defaultJob') do |j|
-            j << ExecTask.new(command: 'ls')
-          end
-        end
+        end        
       end
 
       begin

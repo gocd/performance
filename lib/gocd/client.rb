@@ -98,8 +98,6 @@ module GoCD
       config, md5 = config_xml
       xml = @nokogiri::XML config
 
-      security = Nokogiri::XML::Node.new("security",xml)
-      authConfigs = Nokogiri::XML::Node.new("authConfigs",security)
       authConfig = Nokogiri::XML::Node.new("authConfig",authConfigs)
       authConfig['id'] = 'pwd_file'
       authConfig['pluginId'] = 'cd.go.authentication.passwordfile'
@@ -112,10 +110,8 @@ module GoCD
       property.add_child value
 
       authConfig.add_child property
-      authConfigs.add_child authConfig
-      security.add_child authConfigs
 
-      xml.search("//server").first.add_child security
+      xml.search("//authConfigs").first.add_child authConfig
 
       save_config_xml xml.to_xml, md5
 
@@ -128,7 +124,7 @@ module GoCD
 
       xml = @nokogiri::XML response.to_str
 
-      ldap_config = "<authConfig id=\"ldap_authentication_plugin\" pluginId=\"cd.go.authentication.ldap\">
+      ldap_config = "<security><authConfigs><authConfig id=\"ldap_authentication_plugin\" pluginId=\"cd.go.authentication.ldap\">
                   <property>
                       <key>Url</key>
                       <value>ldap://#{ldap_ip}</value>
@@ -149,9 +145,9 @@ module GoCD
                   <property>
                       <key>Password</key>
                   </property>
-              </authConfig>"
+              </authConfig></authConfigs></security>"
 
-      xml.xpath('//authConfigs').first.add_child ldap_config
+      xml.xpath('//server').first.add_child ldap_config
       @rest_client.post("#{@base_url}/admin/configuration/file.xml",
                         xmlFile: xml.to_xml,
                         md5: md5)
