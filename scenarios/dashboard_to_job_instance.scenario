@@ -1,7 +1,7 @@
 # Scenario : Users visit dashboard -> visit stage instance -> visit job instance
 scenario do
   name 'job details page'
-  count 4
+  count 100
   rampup 100
   loop do
     url '/pipelines'
