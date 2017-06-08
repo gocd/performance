@@ -55,16 +55,24 @@ class ScenarioLoader
     assert_test(reports_dir)
   end
 
-  def run_all(base_url)
+  def run_all(base_url, spike=false)
     reports_dir = "reports/all"
     FileUtils.mkdir_p reports_dir
 
     test do
       Dir.glob("#{@path}/*.scenario") do |file|
         parse(File.basename file).list.each do |scenario|
+          cookies
+          cache
+          with_browser :chrome
           @setup.thread_groups.each do |tg|
             threads scenario.threads do
-              constant_throughput_timer value: 30.0
+              constant_throughput_timer value: throughput
+              synchronizing_timer groupSize: 100 if spike == true
+              Once do
+                post name: 'Security Check', url: "#{base_url}/auth/security_check",
+                    raw_body: "j_username=pwd_admin&j_password=badger"
+              end
               scenario.loops.each do |jloop|
                 loops jloop.loopcount do
                   jloop.url_list.each do |url_value|
