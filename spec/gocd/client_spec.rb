@@ -77,8 +77,7 @@ describe GoCD::Client do
     it 'posts to the right end point' do
       expect(@rest_client).to receive(:post)
         .with("http://localhost:8153/go/admin/configuration/file.xml",
-      xmlFile: '<xml/>',
-      md5: 'md5')
+      {xmlFile: '<xml/>',md5: 'md5'}, {Confirm: true})
 
       @client.save_config_xml('<xml/>', 'md5')
     end
@@ -98,8 +97,7 @@ describe GoCD::Client do
 
       expect(@rest_client).to receive(:post)
         .with("http://localhost:8153/go/admin/configuration/file.xml",
-      xmlFile: expectedXml,
-      md5: 'md5')
+      {xmlFile: expectedXml,md5: 'md5'}, {Confirm: true})
 
       @client.auto_register_key 'key'
     end
@@ -118,8 +116,7 @@ describe GoCD::Client do
 
       expect(@rest_client).to receive(:post)
         .with("http://localhost:8153/go/admin/configuration/file.xml",
-      xmlFile: expectedXml,
-      md5: 'md5')
+      {xmlFile: expectedXml,md5: 'md5'}, {Confirm: true})
 
       @client.job_timeout 61
     end
