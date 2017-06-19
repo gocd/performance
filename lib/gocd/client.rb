@@ -79,9 +79,9 @@ module GoCD
     end
 
     def save_config_xml(xml, md5)
-      @rest_client.post("#{@base_url}/admin/configuration/file.xml",xmlFile: xml, md5: md5) { |response, request, result, &block|
+      @rest_client.post("#{@base_url}/admin/configuration/file.xml",{xmlFile: xml, md5: md5}, {Confirm: true}) { |response, request, result, &block|
         if response.code == 302
-          @rest_client.post("#{@base_url}/admin/configuration/file.xml",{xmlFile: xml, md5: md5}, Authorization: @auth_header)
+          @rest_client.post("#{@base_url}/admin/configuration/file.xml",{xmlFile: xml, md5: md5}, {Authorization: @auth_header, Confirm: true})
         end
       }
     end
@@ -149,8 +149,7 @@ module GoCD
 
       xml.xpath('//server').first.add_child ldap_config
       @rest_client.post("#{@base_url}/admin/configuration/file.xml",
-                        xmlFile: xml.to_xml,
-                        md5: md5)
+                        {xmlFile: xml.to_xml,md5: md5}, {Confirm: true})
 
     end
 
