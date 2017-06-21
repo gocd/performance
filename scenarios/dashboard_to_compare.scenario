@@ -1,7 +1,7 @@
 # Scenario : Users visit Dashboard -> check the compare page
 scenario do
   name 'compare page'
-  count 100
+  count 50
   rampup 100
   loop do
     url '/pipelines'

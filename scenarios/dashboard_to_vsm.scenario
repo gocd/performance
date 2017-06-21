@@ -1,7 +1,7 @@
 # Scenario : Users visit dashboard -> check for pipeline history -> visit vsm pages
 scenario do
   name 'vsm page'
-  count 100
+  count 50
   rampup 100
   loop do
     url '/pipelines'
