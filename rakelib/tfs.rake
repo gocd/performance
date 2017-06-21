@@ -46,7 +46,7 @@ namespace :tfs do
 
       puts "Downloading and setting up Team Explorer ErveryWhere"
       Downloader.new(download_dir) { |q|
-        q.add "https://maven-mirrors.gocd.io/repository/s3-mirrors/local/TEE-CLC-14.0.3.zip"
+        q.add "https://maven-mirrors.gocd.org/repository/s3-mirrors/local/TEE-CLC-14.0.3.zip"
       }.start
       sh "unzip #{download_dir}/TEE-CLC-14.0.3.zip -d #{setup.tools_dir}"
 
