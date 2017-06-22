@@ -51,6 +51,14 @@ module Configuration
       env('THROUGHPUT_PER_MINUTE', '90').to_f
     end
 
+    def thread_count
+      env('THREAD_COUNT', '10').to_i
+    end
+
+    def users_rampup_time
+      env('USERS_RAMPUP_TIME', '100').to_i
+    end
+
     def load_test_duration
       run_config('LOAD_TEST_DURATION', '1200','86400').to_i
     end

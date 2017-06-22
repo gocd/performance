@@ -8,8 +8,8 @@ class Scenario
     @setup = Configuration::SetUp.new
     @name = ''
     @url = ''
-    @count = 1
-    @rampup = 1
+    @count = @setup.thread_count
+    @rampup = @setup.users_rampup_time
     @duration = @setup.load_test_duration
     @response_code = 200
     @loops=[]

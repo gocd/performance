@@ -1,8 +1,7 @@
 # Scenario : Users visit Dashboard -> pipeline edit page
 scenario do
   name 'pipeline edit page'
-  count 50
-  rampup 100
+
   loop do
     url '/pipelines'
     url '/admin/pipelines/%{pipeline}/general'

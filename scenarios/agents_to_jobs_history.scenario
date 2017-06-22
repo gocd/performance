@@ -1,8 +1,6 @@
 # Scenario : Users visit Agents page -> visit agents job run history
 scenario do
   name 'agents job history page'
-  count 50
-  rampup 100
   loop do
     url '/agents'
     url '/agents/%{agentid}/job_run_history'

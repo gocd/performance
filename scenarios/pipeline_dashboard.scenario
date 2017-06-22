@@ -1,8 +1,6 @@
 # Scenario : Users visit Dashboard page
 scenario do
   name 'pipeline dashboard page'
-  count 50
-  rampup 100
   loop do
     url '/pipelines'
   end
