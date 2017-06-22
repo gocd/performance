@@ -17,14 +17,14 @@ describe :scenario do
     expect(@scenario.count).to eq(10)
   end
   it 'sets default count' do
-    expect(@scenario.count).to eq(1)
+    expect(@scenario.count).to eq(10)
   end
   it 'has rampup' do
     @scenario.rampup 3
     expect(@scenario.rampup).to eq(3)
   end
   it 'sets default rampup' do
-    expect(@scenario.rampup).to eq(1)
+    expect(@scenario.rampup).to eq(100)
   end
   it 'has duration' do
     @scenario.duration 10
@@ -41,7 +41,7 @@ describe :scenario do
     expect(@scenario.response_code).to eq(200)
   end
   it 'sets the thread information' do
-    expect(@scenario.threads).to eq({ count:1, rampup:1 , duration:1200 })
+    expect(@scenario.threads).to eq({ count:10, rampup:100 , duration:1200 })
   end
 end
 
