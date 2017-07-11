@@ -2,7 +2,6 @@
 scenario do
   name 'vsm page'
   loop do
-    url '/pipelines'
     url '/tab/pipeline/history/%{pipeline}'
     url '/pipelines/value_stream_map/%{pipeline}/%{pipelinecount}'
   end

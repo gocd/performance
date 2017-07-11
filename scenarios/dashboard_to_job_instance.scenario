@@ -2,7 +2,6 @@
 scenario do
   name 'job details page'
   loop do
-    url '/pipelines'
     url '/pipelines/%{pipeline}/%{pipelinecount}/%{stage}/%{stagecount}'
     url '/tab/build/detail/%{pipeline}/%{pipelinecount}/%{stage}/%{stagecount}/%{job}'
   end

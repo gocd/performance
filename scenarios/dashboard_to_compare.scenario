@@ -2,7 +2,6 @@
 scenario do
   name 'compare page'
   loop do
-    url '/pipelines'
     url '/compare/%{pipeline}/%{comparewith}/with/%{pipelinecount}'
   end
 end

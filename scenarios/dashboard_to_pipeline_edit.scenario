@@ -3,7 +3,6 @@ scenario do
   name 'pipeline edit page'
 
   loop do
-    url '/pipelines'
     url '/admin/pipelines/%{pipeline}/general'
     url '/admin/pipelines/%{pipeline}/edit'
   end
