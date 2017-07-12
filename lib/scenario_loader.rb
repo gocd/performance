@@ -28,7 +28,7 @@ class ScenarioLoader
         with_browser :chrome
         @setup.thread_groups.each do |tg|
           threads scenario.threads do
-            constant_throughput_timer value: throughput
+            constant_throughput_timer value: throughput, calcMode: 2
             synchronizing_timer groupSize: 100 if spike == true
             Once do
               post name: 'Security Check', url: "#{base_url}/auth/security_check",
@@ -67,7 +67,7 @@ class ScenarioLoader
           with_browser :chrome
           @setup.thread_groups.each do |tg|
             threads scenario.threads do
-              constant_throughput_timer value: throughput
+              constant_throughput_timer value: throughput, calcMode: 2
               synchronizing_timer groupSize: 100 if spike == true
               Once do
                 post name: 'Security Check', url: "#{base_url}/auth/security_check",
