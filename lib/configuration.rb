@@ -87,6 +87,10 @@ module Configuration
       env('INCLUDE_PLUGINS')=='Y'
     end
 
+    def include_ecs_elastic_agents?
+      env('INCLUDE_ECS_EA_PLUGINS')=='Y'
+    end
+
     def include_addons?
       env('INCLUDE_ADDONS')=='Y'
     end
