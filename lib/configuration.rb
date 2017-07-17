@@ -203,7 +203,7 @@ module Configuration
     private
 
     def number_of_pipelines
-      env('NO_OF_PIPELINES', 700)
+      env('NO_OF_PIPELINES', 750)
     end
 
     def number_of_pipelines_on_elastic_agents
