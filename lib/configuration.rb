@@ -39,6 +39,10 @@ module Configuration
       (1..number_of_pipelines.to_i).map { |i| "gocd.perf#{i}" }
     end
 
+    def pipelines_run_on_elastic_agents
+      (1..number_of_pipelines_on_elastic_agents.to_i).map { |i| "EA.gocd.perf#{i}" }
+    end
+
     def agents
       (1..env('NO_OF_AGENTS', 75).to_i).map { |i| "agent-#{i}" }
     end
@@ -195,7 +199,11 @@ module Configuration
     private
 
     def number_of_pipelines
-      env('NO_OF_PIPELINES', 750)
+      env('NO_OF_PIPELINES', 700)
+    end
+
+    def number_of_pipelines_on_elastic_agents
+      env('NO_OF_PIPELINES_EA', 50)
     end
   end
 

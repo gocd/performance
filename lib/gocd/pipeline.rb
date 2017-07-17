@@ -185,6 +185,7 @@ module GoCD
         environment_variables: [],
         properties: nil,
         resources: [],
+        elastic_profile_id: nil,
         run_count_instance: nil,
         tabs: [],
         tasks: [],

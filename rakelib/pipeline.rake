@@ -24,7 +24,7 @@ namespace :pipeline do
           s << Job.new(name: 'defaultJob') do |j|
             j << ExecTask.new(command: 'ls')
           end
-        end        
+        end
       end
 
       begin
@@ -35,6 +35,32 @@ namespace :pipeline do
       end
     }
     p "Created pipeline(s) #{@setup.pipelines.join(', ')}"
+  end
+
+  desc "Create Pipelines with Elastic agents set up"
+  task :create_pipelines_to_run_on_elastic_agents do
+    gocd_client = Client.new(gocd_server.url)
+
+    @setup.pipelines_run_on_elastic_agents.each {|pipeline|
+      performance_pipeline = Pipeline.new(group: 'elastic-agents', name: "#{pipeline}") do |p|
+        @distributor.material_for(pipeline[3..-1]).each{|material|
+          p << material
+        }
+        p <<  Stage.new(name: 'default') do |s|
+          s << Job.new(name: 'defaultJob', elastic_profile_id: 'test-ecs') do |j|
+            j << ExecTask.new(command: 'ls')
+          end
+        end
+      end
+
+      begin
+        gocd_client.create_pipeline(performance_pipeline.to_json)
+        gocd_client.unpause_pipeline(performance_pipeline.name)
+      rescue => e
+        raise "Something went wrong while creating pipeline #{pipeline}. \n Server says:\n #{e.response}"
+      end
+    }
+    p "Created pipeline(s) #{@setup.pipelines_run_on_elastic_agents.join(', ')}"
   end
 
   desc "Clear pipelines"
