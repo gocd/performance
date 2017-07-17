@@ -45,7 +45,7 @@ namespace :server do
 
     if setup.include_ecs_elastic_agents?
       mkdir_p "#{server_dir}/go-server-#{v}/plugins/external/"
-      sh "curl -L -o #{server_dir}/go-server-#{v}/plugins/external/ecs-elastic-agents-plugin.jar --fail -H 'Accept: binary/octet-stream' --user '#{ENV['EXTENSIONS_USER']}:#{ENV['EXTENSIONS_PASSWORD']}'  '#{ENV['EA_PLUGIN_DOWNLOAD_URL']}'"
+      sh "curl -L -o #{server_dir}/go-server-#{v}/plugins/external/ecs-elastic-agents-plugin.jar --fail -H 'Accept: binary/octet-stream' --user '#{ENV['EXTENSIONS_USER']}:#{ENV['EXTENSIONS_PASSWORD']}'  #{ENV['EA_PLUGIN_DOWNLOAD_URL']}"
     end
   end
 
