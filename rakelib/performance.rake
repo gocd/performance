@@ -111,6 +111,11 @@ namespace :performance do
     loader.spike 'pipeline_dashboard', go_server.url
   end
 
+  task :dashboard_page => 'jmeter:prepare' do
+    loader = ScenarioLoader.new('./scenarios')
+    loader.run 'pipeline_dashboard', go_server.url
+  end
+
   task :admin_pages => 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
     loader.run 'admin_pages', go_server.url
