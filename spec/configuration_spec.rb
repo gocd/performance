@@ -117,10 +117,10 @@ describe "Configuration" do
       expect(@server.base_url).to eq('http://127.0.0.1:8253')
     end
     it "sets authentication in the server base url " do
-      ENV['AUTH'] = 'admin:badger'
+      ENV['AUTH'] = "perf_tester:#{ENV['LDAP_USER_PWD']}"
       ENV['GO_SERVER_PORT'] = '8253'
       ENV['GOCD_HOST'] = 'authenticated_url'
-      expect(@server.base_url).to eq('http://admin:badger@authenticated_url:8253')
+      expect(@server.base_url).to eq("http://perf_tester:#{ENV['LDAP_USER_PWD']}@authenticated_url:8253")
     end
     it 'sets the secure port' do
       ENV['GO_SERVER_SSL_PORT'] = '8254'

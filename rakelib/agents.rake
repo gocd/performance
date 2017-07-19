@@ -75,7 +75,7 @@ namespace :agents do
 
   task :monitor do
     Looper::run({interval:300, times:setup.load_test_duration.to_i/300}) {
-      response = RestClient.get("#{gocd_server.url}/api/agents", {accept: "application/vnd.go.cd.v4+json", Authorization: "Basic #{Base64.encode64(['admin', 'badger'].join(':'))}"})
+      response = RestClient.get("#{gocd_server.url}/api/agents", {accept: "application/vnd.go.cd.v4+json", Authorization: "Basic #{Base64.encode64(['perf_tester', ENV['LDAP_USER_PWD']].join(':'))}"})
       JSON.parse(response.body)['_embedded']['agents'].each{|agent|
         raise "Agents went missing" if ['Missing', 'LostContact'].include?(agent['agent_state'])
       }

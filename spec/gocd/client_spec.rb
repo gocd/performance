@@ -6,7 +6,7 @@ describe GoCD::Client do
     @rest_client = double('rest_client')
     @client = GoCD::Client.new(rest_client: @rest_client)
     @pipeline = GoCD::Pipeline.new(name: 'pipeline')
-    @auth_header = "Basic #{Base64.encode64(['admin', 'badger'].join(':'))}"
+    @auth_header = "Basic #{Base64.encode64(['perf_tester', ENV['LDAP_USER_PWD']].join(':'))}"
   end
 
   it 'gets the support page' do

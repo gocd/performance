@@ -13,7 +13,7 @@ module GoCD
       @rest_client = rest_client
       @base_url = base_url
       @nokogiri = nokogiri
-      @auth_header = "Basic #{Base64.encode64(['admin', 'badger'].join(':'))}"
+      @auth_header = "Basic #{Base64.encode64(['perf_tester', ENV['LDAP_USER_PWD']].join(':'))}"
     end
 
     def create_pipeline(data)
@@ -34,8 +34,18 @@ module GoCD
                         confirm: true, Authorization: @auth_header)
     end
 
+    def create_ecs_plugin_settings(settings)
+      @rest_client.post("#{@base_url}/api/admin/plugin_settings", settings,
+                    content_type: :json, accept: "application/vnd.go.cd.v1+json", Authorization: @auth_header)
+    end
+
+    def create_ecs_profile(profile)
+      @rest_client.post("#{@base_url}/api/elastic/profiles", profile,
+                    content_type: :json, accept: "application/vnd.go.cd.v1+json", Authorization: @auth_header)
+    end
+
     def get_pipeline_count(name)
-      history = JSON.parse(open("#{@base_url}/api/pipelines/#{name}/history/0",'Confirm' => 'true', http_basic_authentication: ["admin", "badger"]).read)
+      history = JSON.parse(open("#{@base_url}/api/pipelines/#{name}/history/0",'Confirm' => 'true', http_basic_authentication: ["perf_tester", ENV['LDAP_USER_PWD']]).read)
       begin
         history["pipelines"][0]["counter"]
       rescue => e
@@ -44,7 +54,7 @@ module GoCD
     end
 
     def get_agent_id(idx)
-      agents = JSON.parse(open("#{@base_url}/api/agents",'Accept' => 'application/vnd.go.cd.v4+json', http_basic_authentication: ["admin", "badger"]).read)
+      agents = JSON.parse(open("#{@base_url}/api/agents",'Accept' => 'application/vnd.go.cd.v4+json', http_basic_authentication: ["perf_tester", ENV['LDAP_USER_PWD']]).read)
       agents['_embedded']['agents'][idx-1]['uuid']
     end
 
@@ -94,7 +104,7 @@ module GoCD
       @rest_client.get "#{@base_url}/about"
     end
 
-    def set_auth_config
+    def set_file_based_auth_config(file)
       config, md5 = config_xml
       xml = @nokogiri::XML config
 
@@ -105,7 +115,7 @@ module GoCD
       key = Nokogiri::XML::Node.new("key",property)
       key.content = 'PasswordFilePath'
       value = Nokogiri::XML::Node.new("value",property)
-      value.content = File.expand_path("resources/password.properties")
+      value.content = file
       property.add_child key
       property.add_child value
 

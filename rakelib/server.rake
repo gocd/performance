@@ -4,6 +4,7 @@ require './lib/looper'
 require 'rest-client'
 require 'bundler'
 require 'process_builder'
+require 'bcrypt'
 
 namespace :server do
   gocd_server = Configuration::Server.new
@@ -84,7 +85,8 @@ namespace :server do
 
   task :setup_auth do
     gocd_client.set_ldap_auth_config(setup.ldap_server_ip)
-    gocd_client.set_auth_config
+    File.open("#{setup.server_install_dir}/password.properties", 'w') { |file| file.write("file_based_user:#{BCrypt::Password.create(ENV['FILE_BASED_USER_PWD'])}") }
+    gocd_client.set_file_based_auth_config("#{setup.server_install_dir}/password.properties")
   end
 
   task :stop do
