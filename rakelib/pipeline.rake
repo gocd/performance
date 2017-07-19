@@ -38,12 +38,12 @@ namespace :pipeline do
   end
 
   desc "Create Pipelines with Elastic agents set up"
-  task :create_pipelines_to_run_on_elastic_agents => :clean do
+  task :create_pipelines_to_run_on_elastic_agents do
     gocd_client = Client.new(gocd_server.url)
 
     @setup.pipelines_run_on_elastic_agents.each {|pipeline|
       performance_pipeline = Pipeline.new(group: 'elastic-agents', name: "#{pipeline}") do |p|
-        @distributor.material_for(pipeline[3..-1]).each{|material|
+        @distributor.material_for(pipeline).each{|material|
           p << material
         }
         p <<  Stage.new(name: 'default') do |s|
@@ -69,10 +69,11 @@ namespace :pipeline do
     @setup.pipelines.reverse_each { |pipeline|
       begin
         gocd_client.delete_pipeline(pipeline)
-        gocd_client.delete_pipeline("EA.#{pipeline}")
       rescue RestClient::ResourceNotFound
       end
     }
   end
+
+
 
 end
