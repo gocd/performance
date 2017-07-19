@@ -10,7 +10,7 @@ describe "Configuration" do
     end
     it "defaults to 75 pipelines when the environment variable is not set" do
       ENV['NO_OF_PIPELINES'] = nil
-      expect(@setup.pipelines.count).to eq(750)
+      expect(@setup.pipelines.count).to eq(700)
     end
     it "create an array of agents names" do
       ENV['NO_OF_AGENTS'] = '2'
