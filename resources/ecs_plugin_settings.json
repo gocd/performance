@@ -1,0 +1,65 @@
+{
+  "plugin_id": "com.thoughtworks.gocd.elastic-agent.ecs",
+  "plugin_settings_properties": [
+    {
+      "key": "GoServerUrl",
+      "value": "#GoServerURL"
+    },
+    {
+      "key": "AWSAccessKeyId",
+      "value": "#Accesskey"
+    },
+    {
+      "key": "AWSSecretAccessKey",
+      "value": "#Secret"
+    },
+    {
+      "key": "AWSRegion",
+      "value": "us-west-2"
+    },
+    {
+      "key": "ClusterName",
+      "value": "GoCDPerf"
+    },
+    {
+      "key": "ContainerAutoregisterTimeout",
+      "value": "2"
+    },
+    {
+      "key": "ami",
+      "value": "ami-57d9cd2e"
+    },
+    {
+      "key": "EC2InstanceType",
+      "value": "c3.2xlarge"
+    },
+    {
+      "key": "SshKeyPairName",
+      "value": "rajiesh-ec2-instance"
+    },
+    {
+      "key": "TerminationPolicy",
+      "value": "ClosestToNextInstanceHour"
+    },
+    {
+      "key": "EC2IAMInstanceProfile",
+      "value": "#IAMProfile"
+    },
+    {
+      "key": "SubnetIds",
+      "value": "subnet-6debca24"
+    },
+    {
+      "key": "EC2RegisterTimeout",
+      "value": "5"
+    },
+    {
+      "key": "MinEC2InstanceCount",
+      "value": "0"
+    },
+    {
+      "key": "MaxEC2InstancesAllowed",
+      "value": "2"
+    }
+  ]
+}

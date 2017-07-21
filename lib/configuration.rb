@@ -196,6 +196,24 @@ module Configuration
       env('FAILURE_TOLERANCE_RATE', '5').to_i
     end
 
+    def aws_secret
+      key = env('AWS_SECRET_KEY')
+      raise 'Please set AWS_SECRET_KEY environment variable if need to setup ECS plugin' unless key
+      key
+    end
+
+    def aws_access_key
+      key = env('AWS_ACCESS_KEY_ID')
+      raise 'Please set AWS_ACCESS_KEY_ID environment variable if need to setup ECS plugin' unless key
+      key
+    end
+
+    def aws_iam_profile
+      key = env('AWS_IAM_PROFILE')
+      raise 'Please set AWS_IAM_PROFILE environment variable if need to setup ECS plugin' unless key
+      key
+    end
+
     def ldap_server_ip
       env('LDAP_SERVER_IP', 'localhost')
     end
@@ -228,8 +246,6 @@ module Configuration
     def server_dir
       env('SERVER_DIR', '/tmp')
     end
-
-
 
     def gocd_host
       "#{server_url}/go"

@@ -1,0 +1,39 @@
+{
+    "id": "test-ecs",
+    "plugin_id": "com.thoughtworks.gocd.elastic-agent.ecs",
+    "properties": [
+        {
+            "key": "Image",
+            "value": "gocd/gocd-agent-alpine-3.5:v17.7.0"
+        },
+        {
+            "key": "Command"
+        },
+        {
+            "key": "Environment"
+        },
+        {
+            "key": "MaxMemory",
+            "value": "1024m"
+        },
+        {
+            "key": "ReservedMemory",
+            "value": "1024m"
+        },
+        {
+            "key": "AMI"
+        },
+        {
+            "key": "InstanceType"
+        },
+        {
+            "key": "SubnetIds"
+        },
+        {
+            "key": "SecurityGroupIds"
+        },
+        {
+            "key": "IAMInstanceProfile"
+        }
+    ]
+}
