@@ -1,6 +1,6 @@
 {
   "plugin_id": "com.thoughtworks.gocd.elastic-agent.ecs",
-  "plugin_settings_properties": [
+  "configuration": [
     {
       "key": "GoServerUrl",
       "value": "#GoServerURL"

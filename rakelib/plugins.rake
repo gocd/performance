@@ -13,13 +13,13 @@ namespace :plugins do
 
   task :setup_ecs_ea do
     settings = JSON.parse(File.read("resources/ecs_plugin_settings.json"))
-    properties = settings['plugin_settings_properties'].each{|key_value|
+    properties = settings['configuration'].each{|key_value|
       key_value['value'] = "#{gocd_server.secure_url}/go" if key_value['key'] == "GoServerUrl"
       key_value['value'] = setup.aws_secret if key_value['key'] == "AWSSecretAccessKey"
       key_value['value'] = setup.aws_access_key if key_value['key'] == "AWSAccessKeyId"
       key_value['value'] = setup.aws_iam_profile if key_value['key'] == "EC2IAMInstanceProfile"
     }
-    settings.each_with_object({}) { |(key, value), hash| hash[key] = properties if key == 'plugin_settings_properties'}
+    settings.each_with_object({}) { |(key, value), hash| hash[key] = properties if key == 'configuration'}
     gocd_client.create_ecs_plugin_settings(settings.to_json)
   end
 
