@@ -59,3 +59,11 @@ scenario do
     url '/cctray.xml'
   end
 end
+scenario do
+  count 20
+  rampup 100
+  name 'ecs plugin status report'
+  loop do
+    url 'admin/status_reports/com.thoughtworks.gocd.elastic-agent.ecs'
+  end
+end
