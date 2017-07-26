@@ -68,7 +68,11 @@ module GoCD
     end
 
     def job_timeout(timeout)
-      server_attribute('jobTimeout', timeout)
+      begin
+        server_attribute('jobTimeout', timeout)
+      rescue => e
+        p "Config Update loop failed with exception #{e.message}"
+      end
     end
 
     def config_xml

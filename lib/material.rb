@@ -7,7 +7,7 @@ module Material
   class Config
     def initialize
       @setup = SetUp.new
-      @total_materials = @setup.pipelines.length
+      @total_materials = @setup.pipelines.length + @setup.pipelines_run_on_elastic_agents.length
       @materials_ratio = @setup.materials_ratio
     end
   end
