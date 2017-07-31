@@ -59,7 +59,7 @@
     },
     {
       "key": "MaxEC2InstancesAllowed",
-      "value": "2"
+      "value": "1"
     }
   ]
 }

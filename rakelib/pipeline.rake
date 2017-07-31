@@ -47,7 +47,10 @@ namespace :pipeline do
           p << material
         }
         p <<  Stage.new(name: 'default') do |s|
-          s << Job.new(name: 'defaultJob', elastic_profile_id: 'test-ecs') do |j|
+          s << Job.new(name: 'defaultJob1', elastic_profile_id: 'test-ecs') do |j|
+            j << ExecTask.new(command: 'ls')
+          end
+          s << Job.new(name: 'defaultJob2', elastic_profile_id: 'test-ecs') do |j|
             j << ExecTask.new(command: 'ls')
           end
         end
