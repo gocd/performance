@@ -36,7 +36,7 @@ namespace :server do
       mkdir_p "#{server_dir}/go-server-#{v}/config/"
       sh "curl -L -o #{server_dir}/go-server-#{v}/addons/postgres-addon.jar --fail -H 'Accept: binary/octet-stream' --user '#{ENV['EXTENSIONS_USER']}:#{ENV['EXTENSIONS_PASSWORD']}'  #{ENV['PG_ADDON_DOWNLOAD_URL']}"
       open("#{server_dir}/go-server-#{v}/config/postgresqldb.properties", 'w') do |f|
-        f.puts("db.host=#{pg_db_host}")
+        f.puts("db.host=#{setup.pg_db_host}")
         f.puts('db.port=5432')
         f.puts('db.name=cruise')
         f.puts('db.user=go')
