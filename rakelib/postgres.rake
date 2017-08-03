@@ -12,7 +12,7 @@ namespace :postgres do
 
   task :stop do
     verbose false do
-      sh %{ service postgresql-9.2 stop } do |ok, res|
+      sh %{ service postgresql-9.4 stop } do |ok, res|
         puts 'Stopped PostgreSQL server' if ok
       end
     end

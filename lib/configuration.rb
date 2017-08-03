@@ -218,6 +218,10 @@ module Configuration
       env('LDAP_SERVER_IP', 'localhost')
     end
 
+    def pg_db_host
+      env('PG_DB_HOST', 'localhost')
+    end
+
     private
 
     def number_of_pipelines
