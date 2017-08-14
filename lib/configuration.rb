@@ -222,6 +222,10 @@ module Configuration
       env('PG_DB_HOST', 'localhost')
     end
 
+    def influxdb_host
+      env('INFLUXDB_HOST', 'localhost')
+    end
+
     private
 
     def number_of_pipelines

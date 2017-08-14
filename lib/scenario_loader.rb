@@ -7,6 +7,79 @@ require 'fileutils'
 require 'pry'
 include FileUtils
 
+module RubyJmeter
+
+  class DSL
+      def backend_listener(params={}, &block)
+        node = RubyJmeter::ThreadGroup.new(params)
+        attach_node(node, &block)
+      end
+  end
+
+  class BackendListener
+    attr_accessor :doc
+    include Helper
+
+    def initialize(params={})
+      @doc = Nokogiri::XML(<<-EOS.strip_heredoc)
+      <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener" enabled="true">
+        <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" enabled="true">
+          <collectionProp name="Arguments.arguments">
+            <elementProp name="graphiteMetricsSender" elementType="Argument">
+              <stringProp name="Argument.name">graphiteMetricsSender</stringProp>
+              <stringProp name="Argument.value">org.apache.jmeter.visualizers.backend.graphite.TextGraphiteMetricsSender</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="graphiteHost" elementType="Argument">
+              <stringProp name="Argument.name">graphiteHost</stringProp>
+              <stringProp name="Argument.value">#{params[:db_host]}</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="graphitePort" elementType="Argument">
+              <stringProp name="Argument.name">graphitePort</stringProp>
+              <stringProp name="Argument.value">2003</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="rootMetricsPrefix" elementType="Argument">
+              <stringProp name="Argument.name">rootMetricsPrefix</stringProp>
+              <stringProp name="Argument.value">#{params[:prefix]}</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="summaryOnly" elementType="Argument">
+              <stringProp name="Argument.name">summaryOnly</stringProp>
+              <stringProp name="Argument.value">true</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="samplersList" elementType="Argument">
+              <stringProp name="Argument.name">samplersList</stringProp>
+              <stringProp name="Argument.value">.*</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="percentiles" elementType="Argument">
+              <stringProp name="Argument.name">percentiles</stringProp>
+              <stringProp name="Argument.value">90;95;99</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+          </collectionProp>
+        </elementProp>
+        <stringProp name="classname">org.apache.jmeter.visualizers.backend.graphite.GraphiteBackendListenerClient</stringProp>
+      </BackendListener>)
+      EOS
+      update params
+      update_at_xpath params if params.is_a?(Hash) && params[:update_at_xpath]
+    end
+  end
+
+  class ExtendedDSL < DSL
+    def backend_listener(*args, &block)
+      params = args.shift || {}
+      node = RubyJmeter::BackendListener.new(params)
+      attach_node(node, &block)
+    end
+
+  end
+end
+
 class ScenarioLoader
   attr_reader :path
 
@@ -45,6 +118,7 @@ class ScenarioLoader
             end
           end
         end
+        backend_listener prefix: "#{name}.", db_host: @setup.influxdb_host
       end
     end.run(path: @setup.jmeter_bin,
             file: "#{reports_dir}/jmeter.jmx",
