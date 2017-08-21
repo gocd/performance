@@ -8,14 +8,7 @@ require 'pry'
 include FileUtils
 
 module RubyJmeter
-
-  class DSL
-      def backend_listener(params={}, &block)
-        node = RubyJmeter::ThreadGroup.new(params)
-        attach_node(node, &block)
-      end
-  end
-
+  
   class BackendListener
     attr_accessor :doc
     include Helper
@@ -52,7 +45,7 @@ module RubyJmeter
             </elementProp>
             <elementProp name="samplersList" elementType="Argument">
               <stringProp name="Argument.name">samplersList</stringProp>
-              <stringProp name="Argument.value">.*</stringProp>
+              <stringProp name="Argument.value">#{params[:samplers_list]}</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
             <elementProp name="percentiles" elementType="Argument">
@@ -118,7 +111,7 @@ class ScenarioLoader
             end
           end
         end
-        backend_listener prefix: "#{name}.", db_host: @setup.influxdb_host
+        backend_listener prefix: "#{name}.", samplers_list: "#{scenario.name}", db_host: @setup.influxdb_host
       end
     end.run(path: @setup.jmeter_bin,
             file: "#{reports_dir}/jmeter.jmx",

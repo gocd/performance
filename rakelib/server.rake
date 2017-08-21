@@ -63,8 +63,8 @@ namespace :server do
           puts "#{key}=#{value}"
         }
         p.directory = server_dir
-        p.redirection[:err] = 'go-server.startup.out.log'
-        p.redirection[:out] = 'go-server.startup.out.log'
+        p.redirection[:err] = "#{server_dir}/logs/go-server.startup.out.log"
+        p.redirection[:out] = "#{server_dir}/logs/go-server.startup.out.log"
       }.spawn
     end
 
