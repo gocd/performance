@@ -54,6 +54,7 @@ namespace :server do
     v, b = setup.go_version
 
     server_dir = "#{setup.server_install_dir}/go-server-#{v}"
+    mkdir_p "#{server_dir}/logs/"
 
     Bundler.with_clean_env do
       ProcessBuilder.build('sh', 'server.sh') {|p|
