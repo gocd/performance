@@ -1,0 +1,7 @@
+# Scenario : Users visit pipeline history
+scenario do
+  name 'pipeline history page'
+  loop do
+    url '/tab/pipeline/history/%{pipeline}'
+  end
+end

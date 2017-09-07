@@ -121,6 +121,21 @@ namespace :performance do
     loader.run 'admin_pages', go_server.url
   end
 
+  task :environments_page => 'jmeter:prepare' do
+    loader = ScenarioLoader.new('./scenarios')
+    loader.run 'environments_page', go_server.url
+  end
+
+  task :pipeline_history => 'jmeter:prepare' do
+    loader = ScenarioLoader.new('./scenarios')
+    loader.run 'pipeline_history', go_server.url
+  end
+
+  task :plugin_status_report => 'jmeter:prepare' do
+    loader = ScenarioLoader.new('./scenarios')
+    loader.run 'plugin_status_report', go_server.url
+  end
+
   task :load_all => 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
     loader.run_all go_server.url
@@ -130,6 +145,7 @@ namespace :performance do
     loader = ScenarioLoader.new('./scenarios')
     loader.monitor 'perf_mon', go_server.host, go_server.url
   end
+
 
   task :support_api do
     if(setup.load_test_duration.to_i > setup.support_api_interval.to_i)

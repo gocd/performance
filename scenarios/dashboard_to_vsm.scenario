@@ -1,8 +1,7 @@
-# Scenario : Users visit dashboard -> check for pipeline history -> visit vsm pages
+# Scenario : Users visit vsm pages
 scenario do
   name 'vsm page'
   loop do
-    url '/tab/pipeline/history/%{pipeline}'
     url '/pipelines/value_stream_map/%{pipeline}/%{pipelinecount}'
   end
 end

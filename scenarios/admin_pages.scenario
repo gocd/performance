@@ -4,15 +4,6 @@ scenario do
   count 20
   rampup 100
   duration 600
-  name 'environments'
-  loop do
-    url '/environments'
-  end
-end
-scenario do
-  count 20
-  rampup 100
-  duration 600
   name 'pipelines'
   loop do
     url '/admin/pipelines'
@@ -57,13 +48,5 @@ scenario do
   name 'cctray'
   loop do
     url '/cctray.xml'
-  end
-end
-scenario do
-  count 20
-  rampup 100
-  name 'ecs plugin status report'
-  loop do
-    url 'admin/status_reports/com.thoughtworks.gocd.elastic-agent.ecs'
   end
 end
