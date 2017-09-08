@@ -32,7 +32,6 @@ class AnalyzeResult
     xml_doc.each do |failure_attribute|
       total_failures = total_failures+1 if failure_attribute.text == 'true'
     end
-    binding.pry
     (total_failures.to_f/xml_doc.count.to_f)*100 <= @setup.failure_tolrance_rate.to_f
   end
 end
