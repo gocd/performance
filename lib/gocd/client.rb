@@ -54,8 +54,9 @@ module GoCD
     end
 
     def get_agent_id(idx)
-      agents = JSON.parse(open("#{@base_url}/api/agents",'Accept' => 'application/vnd.go.cd.v4+json', http_basic_authentication: ["perf_tester", ENV['LDAP_USER_PWD']]).read)
-      agents['_embedded']['agents'][idx-1]['uuid']
+      response = JSON.parse(open("#{@base_url}/api/agents",'Accept' => 'application/vnd.go.cd.v4+json', http_basic_authentication: ["perf_tester", ENV['LDAP_USER_PWD']]).read)
+      all_agents = response['_embedded']['agents']
+      all_agents.map{|a| a['uuid'] if !a.key?('elastic_agent_id')}.compact[idx-1] #pick only the physical agents, elastic agents are not long living
     end
 
     def get_agents_count()
