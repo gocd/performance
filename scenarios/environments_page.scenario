@@ -1,9 +1,6 @@
 # Scenario : Users visit environments pages
 
 scenario do
-  count 20
-  rampup 100
-  duration 600
   name 'environments'
   loop do
     url '/environments'

@@ -3,7 +3,6 @@
 scenario do
   count 20
   rampup 100
-  duration 600
   name 'pipelines'
   loop do
     url '/admin/pipelines'
@@ -12,7 +11,6 @@ end
 scenario do
   count 20
   rampup 100
-  duration 600
   name 'templates'
   loop do
     url '/admin/templates'
