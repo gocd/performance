@@ -24,11 +24,11 @@ describe "Configuration" do
       expect(@setup.git_repository_host).to eq('git://localhost')
     end
     it 'return the go full and short version' do
-      ENV['GO_VERSION'] = "16.7.0-3883"
+      ENV['GO_FULL_VERSION'] = "16.7.0-3883"
       expect(@setup.go_version).to eq(['16.7.0', '3883'])
     end
     it 'raises error if the GO_VERSION is not in the right format' do
-      ENV['GO_VERSION'] = '16.0'
+      ENV['GO_FULL_VERSION'] = '16.0'
       expect { @setup.go_version }.to raise_error ('Wrong GO_VERSION format use 16.X.X-xxxx')
     end
     it 'gets the config save interval and number of config saves' do

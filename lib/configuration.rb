@@ -128,7 +128,7 @@ module Configuration
     end
 
     def go_version
-      raw_version = env('GO_VERSION') do
+      raw_version = env('GO_FULL_VERSION') do
           json = JSON.parse(open(RELEASES_JSON_URL).read)
           json.select {|x| x['go_version'] == ENV['GO_VERSION']}.sort {|a, b| a['go_build_number'] <=> b['go_build_number']}.last['go_full_version']
       end
