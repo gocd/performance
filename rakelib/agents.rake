@@ -28,10 +28,11 @@ namespace :agents do
     }.start
 
     Parallel.each(setup.agents, :in_processes => 5) {|name|
-      mkdir_p "#{agents_dir}/#{name}/"
+      mkdir_p "#{agents_dir}/#{name}/libs"
       %w{agent.jar tfs-impl.jar agent-plugins.zip}.each{|file|
         cp_r "#{agents_dir}/#{file}" , "#{agents_dir}/#{name}/"
       }
+      cp "scripts/logback-gelf-1.0.4,jar", "#{agents_dir}/#{name}/libs/"
     }
 
   end
@@ -43,13 +44,19 @@ namespace :agents do
       agent_dir = "#{setup.agents_install_dir}/#{name}"
       mkdir_p "#{agent_dir}/config/"
       cp_r "scripts/autoregister.properties" ,  "#{agent_dir}/config/autoregister.properties"
-      log4j_file = "#{agent_dir}/config/agent-log4j.properties"
-      cp_r "scripts/agent-log4j.properties" ,  log4j_file
+      logback_file = "#{agent_dir}/config/agent-logback.xml"
+      cp_r "scripts/agent-logback.xml" ,  logback_file
       if agent_config.should_enable_debug_logging
-        text = File.read(log4j_file)
-        updated_contents = text.gsub(/log4j.logger.com.thoughtworks.go=.*/, "log4j.logger.com.thoughtworks.go=DEBUG")
-        .gsub(/log4j.appender.FILE.MaxBackupIndex=.*/, "log4j.appender.FILE.MaxBackupIndex=30")
-        File.open(log4j_file, "w") {|file| file.puts updated_contents }
+
+        xml = @nokogiri::XML File.read(logback_file)
+        agent_config.loggers.split(",").each{|LOGGER_NAME|
+          new_logger = "<logger name='#{LOGGER_NAME}' level='DEBUG'>
+                          <appender-ref ref='GrayLogAppender'/>
+                        </logger>"
+          xml.xpath('//configuration').first.add_child new_logger
+        }
+        xml.xpath('//configuration/appender/layout/originhost').first.content = name
+        File.open(logback_file, "w") {|file| file.puts xml }
       end
       cd agent_dir do
         sh %{java #{agent_config.startup_args} -jar agent.jar -serverUrl https://#{gocd_server.host}:#{gocd_server.secure_port}/go > #{name}.log 2>&1 & }, verbose:false

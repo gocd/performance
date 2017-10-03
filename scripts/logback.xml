@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ Copyright 2017 ThoughtWorks, Inc.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<configuration
+        xmlns="http://ch.qos.logback/xml/ns/logback"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://ch.qos.logback/xml/ns/logback http://ch.qos.logback/xml/ns/logback/logback.xsd"
+        debug="${gocd.server.logback.debug:-false}"
+        scan="${gocd.server.logback.scan:-true}"
+        scanPeriod="${gocd.server.logback.scanPeriod:-5 seconds}"
+>
+
+    <appender name="GrayLogAppender" class="de.siegmar.logbackgelf.GelfUdpAppender">
+      <graylogHost>graylogserver.gocd.org</graylogHost>
+      <graylogPort>12201</graylogPort>
+      <maxChunkSize>508</maxChunkSize>
+      <useCompression>true</useCompression>
+      <layout class="de.siegmar.logbackgelf.GelfLayout">
+          <originHost>go-perf-server</originHost>
+          <includeRawMessage>false</includeRawMessage>
+          <includeMarker>true</includeMarker>
+          <includeMdcData>true</includeMdcData>
+          <includeCallerData>false</includeCallerData>
+          <includeRootCauseData>false</includeRootCauseData>
+          <includeLevelName>false</includeLevelName>
+          <shortPatternLayout class="ch.qos.logback.classic.PatternLayout">
+              <pattern>%m%nopex</pattern>
+          </shortPatternLayout>
+          <fullPatternLayout class="ch.qos.logback.classic.PatternLayout">
+              <pattern>%m</pattern>
+          </fullPatternLayout>
+          <staticField>app_name:go-server</staticField>
+          <staticField>os_arch:${os.arch}</staticField>
+          <staticField>os_name:${os.name}</staticField>
+          <staticField>os_version:${os.version}</staticField>
+      </layout>
+    </appender>
+    </appender>
+
+    <root level="${gocd.server.logback.root.level:-WARN}">
+        <appender-ref ref="GrayLogAppender"/>
+    </root>
+
+</configuration>

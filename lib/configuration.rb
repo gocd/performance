@@ -268,6 +268,10 @@ module Configuration
     def should_enable_debug_logging
       env('ENABLE_AGENT_DEBUG_LOGS', 'N') == 'Y'
     end
+
+    def loggers
+      env('GO_AGENT_LOGGERS', '')
+    end
   end
 
   # Go server configuration
