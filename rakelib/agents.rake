@@ -49,8 +49,8 @@ namespace :agents do
       if agent_config.should_enable_debug_logging
 
         xml = @nokogiri::XML File.read(logback_file)
-        agent_config.loggers.split(",").each{|LOGGER_NAME|
-          new_logger = "<logger name='#{LOGGER_NAME}' level='DEBUG'>
+        agent_config.loggers.split(",").each{|logger_name|
+          new_logger = "<logger name='#{logger_name}' level='DEBUG'>
                           <appender-ref ref='GrayLogAppender'/>
                         </logger>"
           xml.xpath('//configuration').first.add_child new_logger
