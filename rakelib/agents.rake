@@ -32,7 +32,7 @@ namespace :agents do
       %w{agent.jar tfs-impl.jar agent-plugins.zip}.each{|file|
         cp_r "#{agents_dir}/#{file}" , "#{agents_dir}/#{name}/"
       }
-      cp "scripts/logback-gelf-1.0.4,jar", "#{agents_dir}/#{name}/libs/"
+      cp "scripts/logback-gelf-1.0.4.jar", "#{agents_dir}/#{name}/libs/"
     }
 
   end
