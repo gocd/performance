@@ -55,7 +55,7 @@ namespace :agents do
                         </logger>"
           xml.xpath('//configuration').first.add_child new_logger
         }
-        xml.xpath('//configuration/appender/layout/originhost').first.content = name
+        xml.xpath('//configuration/appender/layout/originHost').first.content = name
         File.open(logback_file, "w") {|file| file.puts xml }
       end
       cd agent_dir do

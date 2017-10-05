@@ -50,7 +50,6 @@
           <staticField>os_version:${os.version}</staticField>
       </layout>
     </appender>
-    </appender>
 
     <root level="${gocd.server.logback.root.level:-WARN}">
         <appender-ref ref="GrayLogAppender"/>
