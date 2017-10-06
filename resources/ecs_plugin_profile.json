@@ -34,6 +34,10 @@
         },
         {
             "key": "IAMInstanceProfile"
+        },
+        {
+            "key": "CPU",
+            "value": "1024"
         }
     ]
 }
