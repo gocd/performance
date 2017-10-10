@@ -22,7 +22,15 @@ namespace :jmeter do
         puts "Downloading and setting up JMeter plugins"
         Downloader.new(download_dir) { |q|
           q.add "http://jmeter-plugins.org/downloads/file/JMeterPlugins-Standard-1.4.0.zip"
+        }.start {|plugin_file|
+          plugin_file.extract_to(setup.jmeter_dir)
+        }
+        Downloader.new(download_dir) { |q|
           q.add "http://jmeter-plugins.org/downloads/file/JMeterPlugins-Extras-1.4.0.zip"
+        }.start {|plugin_file|
+          plugin_file.extract_to(setup.jmeter_dir)
+        }
+        Downloader.new(download_dir) { |q|
           q.add "http://jmeter-plugins.org/downloads/file/JMeterPlugins-ExtrasLibs-1.4.0.zip"
         }.start {|plugin_file|
           plugin_file.extract_to(setup.jmeter_dir)
