@@ -18,16 +18,17 @@ namespace :jmeter do
         q.add "https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-3.0.zip"
       }.start {|file|
         file.extract_to(setup.tools_dir)
-
-        puts "Downloading and setting up JMeter plugins"
-        Downloader.new(download_dir) { |q|
-          q.add "https://jmeter-plugins.org/downloads/file/JMeterPlugins-Standard-1.4.0.zip"
-          q.add "https://jmeter-plugins.org/downloads/file/JMeterPlugins-Extras-1.4.0.zip"
-          q.add "https://jmeter-plugins.org/downloads/file/JMeterPlugins-ExtrasLibs-1.4.0.zip"
-        }.start {|plugin_file|
-          plugin_file.extract_to(setup.jmeter_dir)
-        }
       }
+
+      puts "Downloading and setting up JMeter plugins"
+      Downloader.new(download_dir) { |q|
+        q.add "http://fmtsd01.thoughtworks.com/studios/JMeterPlugins-Standard-1.4.0.zip"
+        q.add "http://fmtsd01.thoughtworks.com/studios/JMeterPlugins-Extras-1.4.0.zip"
+        q.add "http://fmtsd01.thoughtworks.com/studios/JMeterPlugins-ExtrasLibs-1.4.0.zip"
+      }.start {|plugin_file|
+        plugin_file.extract_to(setup.jmeter_dir)
+      }
+
     elsif
       puts "Using existing Jmeter installation at #{setup.jmeter_dir}"
     end
