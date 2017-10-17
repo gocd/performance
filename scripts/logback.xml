@@ -55,4 +55,9 @@
         <appender-ref ref="GrayLogAppender"/>
     </root>
 
+    <logger name="com.thoughtworks.go" level="INFO">
+      <appender-ref ref="GrayLogAppender"/>
+    </logger>
+
+
 </configuration>
