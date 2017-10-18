@@ -16,16 +16,14 @@
   ~ limitations under the License.
   -->
 
-  <configuration
-          xmlns="http://ch.qos.logback/xml/ns/logback"
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://ch.qos.logback/xml/ns/logback http://ch.qos.logback/xml/ns/logback/logback.xsd"
-          debug="${gocd.agent.logback.debug:-false}"
-          scan="${gocd.agent.logback.scan:-true}"
-          scanPeriod="${gocd.agent.logback.scanPeriod:-5 seconds}"
-  >
-
-      <appender name="GrayLogAppender" class="de.siegmar.logbackgelf.GelfUdpAppender">
+<configuration
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://ch.qos.logback/xml/ns/logback http://ch.qos.logback/xml/ns/logback/logback.xsd"
+    debug="${gocd.agent.logback.debug:-false}"
+    scan="${gocd.agent.logback.scan:-true}"
+    scanPeriod="${gocd.agent.logback.scanPeriod:-5 seconds}"
+>
+    <appender name="GrayLogAppender" class="de.siegmar.logbackgelf.GelfUdpAppender">
         <graylogHost>graylogserver.gocd.org</graylogHost>
         <graylogPort>12201</graylogPort>
         <maxChunkSize>508</maxChunkSize>
@@ -49,11 +47,8 @@
             <staticField>os_name:${os.name}</staticField>
             <staticField>os_version:${os.version}</staticField>
         </layout>
-      </appender>
-
-      <root level="${gocd.agent.logback.root.level:-INFO}">
-          <appender-ref ref="GrayLogAppender"/>
-      </root>
-
-
-  </configuration>
+    </appender>
+    <root level="${gocd.agent.logback.root.level:-INFO}">
+        <appender-ref ref="GrayLogAppender"/>
+    </root>
+</configuration>
