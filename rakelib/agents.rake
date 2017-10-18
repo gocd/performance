@@ -5,6 +5,7 @@ require './lib/downloader'
 require './lib/configuration'
 require './lib/looper'
 require 'parallel'
+require 'nokogiri'
 
 namespace :agents do
   setup = Configuration::SetUp.new
@@ -48,7 +49,7 @@ namespace :agents do
       cp_r "scripts/agent-logback.xml" ,  logback_file
       if agent_config.should_enable_debug_logging
 
-        xml = @nokogiri::XML File.read(logback_file)
+        xml = Nokogiri::XML File.read(logback_file)
         agent_config.loggers.split(",").each{|logger_name|
           new_logger = "<logger name='#{logger_name}' level='DEBUG'>
                           <appender-ref ref='GrayLogAppender'/>
