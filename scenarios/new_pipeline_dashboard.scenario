@@ -1,0 +1,8 @@
+# Scenario : Users visit New Dashboard page
+scenario do
+  name 'new dashboard page'
+  loop do
+    url '/dashboard'
+    url '/api/dashboard'
+  end
+end

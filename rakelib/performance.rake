@@ -116,6 +116,11 @@ namespace :performance do
     loader.run 'pipeline_dashboard', go_server.url
   end
 
+  task :new_dashboard_page => 'jmeter:prepare' do
+    loader = ScenarioLoader.new('./scenarios')
+    loader.run 'new_pipeline_dashboard', go_server.url
+  end
+
   task :admin_pages => 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
     loader.run 'admin_pages', go_server.url
@@ -145,7 +150,6 @@ namespace :performance do
     loader = ScenarioLoader.new('./scenarios')
     loader.monitor 'perf_mon', go_server.host, go_server.url
   end
-
 
   task :support_api do
     if(setup.load_test_duration.to_i > setup.support_api_interval.to_i)

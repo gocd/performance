@@ -103,6 +103,7 @@ class ScenarioLoader
             scenario.loops.each do |jloop|
               loops jloop.loopcount do
                 jloop.url_list.each do |url_value|
+                  header({name: 'Accept', value: 'application/vnd.go.cd.v2+json'}) if url_value == "/api/dashboard"
                   visit name: scenario.name, url: "#{base_url}#{jloop.actual_url(url_value)}" do
                     assert equals: scenario.response_code, test_field: 'Assertion.response_code'
                   end
