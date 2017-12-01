@@ -1,0 +1,8 @@
+# Scenario : Periodic access of server health messages
+
+scenario do
+  name 'server messages'
+  loop do
+    url '/server/messages.json'
+  end
+end

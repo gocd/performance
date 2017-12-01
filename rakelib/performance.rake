@@ -141,6 +141,26 @@ namespace :performance do
     loader.run 'plugin_status_report', go_server.url
   end
 
+  task :admin_pipelines => 'jmeter:prepare' do
+    loader = ScenarioLoader.new('./scenarios')
+    loader.run 'admin_pipelines', go_server.url
+  end
+
+  task :CCTray => 'jmeter:prepare' do
+    loader = ScenarioLoader.new('./scenarios')
+    loader.run 'CCTray', go_server.url
+  end
+
+  task :server_health_messages => 'jmeter:prepare' do
+    loader = ScenarioLoader.new('./scenarios')
+    loader.run 'server_health_messages', go_server.url
+  end
+
+  task :user_summary => 'jmeter:prepare' do
+    loader = ScenarioLoader.new('./scenarios')
+    loader.run 'user_summary', go_server.url
+  end
+
   task :load_all => 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
     loader.run_all go_server.url

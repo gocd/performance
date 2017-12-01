@@ -1,0 +1,8 @@
+# Scenario : Users access CCTray
+
+scenario do
+  name 'cctray'
+  loop do
+    url '/cctray.xml'
+  end
+end

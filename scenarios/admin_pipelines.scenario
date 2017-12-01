@@ -1,0 +1,8 @@
+# Scenario : Users visit admin pipelines page
+
+scenario do
+  name 'pipelines'
+  loop do
+    url '/admin/pipelines'
+  end
+end

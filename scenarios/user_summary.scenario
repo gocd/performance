@@ -1,0 +1,8 @@
+# Scenario : Users visit User summary page
+
+scenario do
+  name 'users'
+  loop do
+    url '/admin/users'
+  end
+end
