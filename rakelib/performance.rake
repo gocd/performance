@@ -171,6 +171,25 @@ namespace :performance do
     loader.monitor 'perf_mon', go_server.host, go_server.url
   end
 
+  task :analyze_thread_dump_gc do
+    threaddump_analyzer = Analyzers::ThreadDumpAnalyzer.new
+    gc_analyzer = Analyzers::GCAnalyzer.new
+    rm_rf "thread_dumps"
+    mkdir_p "thread_dumps"
+
+    Looper::run({interval:setup.thread_dump_interval.to_i, times:setup.load_test_duration.to_i/setup.thread_dump_interval.to_i}) {
+      prefix = "threaddump_#{Time.now.strftime("%d_%b_%Y_%H_%M_%S").to_s}"
+      cd "thread_dumps" do
+        threaddump_analyzer.analyze(prefix)
+      end
+    }
+    server_dir = "#{setup.server_install_dir}/go-server-#{setup.go_version[0]}"
+    cd "thread_dumps" do
+     gc_analyzer.analyze("#{server_dir}/gc.log")
+    end
+  end
+
+
   task :support_api do
     if(setup.load_test_duration.to_i > setup.support_api_interval.to_i)
       mkdir_p 'support_response'

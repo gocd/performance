@@ -226,6 +226,16 @@ module Configuration
       env('INFLUXDB_HOST', 'localhost')
     end
 
+    def thread_dump_interval
+      env('THREAD_DUMP_INTERVAL', '60')
+    end
+
+    def fastthread_apikey
+      key = env('FASTTHREAD_APIKEY')
+      raise 'Please set FASTTHREAD_APIKEY to perform thread and GC analysis' unless key
+      key
+    end
+
     private
 
     def number_of_pipelines

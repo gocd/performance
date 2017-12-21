@@ -1,7 +1,7 @@
 require './lib/scenario'
 require 'ruby-jmeter'
 require './lib/configuration'
-require './lib/analyze_result'
+require './lib/analyzer'
 require 'nokogiri'
 require 'fileutils'
 require 'pry'
@@ -260,7 +260,7 @@ class ScenarioLoader
   end
 
   def assert_test(reports_dir)
-      raise "HTTP Response assertion failed more than the tolerable level, Please check the reports" unless AnalyzeResult.new("#{reports_dir}/jmeter.jtl").tolerable?()
+      raise "HTTP Response assertion failed more than the tolerable level, Please check the reports" unless Analyzers::ResultAnalyzer.new("#{reports_dir}/jmeter.jtl").tolerable?()
   end
 
   def consolidate_reports(reports_dir)

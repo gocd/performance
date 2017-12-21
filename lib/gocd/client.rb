@@ -101,6 +101,14 @@ module GoCD
       }
     end
 
+    def analyze_thread_dump(file, apikey)
+      @rest_client.post "http://api.fastthread.io/fastthread-api?apiKey=#{apikey}", file, {content_type: :text}
+    end
+
+    def analyze_gc(file, apikey)
+      @rest_client.post "http://api.gceasy.io/analyzeGC?apiKey=#{apikey}", file, {content_type: :text}
+    end
+
     def support_page
       @rest_client.get "#{@base_url}/api/support", {Authorization: @auth_header}
     end
