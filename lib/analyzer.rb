@@ -18,8 +18,11 @@
 require 'nokogiri'
 require './lib/configuration'
 require './lib/gocd'
+require './lib/reporter'
 require 'json'
 require 'pry'
+require 'singleton'
+require 'markaby'
 
 
 module Analyzers
@@ -48,6 +51,7 @@ module Analyzers
         @server = server
         @setup = setup
         @client = client
+        @Reporter = Reporter::ThreadDumpReporter.instance
     end
 
     def analyze(prefix)
@@ -59,6 +63,11 @@ module Analyzers
       File.open("#{prefix}_report.json","w"){|f|
         f.write(JSON.pretty_generate(JSON.parse(response.body)))
       }
+      @Reporter.report_from("#{prefix}_report.json")
+    end
+
+    def generate_report()
+      @Reporter.write_to_html()
     end
 
   end
@@ -71,6 +80,7 @@ module Analyzers
         @server = server
         @setup = setup
         @client = client
+        @Reporter = Reporter::GCAnalysisReporter.instance
     end
 
     def analyze(file)
@@ -78,7 +88,9 @@ module Analyzers
       File.open("gc_analysis_result.json","w"){|f|
         f.write(JSON.pretty_generate(JSON.parse(response.body)))
       }
+      @Reporter.generate_report()
     end
 
   end
+
 end
