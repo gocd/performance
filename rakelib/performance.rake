@@ -183,12 +183,12 @@ namespace :performance do
         threaddump_analyzer.analyze(prefix)
       end
     }
+    threaddump_analyzer.generate_report()
     server_dir = "#{setup.server_install_dir}/go-server-#{setup.go_version[0]}"
     cd "thread_dumps" do
      gc_analyzer.analyze("#{server_dir}/gc.log")
     end
   end
-
 
   task :support_api do
     if(setup.load_test_duration.to_i > setup.support_api_interval.to_i)

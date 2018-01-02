@@ -34,3 +34,4 @@ go-server
 gitrepos
 Gemfile.lock
 reports
+thread_dumps
