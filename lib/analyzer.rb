@@ -29,8 +29,9 @@ module Analyzers
 
   class ResultAnalyzer
 
-    def initialize(file)
+    def initialize(file,setup = Configuration::SetUp.new)
       @report_file = file
+      @setup = setup
     end
 
     def tolerable?()
@@ -39,7 +40,7 @@ module Analyzers
       xml_doc.each do |failure_attribute|
         total_failures = total_failures+1 if failure_attribute.text == 'true'
       end
-      (total_failures.to_f/xml_doc.count.to_f)*100 <= setup.failure_tolrance_rate.to_f
+      (total_failures.to_f/xml_doc.count.to_f)*100 <= @setup.failure_tolrance_rate.to_f
     end
   end
 
