@@ -187,11 +187,11 @@ namespace :performance do
         end
       end
     }
+    threaddump_analyzer.generate_report()
   end
 
   task :analyze_gc do
     gc_analyzer = Analyzers::GCAnalyzer.new
-    threaddump_analyzer.generate_report()
     server_dir = "#{setup.server_install_dir}/go-server-#{setup.go_version[0]}"
     cd "thread_dumps" do
      gc_analyzer.analyze("#{server_dir}/gc.log")
