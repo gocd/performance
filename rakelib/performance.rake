@@ -171,18 +171,26 @@ namespace :performance do
     loader.monitor 'perf_mon', go_server.host, go_server.url
   end
 
-  task :analyze_thread_dump_gc do
+  task :analyze_thread_dump do
     threaddump_analyzer = Analyzers::ThreadDumpAnalyzer.new
-    gc_analyzer = Analyzers::GCAnalyzer.new
+
     rm_rf "thread_dumps"
     mkdir_p "thread_dumps"
 
     Looper::run({interval:setup.thread_dump_interval.to_i, times:setup.load_test_duration.to_i/setup.thread_dump_interval.to_i}) {
       prefix = "threaddump_#{Time.now.strftime("%d_%b_%Y_%H_%M_%S").to_s}"
       cd "thread_dumps" do
-        threaddump_analyzer.analyze(prefix)
+        begin
+          threaddump_analyzer.analyze(prefix)
+        rescue => e
+          p "Failed to analyze the thread dump for #{prefix}. Failed with exception #{e.message}"
+        end
       end
     }
+  end
+
+  task :analyze_gc do
+    gc_analyzer = Analyzers::GCAnalyzer.new
     threaddump_analyzer.generate_report()
     server_dir = "#{setup.server_install_dir}/go-server-#{setup.go_version[0]}"
     cd "thread_dumps" do
