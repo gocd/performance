@@ -91,7 +91,7 @@ module Reporter
       content = JSON.parse(File.read(file))
       @mab.html do
         head { title "GC Analysis Report" }
-        @mab.div do
+        div do
           h1 "Garbage Collection Analysis Report"
           table do
             tr do
