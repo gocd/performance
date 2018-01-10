@@ -89,7 +89,7 @@ module Analyzers
       File.open("gc_analysis_result.json","w"){|f|
         f.write(JSON.pretty_generate(JSON.parse(response.body)))
       }
-      @Reporter.generate_report()
+      @Reporter.generate_report("gc_analysis_result.json")
     end
 
   end
