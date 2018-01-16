@@ -98,7 +98,7 @@ module Reporter
               th "Serial No."
               th "Description"
             end
-            if content['isProblem'] == 'true'
+            if content['isProblem'] == true
               content['problem'].each_with_index{|row, index|
                 tr do
                   td "#{index}"
