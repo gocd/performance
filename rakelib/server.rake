@@ -55,8 +55,8 @@ namespace :server do
 
     server_dir = "#{setup.server_install_dir}/go-server-#{v}"
     %w(logs libs config).each{|dir| mkdir_p "#{server_dir}/#{dir}/"}
-    cp_r "scripts/logback-gelf-1.0.4.jar", "#{server_dir}/libs/"
-    cp_r "scripts/logback.xml" ,  "#{server_dir}/config/"
+    #cp_r "scripts/logback-gelf-1.0.4.jar", "#{server_dir}/libs/"
+    #cp_r "scripts/logback.xml" ,  "#{server_dir}/config/"
 
     Bundler.with_clean_env do
       ProcessBuilder.build('sh', 'server.sh') {|p|
