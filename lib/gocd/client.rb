@@ -34,12 +34,12 @@ module GoCD
                         confirm: true, Authorization: @auth_header)
     end
 
-    def create_ecs_plugin_settings(settings)
+    def create_plugin_settings(settings)
       @rest_client.post("#{@base_url}/api/admin/plugin_settings", settings,
                     content_type: :json, accept: "application/vnd.go.cd.v1+json", Authorization: @auth_header)
     end
 
-    def create_ecs_profile(profile)
+    def create_profile(profile)
       @rest_client.post("#{@base_url}/api/elastic/profiles", profile,
                     content_type: :json, accept: "application/vnd.go.cd.v1+json", Authorization: @auth_header)
     end
