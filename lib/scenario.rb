@@ -3,7 +3,6 @@ require './lib/configuration'
 require './lib/looper'
 
 class Scenario
-
   def initialize
     @setup = Configuration::SetUp.new
     @name = ''
@@ -12,7 +11,7 @@ class Scenario
     @rampup = @setup.users_rampup_time
     @duration = @setup.load_test_duration
     @response_code = 200
-    @loops=[]
+    @loops = []
   end
 
   def method_missing(method_name, *arguments, &block)
@@ -29,7 +28,7 @@ class Scenario
   end
 
   def threads
-    { count: @count, rampup: @rampup, duration: @duration  }
+    { count: @count, rampup: @rampup, duration: @duration }
   end
 
   def add(loop)
@@ -44,16 +43,14 @@ class Scenario
 end
 
 class Loop
-
   attr_reader :url_list
 
   def initialize
     @loopcount = 1
-    @url_list=[]
+    @url_list = []
     @setup = Configuration::SetUp.new
     @server = Configuration::Server.new
     @gocd_client = GoCD::Client.new @server.url
-
   end
 
   def url(arg)
@@ -65,7 +62,7 @@ class Loop
   end
 
   def loopcount
-    {count: @loopcount}
+    { count: @loopcount }
   end
 
   def actual_url(tmp)
@@ -73,18 +70,18 @@ class Loop
     pipeline = ''
     begin
       Timeout.timeout(60) do
-        while(true) do
+        loop do
           pipeline = @setup.pipelines[rand(@setup.pipelines.length)]
           pipeline_count = @gocd_client.get_pipeline_count(pipeline)
-          break if pipeline_count != "retry"
-          sleep 1
+          break if pipeline_count != 'retry'
+          sleep 10
         end
       end
     rescue Timeout::Error
-      raise "Failed to get a pipeline run to generate a url to hit. Please check the server."
+      raise 'Failed to get a pipeline run to generate a url to hit. Please check the server.'
     end
     agent = @gocd_client.get_agent_id(rand(@setup.agents.length))
-    tmp % { pipeline: pipeline, pipelinecount: pipeline_count, comparewith: pipeline_count-1, stage: 'default',  stagecount: '1', job: 'default_job' ,  jobcount: '1', agentid: agent}
+    format(tmp, pipeline: pipeline, pipelinecount: pipeline_count, comparewith: pipeline_count - 1, stage: 'default', stagecount: '1', job: 'default_job', jobcount: '1', agentid: agent)
   end
 end
 
@@ -109,5 +106,5 @@ end
 def scenarios(file)
   instance = Scenarios.new
   instance.instance_eval IO.read(file)
-  return instance
+  instance
 end
