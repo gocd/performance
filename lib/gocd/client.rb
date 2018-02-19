@@ -104,7 +104,7 @@ module GoCD
     def enable_toggle(toggle)
       @rest_client.post("#{@base_url}/api/admin/feature_toggles/#{toggle}",
                        '{"toggle_value": "on"}',
-                       { content_type: :json, Authorization: @auth_header })
+                       { content_type: :json, Authorization: @auth_header, Confirm: true})
     end
 
     def analyze_thread_dump(file, apikey)
