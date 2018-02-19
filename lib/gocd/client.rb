@@ -101,6 +101,12 @@ module GoCD
       }
     end
 
+    def enable_toggle(toggle)
+      @rest_client.post("#{@base_url}/api/admin/feature_toggles/#{toggle}",
+                       '{"toggle_value": "on"}',
+                       { content_type: :json, Authorization: @auth_header })
+    end
+
     def analyze_thread_dump(file, apikey)
       @rest_client.post "http://api.fastthread.io/fastthread-api?apiKey=#{apikey}", file, {content_type: :text}
     end
