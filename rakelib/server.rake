@@ -92,6 +92,10 @@ namespace :server do
     gocd_client.set_file_based_auth_config("#{setup.server_install_dir}/password.properties")
   end
 
+  task :enable_new_dashboard do
+    gocd_client.enable_toggle('quicker_dashboard_key')
+  end
+
   task :stop do
     verbose false do
       sh %{ pkill -f go-server } do |ok, res|
