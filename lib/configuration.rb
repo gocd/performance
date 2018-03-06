@@ -15,7 +15,7 @@
 # limitations under the License.
 ##########################################################################
 
-RELEASES_JSON_URL = 'https://download.gocd.io/experimental/releases.json'
+RELEASES_JSON_URL = ENV['RELEASES_JSON_URL'] || 'https://download.gocd.org/experimental/releases.json'.freeze
 
 def env(variable, default=nil)
   default = yield if block_given?
