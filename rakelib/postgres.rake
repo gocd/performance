@@ -4,7 +4,7 @@ require './lib/looper'
 require 'etc'
 
 namespace :postgres do
-  task setup_db do
+  task :setup_db do
     sh('dropdb -U go cruise || true')
     sh(%(createdb -U go cruise))
   end
