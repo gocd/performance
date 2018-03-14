@@ -48,6 +48,11 @@ namespace :server do
       mkdir_p "#{server_dir}/go-server-#{v}/plugins/external/"
       sh "curl -L -o #{server_dir}/go-server-#{v}/plugins/external/ecs-elastic-agents-plugin.jar --fail -H 'Accept: binary/octet-stream' --user '#{ENV['EXTENSIONS_USER']}:#{ENV['EXTENSIONS_PASSWORD']}'  #{ENV['EA_PLUGIN_DOWNLOAD_URL']}"
     end
+
+    if setup.include_k8s_elastic_agents?
+      mkdir_p "#{server_dir}/go-server-#{v}/plugins/external/"
+      sh "curl -L -o #{server_dir}/go-server-#{v}/plugins/external/k8s-elastic-agents-plugin.jar --fail  #{ENV['K8S_EA_PLUGIN_DOWNLOAD_URL']}"
+    end
   end
 
   task :start => 'server:stop' do
