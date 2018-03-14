@@ -214,6 +214,24 @@ module Configuration
       key
     end
 
+    def k8s_token
+      key = env('K8s_TOKEN')
+      raise 'Please set K8s_TOKEN environment variable if need to setup Kubernetes EA plugin' unless key
+      key
+    end
+
+    def k8s_ca_cert
+      key = env('K8s_CA_CERT')
+      raise 'Please set K8s_CA_CERT environment variable if need to setup Kubernetes EA plugin' unless key
+      key
+    end
+
+    def k8s_namespace
+      key = env('K8s_NAMESPACE', 'default')
+      raise 'Please set K8s_NAMESPACE environment variable if need to setup Kubernetes EA plugin' unless key
+      key
+    end
+
     def ldap_server_ip
       env('LDAP_SERVER_IP', 'localhost')
     end

@@ -1,0 +1,28 @@
+{
+  "id": "test-k8s",
+  "plugin_id": "cd.go.contrib.elasticagent.kubernetes",
+  "properties": [
+    {
+      "key": "Image",
+      "value": "gocd/gocd-agent-docker-dind:v18.2.0"
+    },
+    {
+      "key": "MaxMemory",
+      "value": "1G"
+    },
+    {
+      "key": "MaxCPU"
+    },
+    {
+      "key": "Environment"
+    },
+    {
+      "key": "SpecifiedUsingPodConfiguration",
+      "value": "false"
+    },
+    {
+      "key": "Privileged",
+      "value": "true"
+    }
+  ]
+}
