@@ -1,0 +1,32 @@
+{
+  "plugin_id": "cd.go.contrib.elasticagent.kubernetes",
+  "configuration": [
+    {
+      "key": "go_server_url",
+      "value": "#GoServerURL"
+    },
+    {
+      "key": "security_token",
+      "value": "#SecurityToken"
+    },
+    {
+      "key": "kubernetes_cluster_url",
+      "value": "https://kubernetes.default.svc:8443"
+    },
+    {
+      "key": "namespace",
+      "value": "#namespace"
+    },
+    {
+      "key": "kubernetes_cluster_ca_cert",
+      "value": "#cacert"
+    },
+    {
+      "key": "pending_pods_count"
+    },
+    {
+      "key": "auto_register_timeout",
+      "value": "2"
+    }
+  ]
+}

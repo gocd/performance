@@ -24,4 +24,16 @@ namespace :plugins do
     gocd_client.create_profile(JSON.parse(File.read("resources/ecs_plugin_profile.json")).to_json)
   end
 
+  task :setup_k8s_ea do
+    k8s = Plugins::Elastic_agent.new("resources/k8s_plugin_settings.json")
+    k8s.create_plugin_settings_with_actual_values({"GoServerUrl" => "#{gocd_server.secure_url}/go",
+                                                   "security_token" => setup.k8s_token,
+                                                   "namespace" => setup.k8s_namespace,
+                                                   "kubernetes_cluster_ca_cert" => setup.k8s_ca_cert},gocd_client)
+  end
+
+  task :setup_k8s_ea_profile do
+    gocd_client.create_profile(JSON.parse(File.read("resources/k8s_plugin_profile.json")).to_json)
+  end
+
 end

@@ -43,7 +43,7 @@ namespace :pipeline do
   end
 
   desc "Create Pipelines with Elastic agents set up"
-  task :create_pipelines_to_run_on_elastic_agents do
+  task :create_pipelines_to_run_on_elastic_agents, [:profile_id] do |t, args|
     gocd_client = Client.new(gocd_server.url)
 
     @setup.pipelines_run_on_elastic_agents.each {|pipeline|
@@ -52,10 +52,10 @@ namespace :pipeline do
           p << material
         }
         p <<  Stage.new(name: 'default') do |s|
-          s << Job.new(name: 'defaultJob1', elastic_profile_id: 'test-ecs') do |j|
+          s << Job.new(name: 'defaultJob1', elastic_profile_id: args[:profile_id]) do |j|
             j << ExecTask.new(command: 'ls')
           end
-          s << Job.new(name: 'defaultJob2', elastic_profile_id: 'test-ecs') do |j|
+          s << Job.new(name: 'defaultJob2', elastic_profile_id: args[:profile_id]) do |j|
             j << ExecTask.new(command: 'ls')
           end
         end
