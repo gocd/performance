@@ -91,6 +91,10 @@ module Configuration
       env('INCLUDE_ECS_EA_PLUGINS')=='Y'
     end
 
+    def include_k8s_elastic_agents?
+      env('INCLUDE_k8S_EA_PLUGINS')=='Y'
+    end
+
     def include_addons?
       env('INCLUDE_ADDONS')=='Y'
     end
