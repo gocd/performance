@@ -78,7 +78,7 @@ class Loop
         end
       end
     rescue Timeout::Error
-      pipeline_count = '1'
+      pipeline_count = 1
     end
     agent = @gocd_client.get_agent_id(rand(@setup.agents.length))
     format(tmp, pipeline: pipeline, pipelinecount: pipeline_count, comparewith: pipeline_count - 1, stage: 'default', stagecount: '1', job: 'default_job', jobcount: '1', agentid: agent)
