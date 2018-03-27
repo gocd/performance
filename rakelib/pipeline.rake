@@ -20,11 +20,6 @@ namespace :pipeline do
         @distributor.material_for(pipeline).each{|material|
           p << material
         }
-        p <<  Stage.new(name: 'first') do |s|
-          s << Job.new(name: 'firstJob') do |j|
-            j << ExecTask.new(command: 'ls')
-          end
-        end
         p <<  Stage.new(name: 'default') do |s|
           s << Job.new(name: 'defaultJob') do |j|
             j << ExecTask.new(command: 'ls')
