@@ -61,9 +61,6 @@ namespace :pipeline do
           s << Job.new(name: 'defaultJob1', elastic_profile_id: args[:profile_id]) do |j|
             j << ExecTask.new(command: 'ls')
           end
-          s << Job.new(name: 'defaultJob2', elastic_profile_id: args[:profile_id]) do |j|
-            j << ExecTask.new(command: 'ls')
-          end
         end
       end
 
