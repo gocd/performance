@@ -71,7 +71,7 @@ namespace :pipeline do
         raise "Something went wrong while creating pipeline #{pipeline}. \n Server says:\n #{e.response}"
       end
     }
-    p "Created pipeline(s) #{@setup.pipelines_run_on_elastic_agents.join(', ')}"
+    p "Created pipeline(s) #{@setup.pipelines_run_on_ecs_elastic_agents.join(', ')}"
   end
 
   desc "Create Pipelines with K8S Elastic agents set up"
@@ -97,7 +97,7 @@ namespace :pipeline do
         raise "Something went wrong while creating pipeline #{pipeline}. \n Server says:\n #{e.response}"
       end
     }
-    p "Created pipeline(s) #{@setup.pipelines_run_on_elastic_agents.join(', ')}"
+    p "Created pipeline(s) #{@setup.pipelines_run_on_k8s_elastic_agents.join(', ')}"
   end
 
   desc "Clear pipelines"
