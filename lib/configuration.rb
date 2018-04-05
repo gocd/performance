@@ -17,30 +17,40 @@
 
 RELEASES_JSON_URL = ENV['RELEASES_JSON_URL'] || 'https://download.gocd.org/experimental/releases.json'.freeze
 
-def env(variable, default=nil)
+def env(variable, default = nil)
   default = yield if block_given?
   ENV[variable] || default
 end
 
 def run_soak_test
-  env('RUN_SOAK_TEST', 'NO').upcase == 'YES' ? true : false
+  env('RUN_SOAK_TEST', 'NO').casecmp('YES').zero? ? true : false
 end
 
-def run_config(variable, load=nil, soak=nil)
+def run_config(variable, load = nil, soak = nil)
   (ENV[variable]) || (run_soak_test ? soak : load)
 end
 
 module Configuration
-
   # Setup configuration
   class SetUp
-
     def pipelines
       (1..number_of_pipelines.to_i).map { |i| "gocd.perf#{i}" }
     end
 
-    def pipelines_run_on_elastic_agents
-      (number_of_pipelines.to_i+1..number_of_pipelines.to_i+number_of_pipelines_on_elastic_agents.to_i).map { |i| "gocd.perf#{i}" }
+# This way of calculating total number of pipelines is ugly. Need to fix it to use percentage
+# Given toal number of pipelines in a run
+# And percentages of pipelines to be running of ecs or k8s or any elastic agents
+# The numbers should be calculated accordingly
+    def total_pipelines
+      number_of_pipelines.to_i + number_of_pipelines_on_ecs_elastic_agents.to_i + number_of_pipelines_on_k8s_elastic_agents.to_i
+    end
+
+    def pipelines_run_on_ecs_elastic_agents
+      (number_of_pipelines.to_i + 1..number_of_pipelines.to_i + number_of_pipelines_on_ecs_elastic_agents.to_i).map { |i| "gocd.perf#{i}" }
+    end
+
+    def pipelines_run_on_k8s_elastic_agents
+      (number_of_pipelines.to_i + number_of_pipelines_on_ecs_elastic_agents.to_i + 1..total_pipelines).map { |i| "gocd.perf#{i}" }
     end
 
     def agents
@@ -64,7 +74,7 @@ module Configuration
     end
 
     def load_test_duration
-      run_config('LOAD_TEST_DURATION', '1200','86400').to_i
+      run_config('LOAD_TEST_DURATION', '1200', '86400').to_i
     end
 
     def git_repository_host
@@ -84,19 +94,19 @@ module Configuration
     end
 
     def include_plugins?
-      env('INCLUDE_PLUGINS')=='Y'
+      env('INCLUDE_PLUGINS') == 'Y'
     end
 
     def include_ecs_elastic_agents?
-      env('INCLUDE_ECS_EA_PLUGINS')=='Y'
+      env('INCLUDE_ECS_EA_PLUGINS') == 'Y'
     end
 
     def include_k8s_elastic_agents?
-      env('INCLUDE_k8S_EA_PLUGINS')=='Y'
+      env('INCLUDE_k8S_EA_PLUGINS') == 'Y'
     end
 
     def include_addons?
-      env('INCLUDE_ADDONS')=='Y'
+      env('INCLUDE_ADDONS') == 'Y'
     end
 
     def addons_src_dir
@@ -120,7 +130,7 @@ module Configuration
     end
 
     def tee_dir
-      Pathname.new(Dir.pwd+'/tools/TEE-CLC-14.0.3')
+      Pathname.new(Dir.pwd + '/tools/TEE-CLC-14.0.3')
     end
 
     def download_url
@@ -133,8 +143,8 @@ module Configuration
 
     def go_version
       raw_version = env('GO_FULL_VERSION') do
-          json = JSON.parse(open(RELEASES_JSON_URL).read)
-          json.select {|x| x['go_version'] == ENV['GO_VERSION']}.sort {|a, b| a['go_build_number'] <=> b['go_build_number']}.last['go_full_version']
+        json = JSON.parse(open(RELEASES_JSON_URL).read)
+        json.select { |x| x['go_version'] == ENV['GO_VERSION'] }.sort_by { |a| a['go_build_number'] }.last['go_full_version']
       end
 
       unless raw_version.include? '-'
@@ -148,7 +158,7 @@ module Configuration
       interval = env('CONFIG_SAVE_INTERVAL', 30).to_i
       {
         interval: interval,
-        times: load_test_duration/interval
+        times: load_test_duration / interval
       }
     end
 
@@ -160,7 +170,7 @@ module Configuration
       interval = env('GIT_COMMIT_INTERVAL', 10).to_i
       {
         interval: interval,
-        times: load_test_duration/interval
+        times: load_test_duration / interval
       }
     end
 
@@ -172,11 +182,11 @@ module Configuration
     end
 
     def tee_path
-      tee_dir + "tf"
+      tee_dir + 'tf'
     end
 
     def tfs_user
-        env('TFS_USER', 'go.tfs.user@gmail.com')
+      env('TFS_USER', 'go.tfs.user@gmail.com')
     end
 
     def tfs_pwd
@@ -261,11 +271,15 @@ module Configuration
     private
 
     def number_of_pipelines
-      env('NO_OF_PIPELINES', 700)
+      env('NO_OF_PIPELINES', 750)
     end
 
-    def number_of_pipelines_on_elastic_agents
-      env('NO_OF_PIPELINES_EA', 50)
+    def number_of_pipelines_on_ecs_elastic_agents
+      env('NO_OF_PIPELINES_ECS_EA', 0)
+    end
+
+    def number_of_pipelines_on_k8s_elastic_agents
+      env('NO_OF_PIPELINES_K8S_EA', 0)
     end
   end
 
