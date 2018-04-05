@@ -32,6 +32,7 @@ namespace :plugins do
       k8s.create_plugin_settings_with_actual_values({"GoServerUrl" => "#{gocd_server.secure_url}/go",
                                                     "security_token" => setup.k8s_token,
                                                     "namespace" => setup.k8s_namespace,
+                                                    "kubernetes_cluster_url" => setup.k8s_cluster_url,
                                                     "kubernetes_cluster_ca_cert" => setup.k8s_ca_cert},gocd_client)
     end
   end

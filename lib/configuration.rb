@@ -246,6 +246,12 @@ module Configuration
       key
     end
 
+    def k8s_cluster_url
+      key = env('K8s_CLUSTER_URL')
+      raise 'Please set K8s_CLUSTER_URL environment variable if need to setup Kubernetes EA plugin' unless key
+      key
+    end
+
     def ldap_server_ip
       env('LDAP_SERVER_IP', 'localhost')
     end
