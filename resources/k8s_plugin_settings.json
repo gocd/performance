@@ -11,7 +11,7 @@
     },
     {
       "key": "kubernetes_cluster_url",
-      "value": "https://kubernetes.default.svc:8443"
+      "value": "#ClusterURL"
     },
     {
       "key": "namespace",
