@@ -92,9 +92,13 @@ namespace :server do
   end
 
   task :setup_auth do
-    gocd_client.set_ldap_auth_config(setup.ldap_server_ip)
-    File.open("#{setup.server_install_dir}/password.properties", 'w') { |file| file.write("file_based_user:#{BCrypt::Password.create(ENV['FILE_BASED_USER_PWD'])}") }
-    gocd_client.set_file_based_auth_config("#{setup.server_install_dir}/password.properties")
+    if !gocd_client.auth_enabled?
+      gocd_client.set_ldap_auth_config(setup.ldap_server_ip)
+      File.open("#{setup.server_install_dir}/password.properties", 'w') { |file| file.write("file_based_user:#{BCrypt::Password.create(ENV['FILE_BASED_USER_PWD'])}") }
+      gocd_client.set_file_based_auth_config("#{setup.server_install_dir}/password.properties")
+    else
+      p "Auth config already setup on the server, skipping."
+    end
   end
 
   task :enable_new_dashboard do
@@ -112,4 +116,6 @@ namespace :server do
   task :auto_register do
     gocd_client.auto_register_key 'perf-auto-register-key'
   end
+
+  
 end
