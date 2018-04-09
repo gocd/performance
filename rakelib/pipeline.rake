@@ -49,7 +49,13 @@ namespace :pipeline do
 
 desc 'Create Pipelines with ECS Elastic agents set up'
 task :create_pipelines_to_run_on_ecs_elastic_agents, [:profile_id] do |_t, args|
+  if setup.include_ecs_elastic_agents?
+    p "Not configuring pipelines to run on ECS elastic agents, as the plugin is not included in this run"
+    next
+  end
+
   gocd_client = Client.new(gocd_server.url)
+
   clean(@setup.pipelines_run_on_ecs_elastic_agents,gocd_client)
   @setup.pipelines_run_on_ecs_elastic_agents.each do |pipeline|
     performance_pipeline = Pipeline.new(group: 'elastic-agents', name: pipeline.to_s) do |p|
@@ -75,6 +81,11 @@ task :create_pipelines_to_run_on_ecs_elastic_agents, [:profile_id] do |_t, args|
 
 desc 'Create Pipelines with K8S Elastic agents set up'
 task :create_pipelines_to_run_on_k8s_elastic_agents, [:profile_id] do |_t, args|
+  if setup.include_k8s_elastic_agents?
+    p "Not configuring pipelines to run on K8s elastic agents, as the plugin is not included in this run"
+    next
+  end
+
   gocd_client = Client.new(gocd_server.url)
   clean(@setup.pipelines_run_on_k8s_elastic_agents,gocd_client)
   @setup.pipelines_run_on_k8s_elastic_agents.each do |pipeline|
@@ -98,6 +109,7 @@ task :create_pipelines_to_run_on_k8s_elastic_agents, [:profile_id] do |_t, args|
     end
     p "Created pipeline(s) #{@setup.pipelines_run_on_k8s_elastic_agents.join(', ')}"
   end
+
 
   private
 
