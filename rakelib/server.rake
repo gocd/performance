@@ -53,6 +53,11 @@ namespace :server do
       mkdir_p "#{server_dir}/go-server-#{v}/plugins/external/"
       sh "curl -L -o #{server_dir}/go-server-#{v}/plugins/external/k8s-elastic-agents-plugin.jar --fail  #{ENV['K8S_EA_PLUGIN_DOWNLOAD_URL']}"
     end
+
+    if setup.include_analytics_plugin?
+      mkdir_p "#{server_dir}/go-server-#{v}/plugins/external/"
+      sh "curl -L -o #{server_dir}/go-server-#{v}/plugins/external/analytics-plugin.jar --fail  #{ENV['ANALYTICS_PLUGIN_DOWNLOAD_URL']}"
+    end
   end
 
   task :start => 'server:stop' do

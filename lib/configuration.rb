@@ -105,6 +105,10 @@ module Configuration
       env('INCLUDE_k8S_EA_PLUGINS') == 'Y'
     end
 
+    def include_analytics_plugin?
+      env('INCLUDE_ANALYTICS_PLUGIN') == 'Y'
+    end
+
     def include_addons?
       env('INCLUDE_ADDONS') == 'Y'
     end

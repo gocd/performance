@@ -1,0 +1,7 @@
+# Scenario : Users visit Build analytics page
+scenario do
+  name 'pipeline build analytics page'
+  loop do
+    url '/analytics/com.thoughtworks.gocd.analytics/pipeline/pipeline_duration?pipeline_name=%{pipeline}&key=analytics.pipeline-chart'
+  end
+end
