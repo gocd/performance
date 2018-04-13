@@ -42,6 +42,18 @@ module Analyzers
       end
       (total_failures.to_f/xml_doc.count.to_f)*100 <= @setup.failure_tolrance_rate.to_f
     end
+
+    def parse_dashboard_result(filename)
+      dashboard = JSON.parse(File.read(filename))
+      File.open("#{filename}.txt","w") do |f|
+        dashboard['_embedded']['pipeline_groups'].each{ |pg|
+          f.puts("Pipeline Group : #{pg['name']}")
+          pg['_embedded']['pipelines'].each{ |p|
+              f.puts("Pipeline : #{p['name']} Runs : #{p["_embedded"]['instances'].first['label']}")
+            }
+        }
+      end
+    end
   end
 
   class ThreadDumpAnalyzer

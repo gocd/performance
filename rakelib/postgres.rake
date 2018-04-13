@@ -4,9 +4,16 @@ require './lib/looper'
 require 'etc'
 
 namespace :postgres do
+  setup = Configuration::SetUp.new
+
   task :setup_db do
     sh('dropdb -U go cruise || true')
     sh(%(createdb -U go cruise))
+
+    if setup.include_analytics_plugin?
+      sh('dropdb -U go analytics || true')
+      sh(%(createdb -U go analytics))
+    end
   end
 
   task :stop do

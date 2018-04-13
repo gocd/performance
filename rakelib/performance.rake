@@ -151,6 +151,16 @@ namespace :performance do
     loader.run 'CCTray', go_server.url
   end
 
+  task :build_time_analytics => 'jmeter:prepare' do
+    loader = ScenarioLoader.new('./scenarios')
+    loader.run 'pipeline_build_analytics', go_server.url
+  end
+
+  task :global_analytics => 'jmeter:prepare' do
+    loader = ScenarioLoader.new('./scenarios')
+    loader.run 'pipeline_global_analytics', go_server.url
+  end
+
   task :server_health_messages => 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
     loader.run 'server_health_messages', go_server.url
@@ -209,5 +219,8 @@ namespace :performance do
       }
     end
   end
+
+  
+
 
 end
