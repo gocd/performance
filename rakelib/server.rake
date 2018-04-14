@@ -56,7 +56,7 @@ namespace :server do
 
     if setup.include_analytics_plugin?
       mkdir_p "#{server_dir}/go-server-#{v}/plugins/external/"
-      sh "curl -L -o #{server_dir}/go-server-#{v}/plugins/external/analytics-plugin.jar --fail  #{ENV['ANALYTICS_PLUGIN_DOWNLOAD_URL']}"
+      sh "curl -L -o #{server_dir}/go-server-#{v}/plugins/external/analytics-plugin.jar --fail -H 'Accept: binary/octet-stream' --user '#{ENV['EXTENSIONS_USER']}:#{ENV['EXTENSIONS_PASSWORD']}' #{ENV['ANALYTICS_PLUGIN_DOWNLOAD_URL']}"
     end
   end
 
