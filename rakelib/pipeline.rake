@@ -49,7 +49,7 @@ namespace :pipeline do
 
 desc 'Create Pipelines with ECS Elastic agents set up'
 task :create_pipelines_to_run_on_ecs_elastic_agents, [:profile_id] do |_t, args|
-  if @setup.include_ecs_elastic_agents?
+  if !@setup.include_ecs_elastic_agents?
     p "Not configuring pipelines to run on ECS elastic agents, as the plugin is not included in this run"
     next
   end
@@ -81,7 +81,7 @@ task :create_pipelines_to_run_on_ecs_elastic_agents, [:profile_id] do |_t, args|
 
 desc 'Create Pipelines with K8S Elastic agents set up'
 task :create_pipelines_to_run_on_k8s_elastic_agents, [:profile_id] do |_t, args|
-  if @setup.include_k8s_elastic_agents?
+  if !@setup.include_k8s_elastic_agents?
     p "Not configuring pipelines to run on K8s elastic agents, as the plugin is not included in this run"
     next
   end
