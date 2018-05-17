@@ -2,7 +2,7 @@
 scenario do
   name 'Global Analytics page'
   loop do
-    url '/analytics/com.thoughtworks.gocd.analytics/dashboard/pipelines_with_longest_average_wait_time'
-    url '/analytics/com.thoughtworks.gocd.analytics/dashboard/agent_with_highest_utilization'
+    url '/analytics/com.thoughtworks.gocd.analytics/dashboard/pipelines_with_the_highest_wait_time'
+    url '/analytics/com.thoughtworks.gocd.analytics/dashboard/agents_with_the_highest_utilization'
   end
 end
