@@ -20,7 +20,7 @@ describe GoCD::Client do
       expect(@rest_client).to receive(:post)
         .with("http://localhost:8153/go/api/admin/pipelines",
       @pipeline.to_json,
-      :accept => 'application/vnd.go.cd.v3+json',
+      :accept => 'application/vnd.go.cd.v6+json',
       :content_type => 'application/json', Authorization: @auth_header)
 
       @client.create_pipeline(@pipeline.to_json)
@@ -31,7 +31,7 @@ describe GoCD::Client do
       expect(@rest_client).to receive(:post)
         .with("base_url/api/admin/pipelines",
       @pipeline.to_json,
-      :accept => 'application/vnd.go.cd.v3+json',
+      :accept => 'application/vnd.go.cd.v6+json',
       :content_type => 'application/json', Authorization: @auth_header)
 
       client.create_pipeline(@pipeline.to_json)
