@@ -92,8 +92,9 @@ namespace :server do
     }
 
     raise "Couldn't start GoCD server at #{v}-#{b} at #{server_dir}" unless server_is_running
-    puts 'The servers up and running'
 
+    sh %(java -jar /var/go/newrelic/newrelic.jar deployment --appname='GoCD Perf Server' --revision="#{v}-#{b}")
+    puts 'The server is up and running'
   end
 
   task :setup_auth do
