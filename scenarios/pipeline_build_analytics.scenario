@@ -2,6 +2,6 @@
 scenario do
   name 'pipeline build analytics page'
   loop do
-    url '/analytics/com.thoughtworks.gocd.analytics/pipeline/pipeline_build_time?pipeline_name=%{pipeline}
+    url '/analytics/com.thoughtworks.gocd.analytics/pipeline/pipeline_build_time?pipeline_name=%{pipeline}'
   end
 end
