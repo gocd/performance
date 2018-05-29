@@ -18,13 +18,13 @@ module GoCD
     def create_pipeline(data)
       @rest_client.post("#{@base_url}/api/admin/pipelines",
                         data,
-                        accept: 'application/vnd.go.cd.v6+json',
+                        accept: 'application/vnd.go.cd.v5+json',
                         content_type: 'application/json', Authorization: @auth_header)
     end
 
     def delete_pipeline(pipeline)
       @rest_client.delete "#{@base_url}/api/admin/pipelines/#{pipeline}",
-                          accept: 'application/vnd.go.cd.v6+json' , Authorization: @auth_header
+                          accept: 'application/vnd.go.cd.v5+json' , Authorization: @auth_header
     end
 
     def unpause_pipeline(name)
