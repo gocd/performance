@@ -93,7 +93,8 @@ namespace :server do
 
     raise "Couldn't start GoCD server at #{v}-#{b} at #{server_dir}" unless server_is_running
 
-    sh %(java -jar /var/go/newrelic/newrelic.jar deployment --appname='GoCD Perf Server' --revision="#{v}-#{b}")
+    revision = setup.include_addons? ? "#{v}-#{b}-PG" : "#{v}-#{b}-H2"
+    sh %(java -jar /var/go/newrelic/newrelic.jar deployment --appname='GoCD Perf Server' --revision="#{revision}")
     puts 'The server is up and running'
   end
 
@@ -122,6 +123,5 @@ namespace :server do
   task :auto_register do
     gocd_client.auto_register_key 'perf-auto-register-key'
   end
-
   
 end
