@@ -63,7 +63,7 @@ task :create_pipelines_to_run_on_ecs_elastic_agents, [:profile_id] do |_t, args|
           p << material
       end
         p << Stage.new(name: 'default') do |s|
-          s << Job.new(name: 'defaultJob1', elastic_profile_id: args[:profile_id]) do |j|
+          s << Job.new(name: 'defaultJob', elastic_profile_id: args[:profile_id]) do |j|
             j << ExecTask.new(command: 'ls')
           end
         end
@@ -94,7 +94,7 @@ task :create_pipelines_to_run_on_k8s_elastic_agents, [:profile_id] do |_t, args|
           p << material
       end
         p << Stage.new(name: 'default') do |s|
-          s << Job.new(name: 'defaultJob1', elastic_profile_id: args[:profile_id]) do |j|
+          s << Job.new(name: 'defaultJob', elastic_profile_id: args[:profile_id]) do |j|
             j << ExecTask.new(command: 'ls')
           end
         end

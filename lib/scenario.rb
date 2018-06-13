@@ -81,7 +81,7 @@ class Loop
       pipeline_count = 1
     end
     agent = @gocd_client.get_agent_id(rand(@setup.agents.length))
-    format(tmp, pipeline: pipeline, pipelinecount: pipeline_count, comparewith: pipeline_count - 1, stage: 'default', stagecount: '1', job: 'default_job', jobcount: '1', agentid: agent)
+    format(tmp, pipeline: pipeline, pipelinecount: pipeline_count, comparewith: pipeline_count - 1, stage: 'default', stagecount: '1', job: 'defaultJob', jobcount: '1', agentid: agent)
   end
 end
 
