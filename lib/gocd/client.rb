@@ -118,6 +118,20 @@ module GoCD
       @rest_client.get "#{@base_url}/about"
     end
 
+    def setup_config_repo(repo_host)
+      config, md5 = config_xml
+      xml = @nokogiri::XML config
+
+      config_repo = %(<config-repos>
+                        <config-repo pluginId="json.config.plugin" id="repo1">
+                          <git url="#{repo_host}/config-repo-git" />
+                        </config-repo>
+                    </config-repos>)
+
+      xml.search('//cruise').first.add_child config_repo
+      save_config_xml xml.to_xml, md5
+    end
+
     def set_file_based_auth_config(file)
       config, md5 = config_xml
       xml = @nokogiri::XML config

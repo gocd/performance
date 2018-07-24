@@ -42,7 +42,8 @@ module Configuration
 # And percentages of pipelines to be running of ecs or k8s or any elastic agents
 # The numbers should be calculated accordingly
     def total_pipelines
-      number_of_pipelines.to_i + number_of_pipelines_on_ecs_elastic_agents.to_i + number_of_pipelines_on_k8s_elastic_agents.to_i
+      number_of_pipelines.to_i + number_of_pipelines_on_ecs_elastic_agents.to_i
+      + number_of_pipelines_on_k8s_elastic_agents.to_i + number_of_pipelines_in_config_repo.to_i
     end
 
     def pipelines_run_on_ecs_elastic_agents
@@ -50,7 +51,13 @@ module Configuration
     end
 
     def pipelines_run_on_k8s_elastic_agents
-      (number_of_pipelines.to_i + number_of_pipelines_on_ecs_elastic_agents.to_i + 1..total_pipelines).map { |i| "gocd.perf#{i}" }
+      (number_of_pipelines.to_i + number_of_pipelines_on_ecs_elastic_agents.to_i + 1..
+        number_of_pipelines.to_i + number_of_pipelines_on_ecs_elastic_agents.to_i + number_of_pipelines_on_k8s_elastic_agents.to_i).map { |i| "gocd.perf#{i}" }
+    end
+
+    def pipelines_in_config_repo
+      (number_of_pipelines.to_i + number_of_pipelines_on_ecs_elastic_agents.to_i + number_of_pipelines_on_k8s_elastic_agents.to_i..
+        total_pipelines).map { |i| "gocd.perf#{i}" }
     end
 
     def agents
@@ -291,6 +298,12 @@ module Configuration
     def number_of_pipelines_on_k8s_elastic_agents
       env('NO_OF_PIPELINES_K8S_EA', 0)
     end
+
+    def number_of_pipelines_in_config_repo
+      env('NO_OF_PIPELINES_CONFIG_REPO', 0)
+    end
+
+
   end
 
   # Setup configuration

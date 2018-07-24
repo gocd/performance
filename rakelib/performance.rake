@@ -1,6 +1,7 @@
 require './lib/gocd'
 require './lib/configuration'
 require './lib/material'
+require './lib/config_repo'
 require './lib/looper'
 require 'ruby-jmeter'
 require './lib/scenario_loader'
@@ -13,20 +14,20 @@ namespace :performance do
   setup = Configuration::SetUp.new
   git = Material::Git.new
   tfs = Material::Tfs.new
+  config_repo = Material::ConfigRepo.new
 
   gocd_client = GoCD::Client.new go_server.url
-
 
   namespace :config do
     task :update do
       duration = setup.config_save_duration
       puts "Saving config by setting the job timeout in a loop #{duration}"
-      Looper::run(duration) {
-        timeout = 60 + rand(9)
+      Looper.run(duration) do
+        timeout = rand(60..68)
 
         puts "Setting job timeout to #{timeout}"
         gocd_client.job_timeout timeout
-      }
+      end
     end
   end
 
@@ -34,29 +35,40 @@ namespace :performance do
     task :update do
       duration = setup.git_commit_duration
 
-      Looper::time_out(duration) {
+      Looper.time_out(duration) do
         git.repos.each do |repo|
+          next if repo.include? 'config-repo-git'
           verbose false do
             cd repo do
               time = Time.now
-              File.write("file", time.to_f)
+              File.write('file', time.to_f)
               sh("git add .;git commit -m 'This is commit at #{time.rfc2822}' --author 'foo <foo@bar.com>'; git gc;")
             end
           end
         end
-      }
+      end
+    end
+
+    task :update_config_repo do
+      duration = setup.config_repo_commit_duration
+      Looper.time_out(duration) do
+        verbose false do
+          config_repo.update
+        end
+      end
+     
     end
   end
 
   namespace :tfs do
-    task :update => 'tfs:prepare' do
+    task update: 'tfs:prepare' do
       duration = setup.tfs_commit_duration
-      tmp_dir = Dir.tmpdir + "/perf-" + rand.to_s
-      workspace_name = "go-ws-#{rand.to_s}"
+      tmp_dir = Dir.tmpdir + '/perf-' + rand.to_s
+      workspace_name = "go-ws-#{rand}"
       login = "#{setup.tfs_user},#{setup.tfs_pwd}"
       tee_clc = setup.tee_path
 
-      Looper::time_out(duration) {
+      Looper.time_out(duration) do
         tfs.project_paths.each do |project_path|
           verbose false do
             mkdir_p tmp_dir
@@ -76,107 +88,106 @@ namespace :performance do
             rm_rf tmp_dir
           end
         end
-      }
+      end
     end
   end
 
-  task :dashboard_to_job_instance => 'jmeter:prepare' do
+  task dashboard_to_job_instance: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
     loader.run 'dashboard_to_job_instance', go_server.url
   end
 
-  task :dashboard_to_vsm => 'jmeter:prepare' do
+  task dashboard_to_vsm: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
     loader.run 'dashboard_to_vsm', go_server.url
   end
 
-  task :dashboard_to_pipeline_edit => 'jmeter:prepare' do
+  task dashboard_to_pipeline_edit: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
     loader.run 'dashboard_to_pipeline_edit', go_server.url
   end
 
-  task :dashboard_to_compare => 'jmeter:prepare' do
+  task dashboard_to_compare: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
     loader.run 'dashboard_to_compare', go_server.url
   end
 
-  task :agents_to_jobs_history => 'jmeter:prepare' do
+  task agents_to_jobs_history: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
     loader.run 'agents_to_jobs_history', go_server.url
   end
 
-
-  task :dashboard_page_spike => 'jmeter:prepare' do
+  task dashboard_page_spike: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
     loader.spike 'pipeline_dashboard', go_server.url
   end
 
-  task :dashboard_page => 'jmeter:prepare' do
+  task dashboard_page: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
     loader.run 'pipeline_dashboard', go_server.url
   end
 
-  task :new_dashboard_page => 'jmeter:prepare' do
+  task new_dashboard_page: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
     loader.run 'new_pipeline_dashboard', go_server.url
   end
 
-  task :admin_pages => 'jmeter:prepare' do
+  task admin_pages: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
     loader.run 'admin_pages', go_server.url
   end
 
-  task :environments_page => 'jmeter:prepare' do
+  task environments_page: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
     loader.run 'environments_page', go_server.url
   end
 
-  task :pipeline_history => 'jmeter:prepare' do
+  task pipeline_history: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
     loader.run 'pipeline_history', go_server.url
   end
 
-  task :plugin_status_report => 'jmeter:prepare' do
+  task plugin_status_report: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
     loader.run 'plugin_status_report', go_server.url
   end
 
-  task :admin_pipelines => 'jmeter:prepare' do
+  task admin_pipelines: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
     loader.run 'admin_pipelines', go_server.url
   end
 
-  task :CCTray => 'jmeter:prepare' do
+  task CCTray: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
     loader.run 'CCTray', go_server.url
   end
 
-  task :build_time_analytics => 'jmeter:prepare' do
+  task build_time_analytics: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
     loader.run 'pipeline_build_analytics', go_server.url
   end
 
-  task :global_analytics => 'jmeter:prepare' do
+  task global_analytics: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
     loader.run 'pipeline_global_analytics', go_server.url
   end
 
-  task :server_health_messages => 'jmeter:prepare' do
+  task server_health_messages: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
     loader.run 'server_health_messages', go_server.url
   end
 
-  task :user_summary => 'jmeter:prepare' do
+  task user_summary: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
     loader.run 'user_summary', go_server.url
   end
 
-  task :load_all => 'jmeter:prepare' do
+  task load_all: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
     loader.run_all go_server.url
   end
 
-  task :monitor => 'jmeter:prepare' do
+  task monitor: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
     loader.monitor 'perf_mon', go_server.host, go_server.url
   end
@@ -184,43 +195,39 @@ namespace :performance do
   task :analyze_thread_dump do
     threaddump_analyzer = Analyzers::ThreadDumpAnalyzer.new
 
-    rm_rf "thread_dumps"
-    mkdir_p "thread_dumps"
+    rm_rf 'thread_dumps'
+    mkdir_p 'thread_dumps'
 
-    Looper::run({interval:setup.thread_dump_interval.to_i, times:setup.load_test_duration.to_i/setup.thread_dump_interval.to_i}) {
-      prefix = "threaddump_#{Time.now.strftime("%d_%b_%Y_%H_%M_%S").to_s}"
-      cd "thread_dumps" do
+    Looper.run(interval: setup.thread_dump_interval.to_i, times: setup.load_test_duration.to_i / setup.thread_dump_interval.to_i) do
+      prefix = "threaddump_#{Time.now.strftime('%d_%b_%Y_%H_%M_%S')}"
+      cd 'thread_dumps' do
         begin
           threaddump_analyzer.analyze(prefix)
-        rescue => e
+        rescue StandardError => e
           p "Failed to analyze the thread dump for #{prefix}. Failed with exception #{e.message}"
         end
       end
-    }
-    threaddump_analyzer.generate_report()
+    end
+    threaddump_analyzer.generate_report
   end
 
   task :analyze_gc do
     gc_analyzer = Analyzers::GCAnalyzer.new
     server_dir = "#{setup.server_install_dir}/go-server-#{setup.go_version[0]}"
-    cd "thread_dumps" do
-     gc_analyzer.analyze("#{server_dir}/gc.log")
+    cd 'thread_dumps' do
+      gc_analyzer.analyze("#{server_dir}/gc.log")
     end
   end
 
   task :support_api do
-    if(setup.load_test_duration.to_i > setup.support_api_interval.to_i)
+    if setup.load_test_duration.to_i > setup.support_api_interval.to_i
       mkdir_p 'support_response'
-      Looper::run({interval:setup.support_api_interval.to_i, times:setup.load_test_duration.to_i/setup.support_api_interval.to_i}) {
+      Looper.run(interval: setup.support_api_interval.to_i, times: setup.load_test_duration.to_i / setup.support_api_interval.to_i) do
         response = gocd_client.support_page
-        File.open("support_response/response_#{Time.now.strftime("%d_%b_%Y_%H_%M_%S").to_s}.json","w") do |f|
+        File.open("support_response/response_#{Time.now.strftime('%d_%b_%Y_%H_%M_%S')}.json", 'w') do |f|
           f.write(JSON.pretty_generate(JSON.parse(response.body)))
         end
-      }
+      end
     end
   end
-
-  
-
-
 end
