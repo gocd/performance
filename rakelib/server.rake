@@ -94,7 +94,7 @@ namespace :server do
     raise "Couldn't start GoCD server at #{v}-#{b} at #{server_dir}" unless server_is_running
 
     revision = setup.include_addons? ? "#{v}-#{b}-PG" : "#{v}-#{b}-H2"
-    sh %(java -jar /var/go/newrelic/newrelic.jar deployment --appname='GoCD Perf Server' --revision="#{revision}")
+    #sh %(java -jar /var/go/newrelic/newrelic.jar deployment --appname='GoCD Perf Server' --revision="#{revision}")
     puts 'The server is up and running'
   end
 
@@ -106,6 +106,10 @@ namespace :server do
     else
       p "Auth config already setup on the server, skipping."
     end
+  end
+
+  task :setup_config_repo do
+      gocd_client.setup_config_repo(setup.git_repository_host)
   end
 
   task :enable_new_dashboard do
