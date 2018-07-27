@@ -10,6 +10,8 @@ include Configuration
 namespace :pipeline do
   @setup = SetUp.new
   @distributor = Material::Distributor.new
+  gocd_server = Server.new
+  gocd_client = Client.new(gocd_server.url)
 
   MULTISTAGE_PIPELINES_POOL = (0..((ENV['NO_OF_PIPELINES'].to_f / 100) * ENV['PERCENT_MULTISTAGE_PIPELINES'].to_i).to_i)
 
@@ -52,7 +54,6 @@ namespace :pipeline do
   task :create_in_config_repo do
 
     config_repo = Material::ConfigRepo.new
-    #clean(@setup.pipelines_in_config_repo)
     @setup.pipelines_in_config_repo.each do |pipeline|
       performance_pipeline = ConfigRepoPipeline.new(group: 'ConfigRepo', name: pipeline.to_s) do |p|
         @distributor.material_for(pipeline).each do |material|
@@ -148,8 +149,7 @@ namespace :pipeline do
   private
 
   def clean(pipelines)
-    gocd_server = Server.new
-    gocd_client = Client.new(gocd_server.url)
+
     pipelines.reverse_each do |pipeline|
         begin
           gocd_client.delete_pipeline(pipeline)
