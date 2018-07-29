@@ -33,10 +33,10 @@ module Material
       end 
     end
 
-    def create_repo(pipeline, file_name)
+    def create_config(config, file_name)
       cd "#{@setup.git_root}/config-repo-git" do
         time = Time.now
-        File.open(file_name, 'w') { |file| file.write(pipeline) }
+        File.open(file_name, 'w') { |file| file.write(config) }
         sh("git add .;git commit -m 'This is Config repo commit at #{time.rfc2822}' --author 'foo <foo@bar.com>'; git gc;")
       end 
     end

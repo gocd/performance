@@ -11,27 +11,27 @@ namespace :server do
   gocd_client = GoCD::Client.new gocd_server.url
   setup = Configuration::SetUp.new
 
-  task :prepare => 'server:stop' do
+  task prepare: 'server:stop' do
     v, b = setup.go_version
 
     server_dir = setup.server_install_dir
-    rm_rf "#{server_dir}"
-    mkdir_p "#{server_dir}"
+    rm_rf server_dir.to_s
+    mkdir_p server_dir.to_s
 
-    Downloader.new("#{server_dir}") {|q|
+    Downloader.new(server_dir.to_s) do |q|
       q.add "#{setup.download_url}/binaries/#{v}-#{b}/generic/go-server-#{v}-#{b}.zip"
-    }.start { |f|
-      f.extract_to("#{server_dir}")
-    }
+    end.start do |f|
+      f.extract_to(server_dir.to_s)
+    end
 
     if setup.include_plugins?
       puts 'Copying the plugins'
       mkdir_p "#{server_dir}/go-server-#{v}/plugins/external/"
-      cp "#{setup.plugin_src_dir}", "#{server_dir}/go-server-#{v}/plugins/external/"
+      cp setup.plugin_src_dir.to_s, "#{server_dir}/go-server-#{v}/plugins/external/"
     end
 
     if setup.include_addons?
-      puts "Copying the addons"
+      puts 'Copying the addons'
       mkdir_p "#{server_dir}/go-server-#{v}/addons/"
       mkdir_p "#{server_dir}/go-server-#{v}/config/"
       sh "curl -L -o #{server_dir}/go-server-#{v}/addons/postgres-addon.jar --fail -H 'Accept: binary/octet-stream' --user '#{ENV['EXTENSIONS_USER']}:#{ENV['EXTENSIONS_PASSWORD']}'  #{ENV['PG_ADDON_DOWNLOAD_URL']}"
@@ -60,41 +60,41 @@ namespace :server do
     end
   end
 
-  task :start => 'server:stop' do
+  task start: 'server:stop' do
     v, b = setup.go_version
 
     server_dir = "#{setup.server_install_dir}/go-server-#{v}"
-    %w(logs libs config).each{|dir| mkdir_p "#{server_dir}/#{dir}/"}
-    #cp_r "scripts/logback-gelf-1.0.4.jar", "#{server_dir}/libs/"
-    #cp_r "scripts/logback.xml" ,  "#{server_dir}/config/"
+    %w[logs libs config].each { |dir| mkdir_p "#{server_dir}/#{dir}/" }
+    # cp_r "scripts/logback-gelf-1.0.4.jar", "#{server_dir}/libs/"
+    # cp_r "scripts/logback.xml" ,  "#{server_dir}/config/"
 
     Bundler.with_clean_env do
-      ProcessBuilder.build('sh', 'server.sh') {|p|
+      ProcessBuilder.build('sh', 'server.sh') do |p|
         p.environment = gocd_server.environment
         puts 'Environment variables'
-        p.environment.each {|key,value|
+        p.environment.each do |key, value|
           puts "#{key}=#{value}"
-        }
+        end
         p.directory = server_dir
         p.redirection[:err] = "#{server_dir}/logs/go-server.startup.out.log"
         p.redirection[:out] = "#{server_dir}/logs/go-server.startup.out.log"
-      }.spawn
+      end.spawn
     end
 
     puts 'Waiting for server start up'
     server_is_running = false
-    Looper.run(interval:10, times: 9) {
+    Looper.run(interval: 10, times: 9) do
       begin
         gocd_client.about_page
         server_is_running = true
-      rescue
+      rescue StandardError
       end
-    }
+    end
 
     raise "Couldn't start GoCD server at #{v}-#{b} at #{server_dir}" unless server_is_running
 
     revision = setup.include_addons? ? "#{v}-#{b}-PG" : "#{v}-#{b}-H2"
-    #sh %(java -jar /var/go/newrelic/newrelic.jar deployment --appname='GoCD Perf Server' --revision="#{revision}")
+    # sh %(java -jar /var/go/newrelic/newrelic.jar deployment --appname='GoCD Perf Server' --revision="#{revision}")
     puts 'The server is up and running'
   end
 
@@ -104,12 +104,16 @@ namespace :server do
       File.open("#{setup.server_install_dir}/password.properties", 'w') { |file| file.write("file_based_user:#{BCrypt::Password.create(ENV['FILE_BASED_USER_PWD'])}") }
       gocd_client.set_file_based_auth_config("#{setup.server_install_dir}/password.properties")
     else
-      p "Auth config already setup on the server, skipping."
+      p 'Auth config already setup on the server, skipping.'
     end
   end
 
   task :setup_config_repo do
-      gocd_client.setup_config_repo(setup.git_repository_host)
+    gocd_client.setup_config_repo(setup.git_repository_host)
+  end
+
+  task :create_environment do
+    gocd_client.create_environment('performance')
   end
 
   task :enable_new_dashboard do
@@ -118,7 +122,7 @@ namespace :server do
 
   task :stop do
     verbose false do
-      sh %{ pkill -f go-server } do |ok, res|
+      sh %( pkill -f go-server ) do |ok, _res|
         puts 'Stopped server' if ok
       end
     end
@@ -127,5 +131,4 @@ namespace :server do
   task :auto_register do
     gocd_client.auto_register_key 'perf-auto-register-key'
   end
-  
 end
