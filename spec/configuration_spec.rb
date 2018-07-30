@@ -20,8 +20,9 @@ describe "Configuration" do
       ENV['NO_OF_AGENTS'] = nil
       expect(@setup.agents.count).to eq(75)
     end
-    it "sets the default git repository host" do
-      expect(@setup.git_repository_host).to eq('git://localhost')
+    it "sets the git repository host as provided by environment" do
+      ENV['GIT_REPOSITORY_HOST'] = 'git://test-env'
+      expect(@setup.git_repository_host).to eq('git://test-env')
     end
     it 'return the go full and short version' do
       ENV['GO_FULL_VERSION'] = "16.7.0-3883"
