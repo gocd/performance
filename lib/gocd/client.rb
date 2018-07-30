@@ -24,13 +24,13 @@ module GoCD
 
     def delete_pipeline(pipeline)
       @rest_client.delete "#{@base_url}/api/admin/pipelines/#{pipeline}",
-                          accept: 'application/vnd.go.cd.v5+json' , Authorization: @auth_header
+                          accept: 'application/vnd.go.cd.v5+json', Authorization: @auth_header
     end
 
     def unpause_pipeline(name)
       @rest_client.post("#{@base_url}/api/pipelines/#{name}/unpause",
                         '',
-                        confirm: true , Authorization: @auth_header)
+                        confirm: true, Authorization: @auth_header)
     end
 
     def create_plugin_settings(settings)
@@ -43,11 +43,16 @@ module GoCD
                         content_type: :json, accept: 'application/vnd.go.cd.v1+json', Authorization: @auth_header)
     end
 
+    def create_environment(environment)
+      @rest_client.post("#{@base_url}/api/elastic/profiles", %({ "name" : "#{environment}"}),
+                        content_type: :json, accept: 'application/vnd.go.cd.v2+json', Authorization: @auth_header)
+    end
+
     def get_pipeline_count(name)
       history = JSON.parse(open("#{@base_url}/api/pipelines/#{name}/history/0", 'Confirm' => 'true', http_basic_authentication: ['perf_tester', ENV['LDAP_USER_PWD']]).read)
       begin
         history['pipelines'][0]['counter']
-      rescue => e
+      rescue StandardError => e
         'retry'
       end
     end
@@ -69,7 +74,7 @@ module GoCD
 
     def job_timeout(timeout)
       server_attribute('jobTimeout', timeout)
-    rescue => e
+    rescue StandardError => e
       p "Config Update loop failed with exception #{e.message}"
     end
 
@@ -119,17 +124,22 @@ module GoCD
     end
 
     def setup_config_repo(repo_host)
-      config, md5 = config_xml
-      xml = @nokogiri::XML config
+      config_repo = %({
+        "id": "perf-config-repo",
+        "plugin_id": "json.config.plugin",
+        "material": {
+          "type": "git",
+          "attributes": {
+            "url": "#{repo_host}/config-repo-git",
+            "auto_update": true,
+            "branch": "master",
+            "shallow_clone": false
+          }
+        }
+      })
 
-      config_repo = %(<config-repos>
-                        <config-repo pluginId="json.config.plugin" id="repo1">
-                          <git url="#{repo_host}/config-repo-git" />
-                        </config-repo>
-                    </config-repos>)
-
-      xml.search('//cruise').first.add_child config_repo
-      save_config_xml xml.to_xml, md5
+      @rest_client.post("#{@base_url}/api/admin/config_repos",
+                        config_repo, content_type: :json,  accept: 'application/vnd.go.cd.v1+json', Authorization: @auth_header)
     end
 
     def set_file_based_auth_config(file)

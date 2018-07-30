@@ -42,8 +42,7 @@ module Configuration
 # And percentages of pipelines to be running of ecs or k8s or any elastic agents
 # The numbers should be calculated accordingly
     def total_pipelines
-      number_of_pipelines.to_i + number_of_pipelines_on_ecs_elastic_agents.to_i
-      + number_of_pipelines_on_k8s_elastic_agents.to_i + number_of_pipelines_in_config_repo.to_i
+      number_of_pipelines.to_i + number_of_pipelines_on_ecs_elastic_agents.to_i + number_of_pipelines_on_k8s_elastic_agents.to_i + number_of_pipelines_in_config_repo.to_i
     end
 
     def pipelines_run_on_ecs_elastic_agents
