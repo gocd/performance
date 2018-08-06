@@ -44,7 +44,7 @@ module GoCD
     end
 
     def create_environment(environment)
-      @rest_client.post("#{@base_url}/api/elastic/profiles", %({ "name" : "#{environment}"}),
+      @rest_client.post("#{@base_url}/api/admin/environments", %({ "name" : "#{environment}"}),
                         content_type: :json, accept: 'application/vnd.go.cd.v2+json', Authorization: @auth_header)
     end
 
