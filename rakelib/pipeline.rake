@@ -59,16 +59,16 @@ namespace :pipeline do
         end
 
         if multi_stage_pipeline?(pipeline)
-          p << Stage.new(name: 'first') do |s|
-            s << Job.new(name: 'firstJob') do |j|
-              j << ExecTask.new(command: 'ls')
+          p << ConfigRepoStage.new(name: 'first') do |s|
+            s << ConfigRepoJob.new(name: 'firstJob') do |j|
+              j << ConfigRepoExecTask.new(command: 'ls')
             end
           end
         end
 
-        p << Stage.new(name: 'default') do |s|
-          s << Job.new(name: 'defaultJob') do |j|
-            j << ExecTask.new(command: 'ls')
+        p << ConfigRepoStage.new(name: 'default') do |s|
+          s << ConfigRepoJob.new(name: 'defaultJob') do |j|
+            j << ConfigRepoExecTask.new(command: 'ls')
           end
         end
       end
