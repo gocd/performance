@@ -19,6 +19,7 @@ require 'json_builder'
 require 'deep_merge'
 
 module GoCD
+
   class ConfigRepoPipeline < Configuration
     def default
       {
@@ -37,8 +38,8 @@ module GoCD
 
     def <<(instance)
       super(instance)
-      self.stages << instance.data if instance.is_a? Stage
-      self.materials << instance.data if instance.is_a? Material
+      self.stages << instance.data if instance.is_a? ConfigRepoStage
+      self.materials << instance.data if instance.is_a? ConfigRepoMaterial
     end
 
     def to_json
