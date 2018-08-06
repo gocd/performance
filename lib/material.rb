@@ -78,6 +78,7 @@ module Material
       material.push(TfsMaterial.new(name: 'material1', url: "#{@setup.tfs_url}/defaultcollection", username: @setup.tfs_user, password: @setup.tfs_pwd, project_path: "$/go-perf-#{suffix - @git.end}")) if suffix.between?(@tfs.begin, @tfs.end)
       material.push(DependencyMaterial.new(pipeline: "#{pipeline.gsub(/[^a-zA-Z.]/, '')}#{suffix - 1}", name: 'dependency1')) if [3, 4, 5, 7, 8, 9].include?(suffix % 10)
       material.push(DependencyMaterial.new(pipeline: "#{pipeline.gsub(/[^a-zA-Z.]/, '')}#{suffix - 2}", name: 'dependency2')) if [0, 3, 7, 6].include?(suffix % 10)
+      material
     end
   end
 end
