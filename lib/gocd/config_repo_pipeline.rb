@@ -56,8 +56,8 @@ module GoCD
 
   end
 
-  class Material < Configuration; end
-  class GitMaterial < Material
+  class ConfigRepoMaterial < Configuration; end
+  class ConfigRepoGitMaterial < ConfigRepoMaterial
     def default
       {
         type: 'git',
@@ -75,7 +75,7 @@ module GoCD
     end
   end
 
-  class TfsMaterial < Material
+  class ConfigRepoTfsMaterial < ConfigRepoMaterial
     def default
       {
         type: 'tfs',
@@ -95,7 +95,7 @@ module GoCD
     end
   end
 
-  class DependencyMaterial < Material
+  class ConfigRepoDependencyMaterial < ConfigRepoMaterial
     def default
       {
         type: 'dependency',
@@ -111,15 +111,15 @@ module GoCD
     end
   end
 
-  class EnvironmentVariable < Configuration
+  class ConfigRepoEnvironmentVariable < Configuration
     def default
       { secure: false }
     end
   end
 
-  class Parameter < Configuration; end
+  class ConfigRepoParameter < Configuration; end
 
-  class Stage < Configuration
+  class ConfigRepoStage < Configuration
     def default
       {
         name: '',
@@ -144,7 +144,7 @@ module GoCD
     end
   end
 
-  class Job < Configuration
+  class ConfigRepoJob < Configuration
     def default
       {
         name: '',
@@ -166,8 +166,8 @@ module GoCD
     end
   end
 
-  class Task < Configuration; end
-  class ExecTask < Task
+  class ConfigRepoTask < Configuration; end
+  class ConfigRepoExecTask < ConfigRepoTask
     def default
       {
         type: 'exec'
