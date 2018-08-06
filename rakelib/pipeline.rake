@@ -54,7 +54,7 @@ namespace :pipeline do
     config_repo = Material::ConfigRepo.new
     @setup.pipelines_in_config_repo.each do |pipeline|
       performance_pipeline = ConfigRepoPipeline.new(group: 'ConfigRepo', name: pipeline.to_s) do |p|
-        @distributor.material_for(pipeline).each do |material|
+        @distributor.material_for_config_repo(pipeline).each do |material|
           p << material
         end
 
