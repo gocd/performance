@@ -50,7 +50,7 @@ class Loop
     @url_list = []
     @setup = Configuration::SetUp.new
     @server = Configuration::Server.new
-    @gocd_client = GoCD::Client.new @server.url
+    @gocd_client = GoCD::Client.new "#{@server.secure_url}/go"
   end
 
   def url(arg)
