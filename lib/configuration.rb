@@ -176,6 +176,14 @@ module Configuration
       env('GIT_ROOT', 'gitrepos')
     end
 
+    def config_repo_commit_duration
+      interval = env('CONFIG_REPO_COMMIT_INTERVAL', 3600).to_i
+      {
+        interval: interval,
+        times: load_test_duration / interval
+      }
+    end
+
     def git_commit_duration
       interval = env('GIT_COMMIT_INTERVAL', 10).to_i
       {
