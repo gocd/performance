@@ -141,7 +141,7 @@ module GoCD
 
     def <<(instance)
       super(instance)
-      self.jobs << instance.data if instance.is_a? Job
+      self.jobs << instance.data if instance.is_a? ConfigRepoJob
     end
   end
 
@@ -163,7 +163,7 @@ module GoCD
 
     def <<(instance)
       super(instance)
-      self.tasks << instance.data if instance.is_a? Task
+      self.tasks << instance.data if instance.is_a? ConfigRepoExecTask
     end
   end
 
