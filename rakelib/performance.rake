@@ -94,102 +94,102 @@ namespace :performance do
 
   task dashboard_to_job_instance: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
-    loader.run 'dashboard_to_job_instance', go_server.url
+    loader.run 'dashboard_to_job_instance', "#{@go_server.secure_url}/go"
   end
 
   task dashboard_to_vsm: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
-    loader.run 'dashboard_to_vsm', go_server.url
+    loader.run 'dashboard_to_vsm', "#{@go_server.secure_url}/go"
   end
 
   task dashboard_to_pipeline_edit: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
-    loader.run 'dashboard_to_pipeline_edit', go_server.url
+    loader.run 'dashboard_to_pipeline_edit', "#{@go_server.secure_url}/go"
   end
 
   task dashboard_to_compare: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
-    loader.run 'dashboard_to_compare', go_server.url
+    loader.run 'dashboard_to_compare', "#{@go_server.secure_url}/go"
   end
 
   task agents_to_jobs_history: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
-    loader.run 'agents_to_jobs_history', go_server.url
+    loader.run 'agents_to_jobs_history', "#{@go_server.secure_url}/go"
   end
 
   task dashboard_page_spike: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
-    loader.spike 'pipeline_dashboard', go_server.url
+    loader.spike 'pipeline_dashboard', "#{@go_server.secure_url}/go"
   end
 
   task dashboard_page: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
-    loader.run 'pipeline_dashboard', go_server.url
+    loader.run 'pipeline_dashboard', "#{@go_server.secure_url}/go"
   end
 
   task new_dashboard_page: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
-    loader.run 'new_pipeline_dashboard', go_server.url
+    loader.run 'new_pipeline_dashboard', "#{@go_server.secure_url}/go"
   end
 
   task admin_pages: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
-    loader.run 'admin_pages', go_server.url
+    loader.run 'admin_pages', "#{@go_server.secure_url}/go"
   end
 
   task environments_page: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
-    loader.run 'environments_page', go_server.url
+    loader.run 'environments_page', "#{@go_server.secure_url}/go"
   end
 
   task pipeline_history: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
-    loader.run 'pipeline_history', go_server.url
+    loader.run 'pipeline_history', "#{@go_server.secure_url}/go"
   end
 
   task plugin_status_report: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
-    loader.run 'plugin_status_report', go_server.url
+    loader.run 'plugin_status_report', "#{@go_server.secure_url}/go"
   end
 
   task admin_pipelines: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
-    loader.run 'admin_pipelines', go_server.url
+    loader.run 'admin_pipelines', "#{@go_server.secure_url}/go"
   end
 
   task CCTray: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
-    loader.run 'CCTray', go_server.url
+    loader.run 'CCTray', "#{@go_server.secure_url}/go"
   end
 
   task build_time_analytics: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
-    loader.run 'pipeline_build_analytics', go_server.url
+    loader.run 'pipeline_build_analytics', "#{@go_server.secure_url}/go"
   end
 
   task global_analytics: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
-    loader.run 'pipeline_global_analytics', go_server.url
+    loader.run 'pipeline_global_analytics', "#{@go_server.secure_url}/go"
   end
 
   task server_health_messages: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
-    loader.run 'server_health_messages', go_server.url
+    loader.run 'server_health_messages', "#{@go_server.secure_url}/go"
   end
 
   task user_summary: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
-    loader.run 'user_summary', go_server.url
+    loader.run 'user_summary', "#{@go_server.secure_url}/go"
   end
 
   task load_all: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
-    loader.run_all go_server.url
+    loader.run_all "#{@go_server.secure_url}/go"
   end
 
   task monitor: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
-    loader.monitor 'perf_mon', go_server.host, go_server.url
+    loader.monitor 'perf_mon', go_server.host, "#{@go_server.secure_url}/go"
   end
 
   task :analyze_thread_dump do
