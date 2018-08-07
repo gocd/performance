@@ -55,7 +55,7 @@ module Configuration
     end
 
     def pipelines_in_config_repo
-      (number_of_pipelines.to_i + number_of_pipelines_on_ecs_elastic_agents.to_i + number_of_pipelines_on_k8s_elastic_agents.to_i..
+      (number_of_pipelines.to_i + number_of_pipelines_on_ecs_elastic_agents.to_i + number_of_pipelines_on_k8s_elastic_agents.to_i + 1..
         total_pipelines).map { |i| "gocd.perf#{i}" }
     end
 
@@ -174,6 +174,14 @@ module Configuration
 
     def git_root
       env('GIT_ROOT', 'gitrepos')
+    end
+
+    def config_repo_commit_duration
+      interval = env('CONFIG_REPO_COMMIT_INTERVAL', 3600).to_i
+      {
+        interval: interval,
+        times: load_test_duration / interval
+      }
     end
 
     def git_commit_duration
