@@ -49,7 +49,7 @@ module GoCD
     end
 
     def get_pipeline_count(name)
-      history = JSON.parse(open("#{@base_url}/api/pipelines/#{name}/history/0", 'Confirm' => 'true', http_basic_authentication: ['perf_tester', ENV['LDAP_USER_PWD']]).read)
+      history = JSON.parse(open("#{@base_url}/api/pipelines/#{name}/history/0", ssl_verify_mode: 0, 'Confirm' => 'true', http_basic_authentication: ['perf_tester', ENV['LDAP_USER_PWD']]).read)
       begin
         history['pipelines'][0]['counter']
       rescue StandardError => e
@@ -58,7 +58,7 @@ module GoCD
     end
 
     def get_agent_id(idx)
-      response = JSON.parse(open("#{@base_url}/api/agents", 'Accept' => 'application/vnd.go.cd.v4+json', http_basic_authentication: ['perf_tester', ENV['LDAP_USER_PWD']], read_timeout: 300).read)
+      response = JSON.parse(open("#{@base_url}/api/agents", 'Accept' => 'application/vnd.go.cd.v4+json', http_basic_authentication: ['perf_tester', ENV['LDAP_USER_PWD']], read_timeout: 300, ssl_verify_mode: 0).read)
       all_agents = response['_embedded']['agents']
       all_agents.map { |a| a['uuid'] unless a.key?('elastic_agent_id') }.compact[idx - 1] # pick only the physical agents, elastic agents are not long living
     end
