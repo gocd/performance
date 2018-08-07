@@ -22,9 +22,9 @@ namespace :jmeter do
 
       puts 'Downloading and setting up JMeter plugins'
       Downloader.new(download_dir) do |q|
-        q.add 'http://gocd-fileserver.studioslabs.thoughtworks.com/studios/JMeterPlugins-Standard-1.4.0.zip'
-        q.add 'http://gocd-fileserver.studioslabs.thoughtworks.com/studios/JMeterPlugins-Extras-1.4.0.zip'
-        q.add 'http://gocd-fileserver.studioslabs.thoughtworks.com/studios/JMeterPlugins-ExtrasLibs-1.4.0.zip'
+        q.add 'https://jmeter-plugins.org/downloads/file/JMeterPlugins-Standard-1.4.0.zip'
+        q.add 'https://jmeter-plugins.org/downloads/file/JMeterPlugins-Extras-1.4.0.zip'
+        q.add 'https://jmeter-plugins.org/downloads/file/JMeterPlugins-ExtrasLibs-1.4.0.zip'
       end.start do |plugin_file|
         plugin_file.extract_to(setup.jmeter_dir)
       end
