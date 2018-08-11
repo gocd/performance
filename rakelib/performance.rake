@@ -53,10 +53,9 @@ namespace :performance do
       duration = setup.config_repo_commit_duration
       Looper.time_out(duration) do
         verbose false do
-          config_repo.update
+          config_repo.update_repo
         end
       end
-     
     end
   end
 
