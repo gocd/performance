@@ -94,7 +94,7 @@ namespace :server do
     raise "Couldn't start GoCD server at #{v}-#{b} at #{server_dir}" unless server_is_running
 
     revision = setup.include_addons? ? "#{v}-#{b}-PG" : "#{v}-#{b}-H2"
-    # sh %(java -jar /var/go/newrelic/newrelic.jar deployment --appname='GoCD Perf Server' --revision="#{revision}")
+    sh %(java -jar /var/go/newrelic/newrelic.jar deployment --appname='GoCD Perf Server' --revision="#{revision}")
     puts 'The server is up and running'
   end
 
@@ -113,7 +113,6 @@ namespace :server do
   end
 
   task :create_environment do
-    gocd_client.create_environment('performance')
   end
 
   task :enable_new_dashboard do
