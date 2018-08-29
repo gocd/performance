@@ -41,7 +41,6 @@ namespace :pipeline do
 
       begin
         gocd_client.create_pipeline(performance_pipeline.to_json)
-        gocd_client.unpause_pipeline(performance_pipeline.name)
       rescue StandardError => e
         raise "Something went wrong while creating pipeline #{pipeline}. \n Server says:\n #{e.response}"
       end
