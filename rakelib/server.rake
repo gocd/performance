@@ -69,7 +69,7 @@ namespace :server do
     # cp_r "scripts/logback.xml" ,  "#{server_dir}/config/"
 
     Bundler.with_clean_env do
-      ProcessBuilder.build('sh', 'server.sh') do |p|
+      ProcessBuilder.build('with-java.sh', './server.sh') do |p|
         p.environment = gocd_server.environment
         puts 'Environment variables'
         p.environment.each do |key, value|
