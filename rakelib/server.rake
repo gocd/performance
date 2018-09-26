@@ -66,7 +66,7 @@ namespace :server do
     server_dir = "#{setup.server_install_dir}/go-server-#{v}"
     %w[logs libs config].each { |dir| mkdir_p "#{server_dir}/#{dir}/" }
     cp_r "scripts/with-java.sh" ,  "#{server_dir}/with-java.sh"
-    chmod 0755, "#{server_dir}/with-java.sh"
+    chmod_R 0755, "#{server_dir}/"
     # cp_r "scripts/logback-gelf-1.0.4.jar", "#{server_dir}/libs/"
     # cp_r "scripts/logback.xml" ,  "#{server_dir}/config/"
 
