@@ -45,11 +45,13 @@ namespace :agents do
       agent_dir = "#{setup.agents_install_dir}/#{name}"
       mkdir_p "#{agent_dir}/config/"
       cp_r "scripts/autoregister.properties" ,  "#{agent_dir}/config/autoregister.properties"
+      cp_r "scripts/with-java.sh" ,  "#{agent_dir}/with-java.sh"
+      chmod 0755, "#{agent_dir}/with-java.sh"
       #logback_file = "#{agent_dir}/config/agent-logback.xml"
       #cp_r "scripts/agent-logback.xml" ,  logback_file
       
       cd agent_dir do
-        sh %{with-java.sh java #{agent_config.startup_args} -jar agent.jar -serverUrl https://#{gocd_server.host}:#{gocd_server.secure_port}/go > #{name}.log 2>&1 & }, verbose:false
+        sh %{./with-java.sh java #{agent_config.startup_args} -jar agent.jar -serverUrl https://#{gocd_server.host}:#{gocd_server.secure_port}/go > #{name}.log 2>&1 & }, verbose:false
         sleep 20
       end
     }
