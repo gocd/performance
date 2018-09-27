@@ -18,7 +18,7 @@ namespace :plugins do
       ecs.create_plugin_settings_with_actual_values({ 'GoServerUrl' => "#{gocd_server.secure_url}/go",
                                                       'AWSSecretAccessKey' => setup.aws_secret,
                                                       'AWSAccessKeyId' => setup.aws_access_key,
-                                                      'EC2IAMInstanceProfile' => setup.aws_iam_profile }, gocd_client)
+                                                      'IamInstanceProfile' => setup.aws_iam_profile }, gocd_client)
     end
   end
 

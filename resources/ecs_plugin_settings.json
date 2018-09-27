@@ -1,65 +1,160 @@
 {
   "plugin_id": "com.thoughtworks.gocd.elastic-agent.ecs",
   "configuration": [
-    {
-      "key": "GoServerUrl",
-      "value": "#GoServerURL"
-    },
-    {
-      "key": "AWSAccessKeyId",
-      "value": "#Accesskey"
-    },
-    {
-      "key": "AWSSecretAccessKey",
-      "value": "#Secret"
-    },
-    {
-      "key": "AWSRegion",
-      "value": "us-west-2"
-    },
-    {
-      "key": "ClusterName",
-      "value": "GoCDPerf"
-    },
-    {
-      "key": "ContainerAutoregisterTimeout",
-      "value": "2"
-    },
-    {
-      "key": "ami",
-      "value": "ami-57d9cd2e"
-    },
-    {
-      "key": "EC2InstanceType",
-      "value": "c3.2xlarge"
-    },
-    {
-      "key": "SshKeyPairName",
-      "value": "rajiesh-ec2-instance"
-    },
-    {
-      "key": "TerminationPolicy",
-      "value": "ClosestToNextInstanceHour"
-    },
-    {
-      "key": "IamInstanceProfile",
-      "value": "#IAMProfile"
-    },
-    {
-      "key": "SubnetIds",
-      "value": "subnet-6debca24"
-    },
-    {
-      "key": "EC2RegisterTimeout",
-      "value": "5"
-    },
-    {
-      "key": "MinEC2InstanceCount",
-      "value": "0"
-    },
-    {
-      "key": "MaxEC2InstancesAllowed",
-      "value": "4"
-    }
+      {
+          "key": "LinuxOSVolumeSize"
+      },
+      {
+          "key": "TerminateStoppedLinuxInstanceAfter"
+      },
+      {
+          "key": "LinuxDockerVolumeType",
+          "value": "none"
+      },
+      {
+          "key": "LinuxDockerVolumeSize"
+      },
+      {
+          "key": "LinuxStopPolicy",
+          "value": "StopIdleInstance"
+      },
+      {
+          "key": "PrivateDockerRegistryEmail"
+      },
+      {
+          "key": "LinuxInstanceType",
+          "value": "c3.2xlarge"
+      },
+      {
+          "key": "WindowsRegisterTimeout"
+      },
+      {
+          "key": "AWSAccessKeyId",
+          "value": "#Accesskey"
+      },
+      {
+          "key": "AWSRegion",
+          "value": "us-west-2"
+      },
+      {
+          "key": "IamInstanceProfile",
+          "value": "#IAMProfile"
+      },
+      {
+          "key": "LogOptions"
+      },
+      {
+          "key": "SubnetIds",
+          "value": "subnet-6debca24"
+      },
+      {
+          "key": "MaxContainerDataVolumeSize"
+      },
+      {
+          "key": "WindowsStopPolicy",
+          "value": "StopIdleInstance"
+      },
+      {
+          "key": "PrivateDockerRegistryUsername"
+      },
+      {
+          "key": "MinLinuxInstanceCount",
+          "value": "0"
+      },
+      {
+          "key": "WindowsInstanceType"
+      },
+      {
+          "key": "EnvironmentVariables"
+      },
+      {
+          "key": "LinuxUserdataScript"
+      },
+      {
+          "key": "WindowsUserdataScript"
+      },
+      {
+          "key": "WindowsOSVolumeType",
+          "value": "none"
+      },
+      {
+          "key": "ClusterName",
+          "value": "GoCDPerf"
+      },
+      {
+          "key": "MaxLinuxInstancesAllowed",
+          "value": "4"
+      },
+      {
+          "key": "LinuxOSVolumeType",
+          "value": "none"
+      },
+      {
+          "key": "ContainerAutoregisterTimeout",
+          "value": "2"
+      },
+      {
+          "key": "KeyPairName",
+          "value": "rajiesh-ec2-instance"
+      },
+      {
+          "key": "StopLinuxInstanceAfter"
+      },
+      {
+          "key": "LinuxRegisterTimeout",
+          "value": "5"
+      },
+      {
+          "key": "WindowsOSVolumeSize"
+      },
+      {
+          "key": "TerminateStoppedWindowsInstanceAfter"
+      },
+      {
+          "key": "LinuxAmi",
+          "value": "ami-57d9cd2e"
+      },
+      {
+          "key": "EfsDnsOrIP"
+      },
+      {
+          "key": "SecurityGroupIds"
+      },
+      {
+          "key": "AWSSecretAccessKey",
+          "value": "#Secret"
+      },
+      {
+          "key": "PrivateDockerRegistryAuthToken"
+      },
+      {
+          "key": "GoServerUrl",
+          "value": "#GoServerURL"
+      },
+      {
+          "key": "PrivateDockerRegistryUrl"
+      },
+      {
+          "key": "WindowsAmi"
+      },
+      {
+          "key": "LogDriver"
+      },
+      {
+          "key": "PrivateDockerRegistryPassword"
+      },
+      {
+          "key": "MinWindowsInstanceCount"
+      },
+      {
+          "key": "MaxWindowsInstancesAllowed"
+      },
+      {
+          "key": "StopWindowsInstanceAfter"
+      },
+      {
+          "key": "PrivateDockerRegistryAuthType",
+          "value": "default"
+      }
   ]
 }
