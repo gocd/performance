@@ -42,7 +42,7 @@
       "value": "ClosestToNextInstanceHour"
     },
     {
-      "key": "EC2IAMInstanceProfile",
+      "key": "IamInstanceProfile",
       "value": "#IAMProfile"
     },
     {
