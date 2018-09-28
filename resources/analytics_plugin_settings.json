@@ -20,6 +20,10 @@
             "key": "client_key"
         },
         {
+            "key": "license",
+            "value": "#license_key"
+        }
+        {
             "key": "password",
             "value": "go"
         },
