@@ -45,7 +45,8 @@ namespace :plugins do
   task :setup_analytics_plugin do
     if setup.include_analytics_plugin?
       k8s = Plugins::Elastic_agent.new('resources/analytics_plugin_settings.json')
-      k8s.create_plugin_settings_with_actual_values({ 'host' => setup.pg_db_host.to_s }, gocd_client)
+      k8s.create_plugin_settings_with_actual_values({ 'host' => setup.pg_db_host.to_s,
+                                                      'license' => setup.analytics_license_key}, gocd_client)
     end
   end
 
