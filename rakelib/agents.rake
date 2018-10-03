@@ -38,7 +38,7 @@ namespace :agents do
 
   end
 
-  task :start => ['agents:stop'] do
+  task :start => ['agents:stop', 'server:auto_register'] do
     agent_config = Configuration::Agent.new
     puts 'Calling all agents'
     Parallel.each(setup.agents, :in_processes => 5) { |name|
