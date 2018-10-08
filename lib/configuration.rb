@@ -278,6 +278,10 @@ module Configuration
       env('PG_DB_HOST', 'localhost')
     end
 
+    def analytics_license_key
+      env('ANALYTICS_LICENSE_KEY', 'no-license-provided')
+    end
+
     def influxdb_host
       env('INFLUXDB_HOST', 'localhost')
     end
