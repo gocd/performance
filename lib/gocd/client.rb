@@ -45,7 +45,7 @@ module GoCD
 
     def create_environment(environment)
       @rest_client.post("#{@base_url}/api/admin/environments", %({ "name" : "#{environment}"}),
-                        content_type: :json, accept: 'application/vnd.go.cd.v2+json', Authorization: @auth_header)
+                        content_type: :json, accept: 'application/vnd.go.cd.v2+json')
     end
 
     def get_pipeline_count(name)
