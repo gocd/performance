@@ -7,18 +7,18 @@ namespace :postgres do
   setup = Configuration::SetUp.new
 
   task :setup_db do
-    sh('dropdb -U go cruise || true')
-    sh(%(createdb -U go cruise))
+    sh('dropdb -U postgres cruise || true')
+    sh(%(createdb -U postgres cruise))
 
     if setup.include_analytics_plugin?
-      sh('dropdb -U go analytics || true')
-      sh(%(createdb -U go analytics))
+      sh('dropdb -U postgres analytics || true')
+      sh(%(createdb -U postgres analytics))
     end
   end
 
   task :stop do
     verbose false do
-      sh %( service postgresql-9.5 stop ) do |ok, _res|
+      sh %( /etc/init.d/postgresql96 stop ) do |ok, _res|
         puts 'Stopped PostgreSQL server' if ok
       end
     end
