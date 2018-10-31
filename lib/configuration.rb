@@ -278,6 +278,12 @@ module Configuration
       env('PG_DB_HOST', 'localhost')
     end
 
+    def pg_db_password
+      pwd = env('PG_DB_PASSWORD', nil)
+      raise 'Missing PG_DB_PASSWORD environment variable' unless pwd
+      pwd
+    end
+
     def analytics_license_key
       env('ANALYTICS_LICENSE_KEY', 'no-license-provided')
     end

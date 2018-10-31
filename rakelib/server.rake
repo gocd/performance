@@ -39,8 +39,8 @@ namespace :server do
         f.puts("db.host=#{setup.pg_db_host}")
         f.puts('db.port=5432')
         f.puts('db.name=cruise')
-        f.puts('db.user=go')
-        f.puts('db.password=go')
+        f.puts('db.user=postgres')
+        f.puts("db.password=#{setup.pg_db_password}")
       end
     end
 
