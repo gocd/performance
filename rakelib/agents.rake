@@ -45,7 +45,7 @@ namespace :agents do
       mkdir_p "#{agent_dir}/config/"
       cp_r 'scripts/autoregister.properties', "#{agent_dir}/config/autoregister.properties"
       cp_r 'scripts/with-java.sh', "#{agent_dir}/with-java.sh"
-      chmod_R 0o755, "#{agent_dir}/"
+      chmod_R 0755, "#{agent_dir}/"
       # logback_file = "#{agent_dir}/config/agent-logback.xml"
       # cp_r "scripts/agent-logback.xml" ,  logback_file
 
