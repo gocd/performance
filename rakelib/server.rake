@@ -5,6 +5,7 @@ require 'rest-client'
 require 'bundler'
 require 'process_builder'
 require 'bcrypt'
+require 'yaml'
 
 namespace :server do
   gocd_server = Configuration::Server.new
@@ -60,12 +61,12 @@ namespace :server do
     end
   end
 
-  task start: 'server:stop' do
+  task start: ['server:stop', 'server:setup_newrelic_agent'] do
     v, b = setup.go_version
 
     server_dir = "#{setup.server_install_dir}/go-server-#{v}"
     %w[logs libs config].each { |dir| mkdir_p "#{server_dir}/#{dir}/" }
-    cp_r "scripts/with-java.sh" ,  "#{server_dir}/with-java.sh"
+    cp_r 'scripts/with-java.sh', "#{server_dir}/with-java.sh"
     chmod_R 0755, "#{server_dir}/"
     # cp_r "scripts/logback-gelf-1.0.4.jar", "#{server_dir}/libs/"
     # cp_r "scripts/logback.xml" ,  "#{server_dir}/config/"
@@ -96,13 +97,13 @@ namespace :server do
     raise "Couldn't start GoCD server at #{v}-#{b} at #{server_dir}" unless server_is_running
 
     revision = setup.include_addons? ? "#{v}-#{b}-PG" : "#{v}-#{b}-H2"
-    sh %(java -jar /var/go/newrelic/newrelic.jar deployment --appname='GoCD Perf Server' --revision="#{revision}")
+    sh %(java -jar /var/go/newrelic/newrelic-agent.jar deployment --appname='GoCD Perf Server' --revision="#{revision}")
     puts 'The server is up and running'
   end
 
   task :setup_auth do
     if !gocd_client.auth_enabled?
-      gocd_client.set_ldap_auth_config(setup.ldap_server_ip)
+      # gocd_client.set_ldap_auth_config(setup.ldap_server_ip)
       File.open("#{setup.server_install_dir}/password.properties", 'w') { |file| file.write("file_based_user:#{BCrypt::Password.create(ENV['FILE_BASED_USER_PWD'])}") }
       gocd_client.set_file_based_auth_config("#{setup.server_install_dir}/password.properties")
     else
@@ -126,6 +127,18 @@ namespace :server do
       sh %( pkill -f go-server ) do |ok, _res|
         puts 'Stopped server' if ok
       end
+    end
+  end
+
+  task :setup_newrelic_agent do
+    rm_rf '/var/go/newrelic'
+    mkdir_p '/var/go/newrelic'
+    sh %(wget http://central.maven.org/maven2/com/newrelic/agent/java/newrelic-agent/4.7.0/newrelic-agent-4.7.0.jar -O /var/go/newrelic/newrelic-agent.jar)
+    sh %(wget http://central.maven.org/maven2/com/newrelic/agent/java/newrelic-api/4.7.0/newrelic-api-4.7.0.jar -O /var/go/newrelic/newrelic-api.jar)
+    config = YAML.load_file('resources/newrelic.yml')
+    config['common']['license_key'] = setup.newrelic_license_key
+    File.open('/var/go/newrelic/newrelic.yml', 'w') do |f|
+      f.write config.to_yaml
     end
   end
 

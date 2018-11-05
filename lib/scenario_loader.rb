@@ -110,7 +110,7 @@ class ScenarioLoader
             end
           end
         end
-        backend_listener prefix: "#{name}.", samplers_list: scenario.name.to_s, db_host: @setup.influxdb_host
+        #backend_listener prefix: "#{name}.", samplers_list: scenario.name.to_s, db_host: @setup.influxdb_host
       end
     end.run(path: @setup.jmeter_bin,
             file: "#{reports_dir}/jmeter.jmx",
