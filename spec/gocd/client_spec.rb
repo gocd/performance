@@ -6,7 +6,7 @@ describe GoCD::Client do
     @rest_client = double('rest_client')
     @client = GoCD::Client.new(rest_client: @rest_client)
     @pipeline = GoCD::Pipeline.new(name: 'pipeline')
-    @auth_header = "Basic #{Base64.encode64(['perf_tester', ENV['LDAP_USER_PWD']].join(':'))}"
+    @auth_header = "Basic #{Base64.encode64(['file_based_user', ENV['FILE_BASED_USER_PWD']].join(':'))}"
   end
 
   it 'gets the support page' do
@@ -22,7 +22,6 @@ describe GoCD::Client do
       @pipeline.to_json,
       :accept => 'application/vnd.go.cd.v6+json',
       :content_type => 'application/json', Authorization: @auth_header)
-
       @client.create_pipeline(@pipeline.to_json)
     end
 

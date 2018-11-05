@@ -12,7 +12,7 @@ module GoCD
       @rest_client = rest_client
       @base_url = base_url
       @nokogiri = nokogiri
-      @auth_header = "Basic #{Base64.encode64(['perf_tester', ENV['LDAP_USER_PWD']].join(':'))}"
+      @auth_header = "Basic #{Base64.encode64(['file_based_user', ENV['FILE_BASED_USER_PWD']].join(':'))}"
     end
 
     def create_pipeline(data)
@@ -49,7 +49,7 @@ module GoCD
     end
 
     def get_pipeline_count(name)
-      history = JSON.parse(open("#{@base_url}/api/pipelines/#{name}/history/0", ssl_verify_mode: 0, 'Confirm' => 'true', http_basic_authentication: ['perf_tester', ENV['LDAP_USER_PWD']]).read)
+      history = JSON.parse(open("#{@base_url}/api/pipelines/#{name}/history/0", ssl_verify_mode: 0, 'Confirm' => 'true', http_basic_authentication: ['file_based_user', ENV['FILE_BASED_USER_PWD']]).read)
       begin
         history['pipelines'][0]['counter']
       rescue StandardError => e
@@ -58,13 +58,13 @@ module GoCD
     end
 
     def get_agent_id(idx)
-      response = JSON.parse(open("#{@base_url}/api/agents", 'Accept' => 'application/vnd.go.cd.v4+json', http_basic_authentication: ['perf_tester', ENV['LDAP_USER_PWD']], read_timeout: 300, ssl_verify_mode: 0).read)
+      response = JSON.parse(open("#{@base_url}/api/agents", 'Accept' => 'application/vnd.go.cd.v4+json', http_basic_authentication: ['file_based_user', ENV['FILE_BASED_USER_PWD']], read_timeout: 300, ssl_verify_mode: 0).read)
       all_agents = response['_embedded']['agents']
       all_agents.map { |a| a['uuid'] unless a.key?('elastic_agent_id') }.compact[idx - 1] # pick only the physical agents, elastic agents are not long living
     end
 
     def get_agents_count
-      agents = JSON.parse(open("#{@base_url}/api/agents", 'Accept' => 'application/vnd.go.cd.v4+json').read)
+      agents = JSON.parse(open("#{@base_url}/api/agents", 'Accept' => 'application/vnd.go.cd.v4+json', ssl_verify_mode: 0).read)
       agents['_embedded']['agents'].length
     end
 
