@@ -21,12 +21,12 @@ namespace :agents do
     }
     mkdir_p agents_dir
 
-    Downloader.new(agents_dir) {|q|
-      q.add "http://#{gocd_server.host}:#{gocd_server.port}/go/admin/agent.jar"
+    cd agents_dir do
+      sh %{wget --no-check-certificate https://#{gocd_server.host}:#{gocd_server.secure_port}/go/admin/agent.jar}, verbose:false
       %w{tfs-impl.jar agent-plugins.zip}.each{|file|
-        q.add "http://#{gocd_server.host}:#{gocd_server.port}/go/admin/#{file}"
+        sh %{wget --no-check-certificate https://#{gocd_server.host}:#{gocd_server.secure_port}/go/admin/#{file}}, verbose:false
       }
-    }.start
+    end
 
     Parallel.each(setup.agents, :in_processes => 5) {|name|
       mkdir_p "#{agents_dir}/#{name}/libs"
