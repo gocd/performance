@@ -146,10 +146,12 @@ module GoCD
       config, md5 = config_xml
       xml = @nokogiri::XML config
 
-      authConfig = Nokogiri::XML::Node.new('authConfig', xml)
-      authConfig['id'] = 'pwd_file'
-      authConfig['pluginId'] = 'cd.go.authentication.passwordfile'
-      property = Nokogiri::XML::Node.new('property', authConfig)
+      security = Nokogiri::XML::Node.new('security', xml)
+      auth_configs = Nokogiri::XML::Node.new('authConfigs', security)
+      auth_config = Nokogiri::XML::Node.new('authConfig', auth_configs)
+      auth_config['id'] = 'pwd_file'
+      auth_config['pluginId'] = 'cd.go.authentication.passwordfile'
+      property = Nokogiri::XML::Node.new('property', auth_config)
       key = Nokogiri::XML::Node.new('key', property)
       key.content = 'PasswordFilePath'
       value = Nokogiri::XML::Node.new('value', property)
@@ -157,9 +159,11 @@ module GoCD
       property.add_child key
       property.add_child value
 
-      authConfig.add_child property
+      auth_config.add_child property
+      auth_configs.add_child auth_config
+      security.add_child auth_configs
 
-      xml.search('//authConfigs').first.add_child authConfig
+      xml.search('//server').first.add_child security
 
       save_config_xml xml.to_xml, md5
     end
