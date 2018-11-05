@@ -116,6 +116,7 @@ namespace :server do
   end
 
   task :create_environment do
+    gocd_client.create_environment('performance')
   end
 
   task :enable_new_dashboard do
