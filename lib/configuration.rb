@@ -387,7 +387,7 @@ module Configuration
     end
 
     def secure_url
-      env('PERF_SERVER_SSH_URL', 'https://localhost:8154')
+      env('PERF_SERVER_SSH_URL', "https://#{host}:8154")
     end
 
     def environment
