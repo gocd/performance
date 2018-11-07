@@ -136,10 +136,10 @@ namespace :server do
     mkdir_p '/var/go/newrelic'
     sh %(wget http://central.maven.org/maven2/com/newrelic/agent/java/newrelic-agent/4.7.0/newrelic-agent-4.7.0.jar -O /var/go/newrelic/newrelic-agent.jar)
     sh %(wget http://central.maven.org/maven2/com/newrelic/agent/java/newrelic-api/4.7.0/newrelic-api-4.7.0.jar -O /var/go/newrelic/newrelic-api.jar)
-    config = YAML.load_file('resources/newrelic.yml')
-    config['common']['license_key'] = setup.newrelic_license_key
+    newrelic_config = File.read('resources/newrelic.yml')
+    newrelic_config.gsub!(/<%= license_key %>/, setup.newrelic_license_key)
     File.open('/var/go/newrelic/newrelic.yml', 'w') do |f|
-      f.write config.to_yaml
+      f.write newrelic_config
     end
   end
 
