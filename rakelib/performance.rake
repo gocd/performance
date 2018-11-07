@@ -32,12 +32,11 @@ namespace :performance do
   end
 
   namespace :git do
-    task :update do
+    task :update do # This task updates all the git repos and the config repo too
       duration = setup.git_commit_duration
 
       Looper.time_out(duration) do
         git.repos.each do |repo|
-          next if repo.include? 'config-repo-git'
           verbose false do
             cd repo do
               time = Time.now
@@ -49,7 +48,7 @@ namespace :performance do
       end
     end
 
-    task :update_config_repo do
+    task :update_config_repo do # Not using this task now, need to find a better way to handle Material repos and config repos update in single task
       duration = setup.config_repo_commit_duration
       Looper.time_out(duration) do
         verbose false do
