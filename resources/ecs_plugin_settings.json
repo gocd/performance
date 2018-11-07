@@ -45,7 +45,7 @@
       },
       {
           "key": "SubnetIds",
-          "value": "subnet-6debca24"
+          "value": ""
       },
       {
           "key": "MaxContainerDataVolumeSize"
@@ -79,7 +79,7 @@
       },
       {
           "key": "ClusterName",
-          "value": "GoCDPerf"
+          "value": "GoCDPerfEA"
       },
       {
           "key": "MaxLinuxInstancesAllowed",
