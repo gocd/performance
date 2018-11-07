@@ -393,7 +393,7 @@ module Configuration
     end
 
     def secure_url
-      env('PERF_SERVER_SSH_URL', "https://#{host}:8154/go")
+      env('PERF_SERVER_SSH_URL', "https://#{host}:8154")
     end
 
     def environment
