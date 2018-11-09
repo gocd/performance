@@ -64,7 +64,7 @@ module GoCD
     end
 
     def get_agents_count
-      agents = JSON.parse(open("#{@base_url}/api/agents", 'Accept' => 'application/vnd.go.cd.v4+json', ssl_verify_mode: 0).read)
+      agents = JSON.parse(open("#{@base_url}/api/agents", 'Accept' => 'application/vnd.go.cd.v4+json', read_timeout: 300, ssl_verify_mode: 0).read)
       agents['_embedded']['agents'].length
     end
 
@@ -79,7 +79,7 @@ module GoCD
     end
 
     def config_xml
-      res = @rest_client.get("#{@base_url}/admin/configuration/file.xml") do |response, _request, _result|
+      res = @rest_client.get("#{@base_url}/admin/configuration/file.xml", timeout: 120) do |response, _request, _result|
         if response.code == 302
           @rest_client.get "#{@base_url}/admin/configuration/file.xml", Authorization: @auth_header
         else
