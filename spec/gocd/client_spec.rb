@@ -57,7 +57,7 @@ describe GoCD::Client do
     it 'gets from the right end point' do
       allow(@response).to receive(:headers).and_return({'x_cruise_config_md5': 'md5'})
       expect(@rest_client).to receive(:get)
-        .with("http://localhost:8153/go/admin/configuration/file.xml")
+        .with("http://localhost:8153/go/admin/configuration/file.xml", {:timeout=>120})
       @client.config_xml
     end
 
