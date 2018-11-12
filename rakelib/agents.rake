@@ -10,7 +10,7 @@ require 'nokogiri'
 namespace :agents do
   setup = Configuration::SetUp.new
   gocd_server = Configuration::Server.new
-  gocd_client = GoCD::Client.new gocd_server.url
+  gocd_client = GoCD::Client.new "#{gocd_server.secure_url}/go"
 
   task prepare: 'agents:stop' do
     v, b = setup.go_version
