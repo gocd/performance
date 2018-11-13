@@ -79,9 +79,9 @@ module GoCD
     end
 
     def config_xml
-      res = @rest_client.get("#{@base_url}/admin/configuration/file.xml", timeout: 120) do |response, _request, _result|
+      res = @rest_client.get("#{@base_url}/admin/configuration/file.xml", timeout: 120, verify_ssl: false) do |response, _request, _result|
         if response.code == 302
-          @rest_client.get "#{@base_url}/admin/configuration/file.xml", Authorization: @auth_header
+          @rest_client.get "#{@base_url}/admin/configuration/file.xml", Authorization: @auth_header, verify_ssl: false
         else
           response
         end
@@ -94,9 +94,9 @@ module GoCD
     end
 
     def save_config_xml(xml, md5)
-      @rest_client.post("#{@base_url}/admin/configuration/file.xml", { xmlFile: xml, md5: md5 }, Confirm: true) do |response, _request, _result|
+      @rest_client.post("#{@base_url}/admin/configuration/file.xml", { xmlFile: xml, md5: md5 }, Confirm: true, verify_ssl: false) do |response, _request, _result|
         if response.code == 302
-          @rest_client.post("#{@base_url}/admin/configuration/file.xml", { xmlFile: xml, md5: md5 }, Authorization: @auth_header, Confirm: true)
+          @rest_client.post("#{@base_url}/admin/configuration/file.xml", { xmlFile: xml, md5: md5 }, Authorization: @auth_header, Confirm: true, verify_ssl: false)
         end
       end
     end
