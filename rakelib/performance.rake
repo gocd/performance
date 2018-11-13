@@ -16,7 +16,7 @@ namespace :performance do
   tfs = Material::Tfs.new
   config_repo = Material::ConfigRepo.new
 
-  gocd_client = GoCD::Client.new go_server.url
+  gocd_client = GoCD::Client.new "#{go_server.secure_url}/go"
 
   namespace :config do
     task :update do
