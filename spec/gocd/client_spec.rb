@@ -57,7 +57,7 @@ describe GoCD::Client do
     it 'gets from the right end point' do
       allow(@response).to receive(:headers).and_return({'x_cruise_config_md5': 'md5'})
       expect(@rest_client).to receive(:get)
-        .with("http://localhost:8153/go/admin/configuration/file.xml", {:timeout=>120})
+        .with("http://localhost:8153/go/admin/configuration/file.xml", {:timeout=>120, :verify_ssl=>false})
       @client.config_xml
     end
 
@@ -76,7 +76,7 @@ describe GoCD::Client do
     it 'posts to the right end point' do
       expect(@rest_client).to receive(:post)
         .with("http://localhost:8153/go/admin/configuration/file.xml",
-      {xmlFile: '<xml/>',md5: 'md5'}, {Confirm: true})
+      {xmlFile: '<xml/>',md5: 'md5'}, {Confirm: true, :verify_ssl=>false})
 
       @client.save_config_xml('<xml/>', 'md5')
     end
@@ -96,7 +96,7 @@ describe GoCD::Client do
 
       expect(@rest_client).to receive(:post)
         .with("http://localhost:8153/go/admin/configuration/file.xml",
-      {xmlFile: expectedXml,md5: 'md5'}, {Confirm: true})
+      {xmlFile: expectedXml,md5: 'md5'}, {Confirm: true, :verify_ssl=>false})
 
       @client.auto_register_key 'key'
     end
@@ -115,7 +115,7 @@ describe GoCD::Client do
 
       expect(@rest_client).to receive(:post)
         .with("http://localhost:8153/go/admin/configuration/file.xml",
-      {xmlFile: expectedXml,md5: 'md5'}, {Confirm: true})
+      {xmlFile: expectedXml,md5: 'md5'}, {Confirm: true, :verify_ssl=>false})
 
       @client.job_timeout 61
     end
