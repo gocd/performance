@@ -211,13 +211,20 @@ module GoCD
     private
 
     def server_attribute(attribute, value)
-      config, md5 = config_xml
+      headers = { Authorization: @auth_header, Confirm: 'true' }
+      res = RestClient::Request.execute(url: "#{@base_url}/admin/configuration/file.xml",
+                                        method: :get, verify_ssl: false, timeout: 120, headers: headers)
+      md5 = res.headers[:x_cruise_config_md5]
+      config = res.body
 
       xml = @nokogiri::XML config
       xml.xpath('//server').each do |ele|
         ele.set_attribute(attribute, value)
       end
-      save_config_xml xml.to_xml, md5
+
+      RestClient::Request.execute(url: "#{@base_url}/admin/configuration/file.xml",
+                                  method: :post, payload: { xmlFile: xml.to_xml, md5: md5 },
+                                  verify_ssl: false, timeout: 120, headers: headers)
     end
   end
 end
