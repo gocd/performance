@@ -73,7 +73,20 @@ module GoCD
     end
 
     def job_timeout(timeout)
-      server_attribute('jobTimeout', timeout)
+      headers = { Authorization: @auth_header, Confirm: 'true' }
+      res = RestClient::Request.execute(url: "#{@base_url}/admin/configuration/file.xml",
+                                        method: :get, verify_ssl: false, timeout: 120, headers: headers)
+      md5 = res.headers[:x_cruise_config_md5]
+      config = res.body
+
+      xml = @nokogiri::XML config
+      xml.xpath('//server').each do |ele|
+        ele.set_attribute('jobTimeout', value)
+      end
+
+      RestClient::Request.execute(url: "#{@base_url}/admin/configuration/file.xml",
+                                  method: :post, payload: { xmlFile: xml.to_xml, md5: md5 },
+                                  verify_ssl: false, timeout: 120, headers: headers)
     rescue StandardError => e
       p "Config Update loop failed with exception #{e.message}"
     end
@@ -211,20 +224,12 @@ module GoCD
     private
 
     def server_attribute(attribute, value)
-      headers = { Authorization: @auth_header, Confirm: 'true' }
-      res = RestClient::Request.execute(url: "#{@base_url}/admin/configuration/file.xml",
-                                        method: :get, verify_ssl: false, timeout: 120, headers: headers)
-      md5 = res.headers[:x_cruise_config_md5]
-      config = res.body
-
+      config, md5 = config_xml
       xml = @nokogiri::XML config
       xml.xpath('//server').each do |ele|
         ele.set_attribute(attribute, value)
       end
-
-      RestClient::Request.execute(url: "#{@base_url}/admin/configuration/file.xml",
-                                  method: :post, payload: { xmlFile: xml.to_xml, md5: md5 },
-                                  verify_ssl: false, timeout: 120, headers: headers)
+      save_config_xml xml.to_xml, md5
     end
   end
 end
