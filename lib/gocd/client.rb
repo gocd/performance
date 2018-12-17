@@ -81,7 +81,7 @@ module GoCD
 
       xml = @nokogiri::XML config
       xml.xpath('//server').each do |ele|
-        ele.set_attribute('jobTimeout', value)
+        ele.set_attribute('jobTimeout', timeout)
       end
 
       RestClient::Request.execute(url: "#{@base_url}/admin/configuration/file.xml",
