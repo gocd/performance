@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gocd-init-configmap
+  labels:
+    app: {{ template "gocd.name" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+data:
+  addon_config.sh: |-
+    #!bin/bash
+     
+    SERVICE_ACCOUNT_PATH=/var/run/secrets/kubernetes.io/serviceaccount
+    KUBE_TOKEN=$(<${SERVICE_ACCOUNT_PATH}/token)
+
+    tee /godata/config/postgresqldb.properties >/dev/null <<EOF
+    db.host=my-release-postgresql
+    db.port=5432
+    db.name=cruise
+    db.user=postgres
+    db.password=postgres
+    EOF
+   
+    curl -L -o '/godata/addons/go-postgresql-18.12.0-8213-520daad.jar' --fail -H 'Accept: binary/octet-stream' --user 'username:password' \
+    'https://extensions.gocd.org/addons/postgres_experimental/versions/latest/download?eula_accepted=true' &> /godata/addons/addon_config.log
