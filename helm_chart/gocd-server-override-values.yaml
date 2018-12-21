@@ -69,6 +69,16 @@ server:
         value: https://github.com/gocd/kubernetes-elastic-agents/releases/download/v2.0.0/kubernetes-elastic-agent-2.0.0-113.jar
       - name: GOCD_PLUGIN_INSTALL_docker-registry-artifact-plugin
         value: https://github.com/gocd/docker-registry-artifact-plugin/releases/download/1.0.0/docker-registry-artifact-plugin-1.0.0-3.jar
+      - name: EXTENSION_USERNAME
+        valueFrom:
+          secretKeyRef:
+            name: gocd-extensions
+            key: extensions_user
+      - name: EXTENSION_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: gocd-extensions
+            key: extensions_password
 
   service:
     # server.service.type is the GoCD Server service type
