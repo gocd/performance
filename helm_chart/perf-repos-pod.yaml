@@ -1,0 +1,53 @@
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: perf-repo
+spec:
+  volumes:
+    - name: gocd-server-repo-scripts
+      configMap:
+        name: gocd-repo-init-configmap
+        defaultMode: 0755
+  containers:
+    - name: perf-repo
+      image: centos
+      env:
+        - name: NUMBER_OF_REPOS
+          valueFrom:
+            configMapKeyRef:
+              name: perf-keys
+              key: number_of_repos 
+        - name: NUMBER_OF_CONFIG_REPOS
+          valueFrom:
+            configMapKeyRef:
+              name: perf-keys
+              key: number_of_config_repos
+        - name: NUMBER_OF_PIPELINES_IN_CONFIG_REPOS
+          valueFrom:
+            configMapKeyRef:
+              name: perf-keys
+              key: number_of_pipelines_in_config_repos
+        - name: GIT_COMMIT_INTERVAL
+          valueFrom:
+            configMapKeyRef:
+              name: perf-keys
+              key: git_commit_interval
+        - name: CONFIG_REPOS_COMMIT_INTERVAL
+          valueFrom:
+            configMapKeyRef:
+              name: perf-keys
+              key: config_repo_commit_interval
+        - name: TEST_DURATION
+          valueFrom:
+            configMapKeyRef:
+              name: perf-keys
+              key: test_duration
+      ports:
+        - containerPort: 9418
+      volumeMounts:
+        - name: gocd-server-repo-scripts
+          mountPath: /preconfigure_git_repos.sh
+          subPath: preconfigure_git_repos.sh
+      command: ["/bin/sh", "-c", "/preconfigure_git_repos.sh"]
+          
