@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: perf-repo-service
+  labels:
+    app: perf-repo
+spec:
+  type: ClusterIP
+  ports:
+  - name: git-daemon
+    port:  9418
+    targetPort: git-daemon
+  selector:
+    app: perf-repo

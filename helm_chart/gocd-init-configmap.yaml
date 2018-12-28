@@ -10,12 +10,12 @@ data:
     KUBE_TOKEN=$(<${SERVICE_ACCOUNT_PATH}/token)
 
     tee /godata/config/postgresqldb.properties >/dev/null <<EOF
-    db.host=my-release-postgresql
+    db.host=postgresdb-postgresql
     db.port=5432
     db.name=cruise
     db.user=postgres
     db.password=postgres
     EOF
    
-    curl -L -o '/godata/addons/go-postgresql-18.12.0-8213-520daad.jar' --fail -H 'Accept: binary/octet-stream' --user $EXTENSION_USERNAME:$EXTENSION_PASSWORD \
+    curl -L -o '/godata/addons/go-postgresql.jar' --fail -H 'Accept: binary/octet-stream' --user $EXTENSION_USERNAME:$EXTENSION_PASSWORD \
     'https://extensions.gocd.org/addons/postgres_experimental/versions/latest/download?eula_accepted=true' &> /godata/addons/addon_config.log

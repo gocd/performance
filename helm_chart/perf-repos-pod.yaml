@@ -3,6 +3,8 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: perf-repo
+  labels:
+    app: perf-repo
 spec:
   volumes:
     - name: gocd-server-repo-scripts
@@ -44,7 +46,8 @@ spec:
               name: perf-keys
               key: test_duration
       ports:
-        - containerPort: 9418
+        - name: git-daemon
+          containerPort: 9418
       volumeMounts:
         - name: gocd-server-repo-scripts
           mountPath: /preconfigure_git_repos.sh
