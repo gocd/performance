@@ -35,7 +35,7 @@ namespace :k8_infra do
 
   task :setup_gocd_server do
 
-    sh("kubectl create secret generic gocd-extensions --from-literal=extensions_user=#{ENV['EXTENSIONS_USER']} --from-literal=extensions_password=#{ENV['EXTENSIONS_PASSWORD']} --namespace=gocd")
+    sh("kubectl create secret generic gocd-extensions --from-literal=extensions_user=#{ENV['EXTENSIONS_USER']} --from-literal=extensions_password='#{ENV['EXTENSIONS_PASSWORD']}' --namespace=gocd")
     sh("kubectl create -f helm_chart/gocd-init-configmap.yaml --namespace=gocd")
     sh("helm install --name gocd-app --namespace gocd stable/gocd -f helm_chart/gocd-server-override-values.yaml")
 
@@ -48,7 +48,7 @@ namespace :k8_infra do
 
   task :setup_git_repos do
 
-    sh("kubectl create configmap perf-keys --from-literal number_of_repos=2 --from-literal number_of_config_repos=1 --from-literal number_of_pipelines_in_config_repos=1 --from-literal git_commit_interval=90 --from-literal config_repo_commit_interval=1 --from-literal test_duration=30000 —namespace=gocd")
+    sh("kubectl create configmap perf-keys --from-literal number_of_repos=2 --from-literal number_of_config_repos=1 --from-literal number_of_pipelines_in_config_repos=1 --from-literal git_commit_interval=90 --from-literal config_repo_commit_interval=1 --from-literal test_duration=30000 --namespace=gocd")
     sh("kubectl create -f helm_chart/perf-repo-service.yaml --namespace=gocd")
     sh("kubectl create -f helm_chart/gocd-repos-init-configmap.yaml --namespace=gocd")
     sh("kubectl create -f helm_chart/perf-repos-pod.yaml --namespace=gocd")
