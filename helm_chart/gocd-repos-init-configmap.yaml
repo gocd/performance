@@ -8,7 +8,8 @@ data:
      
     yum install -y git git-daemon
     git config --global user.name "Perf Tester"
-    for COUNTER in  1 .. $NUMBER_OF_REPOS 
+    git config --global user.email "perf-tester@test.com"
+    for COUNTER in  {1..$NUMBER_OF_REPOS}
     do
       mkdir -p /var/repos/repo-$COUNTER
       cd /var/repos/repo-$COUNTER
@@ -25,7 +26,7 @@ data:
     test_end_time=$(($current_time + $TEST_DURATION))
     while [ $current_time -lt $test_end_time ]
     do
-        for COUNTER in 1 .. $NUMBER_OF_REPOS
+        for COUNTER in {1..$NUMBER_OF_REPOS}
         do
           cd /var/repos/repo-$COUNTER
           echo `date +%s` > file
