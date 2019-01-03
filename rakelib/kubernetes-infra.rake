@@ -43,7 +43,7 @@ namespace :k8_infra do
 
   task :setup_postgresdb do
 
-    sh("helm install --name postgresdb stable/postgresql -f helm_chart/postgres-values.yaml --namespace=gocd --version=3.2.0")
+    sh("helm install --name postgresdb stable/postgresql -f helm_chart/postgres-values.yaml --namespace=gocd")
   end
 
   task :setup_git_repos do
