@@ -149,6 +149,33 @@ namespace :pipeline do
     p "Created pipeline(s) #{@setup.pipelines_run_on_k8s_elastic_agents.join(', ')}"
   end
 
+  desc 'Create Pipelines with Azure Elastic agents set up'
+  task :create_pipelines_to_run_on_azure_elastic_agents do
+    unless @setup.include_azure_elastic_agents?
+      p 'Not configuring pipelines to run on azure elastic agents, as the plugin is not included in this run'
+      next
+    end
+    gocd_client = Client.new(gocd_server.url)
+
+    clean(@setup.pipelines_run_on_azure_elastic_agents, gocd_client)
+    @setup.pipelines_run_on_azure_elastic_agents.each do |pipeline|
+      performance_pipeline = Pipeline.new(group: 'azure-elastic-agents', name: pipeline.to_s) do |p|
+        p << GitMaterial.new(name: 'git-material', url: "git://#{@setup.git_repository_host}/git-repo-gocd.perf#{counter-1000}", destination: 'common')
+        p << Stage.new(name: 'default') do |s|
+          s << Job.new(name: 'defaultJob', elastic_profile_id: 'azure-linux') do |j|
+            j << ExecTask.new(command: 'ls')
+          end
+        end
+      end
+
+      begin
+        gocd_client.create_pipeline(performance_pipeline.to_json)
+      rescue StandardError => e
+        raise "Something went wrong creating pipeline gocd.perf#{counter}. \n Server says:\n #{e.response}"
+      end
+    end
+  end
+
   private
 
   def clean(pipelines, gocd_client)

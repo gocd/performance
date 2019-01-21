@@ -229,11 +229,4 @@ namespace :performance do
     end
   end
 
-  task :infrastructure, [:action] do |t , args|
-    cd '../aws' do
-      sh 'bundle install --path .bundle --binstubs'
-      sh %(bundle exec ruby perf_setup #{args['action']} --stack-name Performance --region us-east-2 --parameters "ServerAutoRegisterKey=#{ENV['BUILD_SERVER_AUTO_REGISTER_KEY']};PerfServerDBPassword=#{ENV['PG_DB_PASSWORD']}")
-    end
-  end
-
 end

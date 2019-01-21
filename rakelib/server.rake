@@ -44,21 +44,7 @@ namespace :server do
         f.puts("db.password=#{setup.pg_db_password}")
       end
     end
-
-    if setup.include_ecs_elastic_agents?
-      mkdir_p "#{server_dir}/go-server-#{v}/plugins/external/"
-      sh "curl -L -o #{server_dir}/go-server-#{v}/plugins/external/ecs-elastic-agents-plugin.jar --fail -H 'Accept: binary/octet-stream' --user '#{ENV['EXTENSIONS_USER']}:#{ENV['EXTENSIONS_PASSWORD']}'  #{ENV['EA_PLUGIN_DOWNLOAD_URL']}"
-    end
-
-    if setup.include_k8s_elastic_agents?
-      mkdir_p "#{server_dir}/go-server-#{v}/plugins/external/"
-      sh "curl -L -o #{server_dir}/go-server-#{v}/plugins/external/k8s-elastic-agents-plugin.jar --fail  #{ENV['K8S_EA_PLUGIN_DOWNLOAD_URL']}"
-    end
-
-    if setup.include_analytics_plugin?
-      mkdir_p "#{server_dir}/go-server-#{v}/plugins/external/"
-      sh "curl -L -o #{server_dir}/go-server-#{v}/plugins/external/analytics-plugin.jar --fail -H 'Accept: binary/octet-stream' --user '#{ENV['EXTENSIONS_USER']}:#{ENV['EXTENSIONS_PASSWORD']}' #{ENV['ANALYTICS_PLUGIN_DOWNLOAD_URL']}"
-    end
+    download_plugins # will check if perf run needs what all plugins and will download them
   end
 
   task start: ['server:stop', 'server:setup_newrelic_agent'] do
@@ -145,5 +131,25 @@ namespace :server do
 
   task :auto_register do
     gocd_client.auto_register_key 'perf-auto-register-key'
+  end
+
+  def download_plugins
+    mkdir_p "#{server_dir}/go-server-#{v}/plugins/external/"
+
+    if setup.include_ecs_elastic_agents?
+      sh "curl -L -o #{server_dir}/go-server-#{v}/plugins/external/ecs-elastic-agents-plugin.jar --fail -H 'Accept: binary/octet-stream' --user '#{ENV['EXTENSIONS_USER']}:#{ENV['EXTENSIONS_PASSWORD']}'  #{ENV['EA_PLUGIN_DOWNLOAD_URL']}"
+    end
+
+    if setup.include_k8s_elastic_agents?
+      sh "curl -L -o #{server_dir}/go-server-#{v}/plugins/external/k8s-elastic-agents-plugin.jar --fail  #{ENV['K8S_EA_PLUGIN_DOWNLOAD_URL']}"
+    end
+
+    if setup.include_analytics_plugin?
+      sh "curl -L -o #{server_dir}/go-server-#{v}/plugins/external/analytics-plugin.jar --fail -H 'Accept: binary/octet-stream' --user '#{ENV['EXTENSIONS_USER']}:#{ENV['EXTENSIONS_PASSWORD']}' #{ENV['ANALYTICS_PLUGIN_DOWNLOAD_URL']}"
+    end
+
+    if setup.include_azure_elastic_agents?
+      sh "curl -L -o #{server_dir}/go-server-#{v}/plugins/external/azure-elastic-agents-plugin.jar --fail -H 'Accept: binary/octet-stream' --user '#{ENV['EXTENSIONS_USER']}:#{ENV['EXTENSIONS_PASSWORD']}' #{ENV['AZURE_EA_PLUGIN_DOWNLOAD_URL']}"
+    end
   end
 end
