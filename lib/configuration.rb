@@ -54,12 +54,12 @@ module Configuration
         number_of_pipelines.to_i + number_of_pipelines_on_ecs_elastic_agents.to_i + number_of_pipelines_on_k8s_elastic_agents.to_i).map { |i| "gocd.perf#{i}" }
     end
 
-    def pipelines_in_config_repo
+    def pipelines_run_on_azure_elastic_agents
       (number_of_pipelines.to_i + number_of_pipelines_on_ecs_elastic_agents.to_i + number_of_pipelines_on_k8s_elastic_agents.to_i + 1..
-        total_pipelines).map { |i| "gocd.perf#{i}" }
+        number_of_pipelines.to_i + number_of_pipelines_on_ecs_elastic_agents.to_i + number_of_pipelines_on_k8s_elastic_agents.to_i + number_of_pipelines_on_azure_elastic_agents.to_i).map { |i| "gocd.perf#{i}" }
     end
 
-    def pipelines_run_on_azure_elastic_agents
+    def pipelines_in_config_repo
       (number_of_pipelines.to_i + number_of_pipelines_on_ecs_elastic_agents.to_i + number_of_pipelines_on_k8s_elastic_agents.to_i + number_of_pipelines_on_azure_elastic_agents.to_i + 1..
         total_pipelines).map { |i| "gocd.perf#{i}" }
     end
