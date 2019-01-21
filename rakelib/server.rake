@@ -134,6 +134,8 @@ namespace :server do
   end
 
   def download_plugins
+    v, b = setup.go_version
+    server_dir = setup.server_install_dir
     mkdir_p "#{server_dir}/go-server-#{v}/plugins/external/"
 
     if setup.include_ecs_elastic_agents?
