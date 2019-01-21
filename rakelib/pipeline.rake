@@ -160,7 +160,9 @@ namespace :pipeline do
     clean(@setup.pipelines_run_on_azure_elastic_agents, gocd_client)
     @setup.pipelines_run_on_azure_elastic_agents.each do |pipeline|
       performance_pipeline = Pipeline.new(group: 'azure-elastic-agents', name: pipeline.to_s) do |p|
-        p << GitMaterial.new(name: 'git-material', url: "git://#{@setup.git_repository_host}/git-repo-gocd.perf#{counter-1000}", destination: 'common')
+        @distributor.material_for(pipeline).each do |material|
+          p << material
+        end
         p << Stage.new(name: 'default') do |s|
           s << Job.new(name: 'defaultJob', elastic_profile_id: 'azure-linux') do |j|
             j << ExecTask.new(command: 'ls')
