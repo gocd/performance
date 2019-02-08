@@ -27,9 +27,9 @@ server:
   shouldPreconfigure: true
   image:
     # server.image.repository is the GoCD Server image name
-    repository: "gocdexperimental/gocd-server"
+    repository: "gocd/gocd-server"
     # server.image.tag is the GoCD Server image's tag
-    tag: "v19.1.0-8252"
+    tag:
     # server.image.pullPolicy is the GoCD Server image's pull policy
     pullPolicy: "IfNotPresent"
 
@@ -82,7 +82,7 @@ server:
 
   service:
     # server.service.type is the GoCD Server service type
-    type: "NodePort"
+    type: "LoadBalancer"
     # server.service.httpPort is the GoCD Server HTTP port
     httpPort: 8153
     # server.service.httpPort is the GoCD Server HTTPS port
