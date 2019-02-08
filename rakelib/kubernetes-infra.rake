@@ -12,7 +12,7 @@ namespace :k8_infra do
   gocd_server = Configuration::Server.new
   gocd_client = GoCD::Client.new gocd_server.url
 
-  task :prepare_k8s_cluster do
+  task :prepare_gke_k8s_cluster do
 
    # sh("gcloud auth activate-service-account #{ENV['K8S_ACCOUNT']} --key-file=#{ENV['K8S_KEYFILE']}")
     sh("gcloud config set project #{ENV['K8S_PROJECT_NAME']}")
@@ -27,7 +27,7 @@ namespace :k8_infra do
     sh("kubectl create namespace gocd")
   end
 
-  task :delete_k8s_cluster do
+  task :delete_gke_k8s_cluster do
     sh("gcloud container clusters get-credentials #{ENV['K8S_CLUSTER_NAME']} --zone #{ENV['K8S_REGION']}")
     sh("gcloud container clusters delete #{ENV['K8S_CLUSTER_NAME']} --quiet --zone #{ENV['K8S_REGION']}")
   end
@@ -43,7 +43,7 @@ namespace :k8_infra do
 
   task :setup_postgresdb do
 
-    sh("helm install --name postgresdb stable/postgresql -f helm_chart/postgres-values.yaml --namespace=gocd")
+    sh("helm install --name postgresdb stable/postgresql -f  helm_chart/postgres-values.yaml --set postgresqlDataDir=/bitnami/postgresql/gocd --namespace=gocd")
   end
 
   task :setup_git_repos do
@@ -55,6 +55,23 @@ namespace :k8_infra do
     
   end
 
+  task :prepare_eks_k8s_cluster do
 
+    sh("eksctl create cluster --name #{ENV['EKS_CLUSTER_NAME']} --nodes #{ENV['EKS_WORKER_NODES']} --region #{ENV['EKS_CLUSTER_REGION']}")
+    sh("Kubectl delete clusterrolebinding clusterRoleBinding || true")
+    sh("kubectl create clusterrolebinding clusterRoleBinding --clusterrole=cluster-admin --serviceaccount=kube-system:default")
+    sh("kubectl create serviceaccount tiller --namespace kube-system")
+    sh("kubectl apply -f rbac-config.yaml")
+    sh("helm init --service-account tiller --wait")
+    sh("helm repo add stable https://kubernetes-charts.storage.googleapis.com")
+    sh("kubectl create namespace gocd")
+
+  end
+
+  task :delete_eks_k8s_cluster do
+
+    sh("eksctl delete cluster --name #{ENV['EKS_CLUSTER_NAME']} --region #{ENV['EKS_CLUSTER_REGION']}")
+
+  end
 
 end
