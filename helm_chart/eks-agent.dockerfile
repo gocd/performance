@@ -22,11 +22,7 @@ FROM gocd/gocd-agent-centos-7:v19.1.0
 
     RUN chmod +x ./aws-iam-authenticator
 
-    RUN mkdir $HOME/bin/
-
-    RUN cp aws-iam-authenticator $HOME/bin/aws-iam-authenticator && export PATH=$HOME/bin:$PATH
-
-    RUN echo 'export PATH=$HOME/bin:$PATH' >> ~/.bashrc
+    RUN mv aws-iam-authenticator /usr/local/bin
 
     RUN curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/latest_release/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
 

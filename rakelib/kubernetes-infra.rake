@@ -61,7 +61,7 @@ namespace :k8_infra do
     sh("Kubectl delete clusterrolebinding clusterRoleBinding || true")
     sh("kubectl create clusterrolebinding clusterRoleBinding --clusterrole=cluster-admin --serviceaccount=kube-system:default")
     sh("kubectl create serviceaccount tiller --namespace kube-system")
-    sh("kubectl apply -f rbac-config.yaml")
+    sh("kubectl apply -f helm_chart/rbac-config.yaml")
     sh("helm init --service-account tiller --wait")
     sh("helm repo add stable https://kubernetes-charts.storage.googleapis.com")
     sh("kubectl create namespace gocd")
