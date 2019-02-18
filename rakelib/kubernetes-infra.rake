@@ -43,7 +43,7 @@ namespace :k8_infra do
 
   task :setup_postgresdb do
 
-    sh("helm install --name postgresdb stable/postgresql -f  helm_chart/postgres-values.yaml --set postgresqlDataDir=/bitnami/postgresql/gocd --namespace=gocd")
+    sh("helm install --name postgresdb stable/postgresql -f  helm_chart/postgres-values.yaml --set postgresqlDataDir=/bitnami/postgresql/gocd --namespace=gocd --version 3.10.2")
   end
 
   task :setup_git_repos do
