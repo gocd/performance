@@ -38,7 +38,10 @@ namespace :k8_infra do
     sh("kubectl create secret generic gocd-extensions --from-literal=extensions_user=#{ENV['EXTENSIONS_USER']} --from-literal=extensions_password='#{ENV['EXTENSIONS_PASSWORD']}' --namespace=gocd")
     sh("kubectl create -f helm_chart/gocd-init-configmap.yaml --namespace=gocd")
     sh("helm install --name gocd-app --namespace gocd stable/gocd -f helm_chart/gocd-server-override-values.yaml")
-
+    sh("export GO_SERVER_LB_IP=$(kubectl get svc gocd-app-server -o=go-template --template='{{(index .status.loadBalancer.ingress 0 ).ip}}' --namespace=gocd)")
+    sh("chmod +x helm_chart/update-server-ip.sh")
+    sh("bash helm_chart/update-server-ip.sh")
+    sh("aws route53 change-resource-record-sets --hosted-zone-id Z2I0AUBABYDS9 --change-batch file://helm_chart/batch-change.json")
   end
 
   task :setup_postgresdb do
@@ -48,7 +51,7 @@ namespace :k8_infra do
 
   task :setup_git_repos do
 
-    sh("kubectl create configmap perf-keys --from-literal number_of_repos=2 --from-literal number_of_config_repos=1 --from-literal number_of_pipelines_in_config_repos=1 --from-literal git_commit_interval=90 --from-literal config_repo_commit_interval=1 --from-literal test_duration=30000 --namespace=gocd")
+    sh("kubectl create configmap perf-keys --from-literal number_of_repos=#{ENV['NUMBER_OF_REPOS']} --from-literal number_of_config_repos=#{ENV['NUMBER_OF_CONFIG_REPOS']}  --from-literal number_of_pipelines_in_config_repos=#{ENV['NUMBER_OF_CR_PIPELINES']}  --from-literal git_commit_interval=90 --from-literal config_repo_commit_interval=1 --from-literal test_duration=30000 --namespace=gocd")
     sh("kubectl create -f helm_chart/perf-repo-service.yaml --namespace=gocd")
     sh("kubectl create -f helm_chart/gocd-repos-init-configmap.yaml --namespace=gocd")
     sh("kubectl create -f helm_chart/perf-repos-pod.yaml --namespace=gocd")
