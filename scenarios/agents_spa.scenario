@@ -1,8 +1,8 @@
 # Scenario : Users visit Agents page -> visit agents job run history
 scenario do
-  name 'agents job history page'
+  name 'agents page'
+  version 'application/vnd.go.cd.v4+json'
   loop do
-    url '/agents'
-    url '/agents/%{agentid}/job_run_history'
+    url '/api/agents'
   end
 end
