@@ -145,7 +145,7 @@ class ScenarioLoader
               loops jloop.loopcount do
                 jloop.url_list.each do |url_value|
                   header(name: 'Accept', value: scenario.version) unless scenario.version.nil?
-                  header(name: 'Authorization', value: "Bearer #{access_token}")
+                  header(name: 'Authorization', value: "Bearer ${auth_token}")
                   visit name: scenario.name, url: "#{base_url}#{jloop.actual_url(url_value)}" do
                     assert equals: scenario.response_code, test_field: 'Assertion.response_code'
                   end
