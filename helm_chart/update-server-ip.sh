@@ -1,6 +1,6 @@
 #!/bin/bash
 
-time=$(date -j)
+time=$(date)
 
 tee $PWD/helm_chart/batch-change.json >/dev/null <<EOF 
 {
