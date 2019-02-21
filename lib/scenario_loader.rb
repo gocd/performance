@@ -5,6 +5,7 @@ require './lib/analyzer'
 require 'nokogiri'
 require 'fileutils'
 require 'pry'
+require 'json'
 include FileUtils
 
 module RubyJmeter
@@ -137,15 +138,17 @@ class ScenarioLoader
             synchronizing_timer groupSize: 100 if spike == true
             Once do
               header(name: 'Authorization', value: "Basic #{Base64.encode64(['file_based_user', ENV['FILE_BASED_USER_PWD']].join(':'))}")
-              post name: 'Get Access Token', url: "#{base_url}/api/current_user/access_tokens" do
-                extract name: 'access_token', regex: %q{.*"token":"([^"]+)".*}
+              header(name: 'Accept', value: "application/vnd.go.cd.v1+json")
+              header(name: 'Content-Type', value: "application/json")
+              post name: 'Get Access Token', url: "#{base_url}/api/current_user/access_tokens", raw_body: { description: "perf testing" }.to_json do
+                extract name: 'access_token', regex: %q{.*"token" : "([^"]+)".*}
               end
             end
             scenario.loops.each do |jloop|
               loops jloop.loopcount do
                 jloop.url_list.each do |url_value|
                   header(name: 'Accept', value: scenario.version) unless scenario.version.nil?
-                  header(name: 'Authorization', value: "Bearer ${auth_token}")
+                  header(name: 'Authorization', value: "Bearer ${access_token}")
                   visit name: scenario.name, url: "#{base_url}#{jloop.actual_url(url_value)}" do
                     assert equals: scenario.response_code, test_field: 'Assertion.response_code'
                   end

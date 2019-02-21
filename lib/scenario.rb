@@ -12,7 +12,7 @@ class Scenario
     @duration = @setup.load_test_duration
     @response_code = 200
     @loops = []
-    @version = nil
+    @version = ''
   end
 
   def method_missing(method_name, *arguments, &block)
