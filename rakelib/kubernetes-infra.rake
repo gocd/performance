@@ -38,10 +38,10 @@ namespace :k8_infra do
     sh("kubectl create secret generic gocd-extensions --from-literal=extensions_user=#{ENV['EXTENSIONS_USER']} --from-literal=extensions_password='#{ENV['EXTENSIONS_PASSWORD']}' --namespace=gocd")
     sh("kubectl create -f helm_chart/gocd-init-configmap.yaml --namespace=gocd")
     sh("helm install --name gocd-app --namespace gocd stable/gocd -f helm_chart/gocd-server-override-values.yaml")
-    sh("export GO_SERVER_LB=$(kubectl get svc gocd-app-server -o=go-template --template='{{(index .status.loadBalancer.ingress 0 ).hostname}}' --namespace=gocd)")
     sh("chmod +x helm_chart/update-server-ip.sh")
-    sh("helm_chart/update-server-ip.sh")
+    sh("export GO_SERVER_LB=$(kubectl get svc gocd-app-server -o=go-template --template='{{(index .status.loadBalancer.ingress 0 ).hostname}}' --namespace=gocd);helm_chart/update-server-ip.sh")
     sh("aws route53 change-resource-record-sets --hosted-zone-id Z2I0AUBABYDS9 --change-batch file://helm_chart/batch-change.json")
+    
   end
 
   task :setup_postgresdb do
@@ -72,7 +72,9 @@ namespace :k8_infra do
   end
 
   task :delete_eks_k8s_cluster do
-
+    
+    sh("kubectl delete namespaces gocd")
+    sh("helm del --purge postgresdb gocd-app")
     sh("eksctl delete cluster --name #{ENV['EKS_CLUSTER_NAME']} --region #{ENV['EKS_CLUSTER_REGION']}")
 
   end

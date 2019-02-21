@@ -14,7 +14,7 @@ tee $PWD/helm_chart/batch-change.json >/dev/null <<EOF
           "TTL": 300,
           "ResourceRecords": [
               {
-                  "Value": "$GOCD_SERVER_LB"
+                  "Value": "$GO_SERVER_LB"
               }
           ]
             }
