@@ -112,7 +112,7 @@ namespace :performance do
 
   task agents_page: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
-    loader.run 'agents_page', "#{go_server.secure_url}/go"
+    loader.run 'agents_spa', "#{go_server.secure_url}/go"
   end
 
   task dashboard_page_spike: 'jmeter:prepare' do
