@@ -1,6 +1,7 @@
 # Scenario : Users visit Dashboard page
 scenario do
   name 'pipeline dashboard page'
+  version 'application/vnd.go.cd.v2+json'
   loop do
     url '/pipelines'
   end

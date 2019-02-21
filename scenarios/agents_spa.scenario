@@ -1,0 +1,8 @@
+# Scenario : Users visit Agents page -> visit agents job run history
+scenario do
+  name 'agents page'
+  version 'application/vnd.go.cd.v4+json'
+  loop do
+    url '/api/agents'
+  end
+end

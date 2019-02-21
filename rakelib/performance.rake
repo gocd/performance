@@ -127,7 +127,7 @@ namespace :performance do
 
   task new_dashboard_page: 'jmeter:prepare' do
     loader = ScenarioLoader.new('./scenarios')
-    loader.run 'new_pipeline_dashboard', "#{go_server.secure_url}/go"
+    loader.run_with_access_token 'new_pipeline_dashboard', "#{go_server.secure_url}/go"
   end
 
   task admin_pages: 'jmeter:prepare' do
