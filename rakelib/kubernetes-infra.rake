@@ -38,11 +38,10 @@ namespace :k8_infra do
     sh("kubectl create secret generic gocd-extensions --from-literal=extensions_user=#{ENV['EXTENSIONS_USER']} --from-literal=extensions_password='#{ENV['EXTENSIONS_PASSWORD']}' --namespace=gocd")
     sh("kubectl create -f helm_chart/gocd-init-configmap.yaml --namespace=gocd")
     sh("helm install --name gocd-app --namespace gocd stable/gocd -f helm_chart/gocd-server-override-values.yaml")
-    #sh("kubectl get svc gocd-app-server -o=go-template --template='{{(index .status.loadBalancer.ingress 0 )}}' --namespace=gocd")
-    #sh("export GO_SERVER_LB_IP=$(kubectl get svc gocd-app-server -o=go-template --template='{{(index .status.loadBalancer.ingress 0 ).IP}}' --namespace=gocd)")
-    #sh("chmod +x helm_chart/update-server-ip.sh")
-    #sh("helm_chart/update-server-ip.sh")
-    #sh("aws route53 change-resource-record-sets --hosted-zone-id Z2I0AUBABYDS9 --change-batch file://helm_chart/batch-change.json")
+    sh("export GO_SERVER_LB=$(kubectl get svc gocd-app-server -o=go-template --template='{{(index .status.loadBalancer.ingress 0 ).hostname}}' --namespace=gocd)")
+    sh("chmod +x helm_chart/update-server-ip.sh")
+    sh("helm_chart/update-server-ip.sh")
+    sh("aws route53 change-resource-record-sets --hosted-zone-id Z2I0AUBABYDS9 --change-batch file://helm_chart/batch-change.json")
   end
 
   task :setup_postgresdb do

@@ -10,11 +10,11 @@ tee $PWD/helm_chart/batch-change.json >/dev/null <<EOF
             "Action": "UPSERT",
             "ResourceRecordSet": {
           "Name": "perf-eks-test.gocd.org.",
-          "Type": "A",
+          "Type": "CNAME",
           "TTL": 300,
           "ResourceRecords": [
               {
-                  "Value": "$GOCD_SERVER_LB_IP"
+                  "Value": "$GOCD_SERVER_LB"
               }
           ]
             }
