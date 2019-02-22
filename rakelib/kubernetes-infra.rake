@@ -39,7 +39,7 @@ namespace :k8_infra do
     sh("kubectl create -f helm_chart/gocd-init-configmap.yaml --namespace=gocd")
     sh("helm install --name gocd-app --namespace gocd stable/gocd -f helm_chart/gocd-server-override-values.yaml")
     sh("chmod +x helm_chart/update-server-ip.sh")
-    sh("export GO_SERVER_LB=$(kubectl get svc gocd-app-server -o=go-template --template='{{(index .status.loadBalancer.ingress 0 ).hostname}}' --namespace=gocd);helm_chart/update-server-ip.sh")
+    sh("export GO_SERVER_LB=$(kubectl get svc gocd-app-server -o=go-template --template={{(index .status.loadBalancer.ingress 0 ).hostname}} --namespace=gocd);helm_chart/update-server-ip.sh")
     sh("aws route53 change-resource-record-sets --hosted-zone-id Z2I0AUBABYDS9 --change-batch file://helm_chart/batch-change.json")
     
   end
