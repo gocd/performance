@@ -129,9 +129,6 @@ class ScenarioLoader
 
     test do
       parse("#{name}.scenario").list.each do |scenario|
-        cookies
-        cache
-        with_browser :chrome
         @setup.thread_groups.each do |_tg|
           threads scenario.threads do
             constant_throughput_timer value: throughput, calcMode: 4
