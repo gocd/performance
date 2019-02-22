@@ -4,6 +4,5 @@ scenario do
 
   loop do
     url '/admin/pipelines/%{pipeline}/general'
-    url '/admin/pipelines/%{pipeline}/edit'
   end
 end
