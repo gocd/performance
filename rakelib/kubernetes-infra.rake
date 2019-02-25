@@ -38,8 +38,27 @@ namespace :k8_infra do
     sh("kubectl create secret generic gocd-extensions --from-literal=extensions_user=#{ENV['EXTENSIONS_USER']} --from-literal=extensions_password='#{ENV['EXTENSIONS_PASSWORD']}' --namespace=gocd")
     sh("kubectl create -f helm_chart/gocd-init-configmap.yaml --namespace=gocd")
     sh("helm install --name gocd-app --namespace gocd stable/gocd -f helm_chart/gocd-server-override-values.yaml")
-    sh("chmod +x helm_chart/update-server-ip.sh")
-    sh("export GO_SERVER_LB=$(kubectl get svc gocd-app-server -o=go-template --template={{(index .status.loadBalancer.ingress 0 ).hostname}} --namespace=gocd);helm_chart/update-server-ip.sh")
+    GO_SERVER_LB=`kubectl get svc gocd-app-server -o=go-template --template='{{(index .status.loadBalancer.ingress 0 ).hostname}}' --namespace=gocd`
+    request_to_update_route53={
+      "Comment": "changed value for the eks perf run on $time",
+          "Changes": [
+            {
+              "Action": "UPSERT",
+              "ResourceRecordSet": {
+            "Name": "perf-eks-test.gocd.org.",
+            "Type": "CNAME",
+            "TTL": 300,
+            "ResourceRecords": [
+                {
+                    "Value": "#{GO_SERVER_LB}"
+                }
+            ]
+              }
+        }
+      ]
+    }.to_json
+    
+    File.open("helm_chart/batch-change.json", 'w') { |file| file.write(request_to_update_route53) }
     sh("aws route53 change-resource-record-sets --hosted-zone-id Z2I0AUBABYDS9 --change-batch file://helm_chart/batch-change.json")
     
   end
