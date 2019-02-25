@@ -38,6 +38,11 @@ namespace :k8_infra do
     sh("kubectl create secret generic gocd-extensions --from-literal=extensions_user=#{ENV['EXTENSIONS_USER']} --from-literal=extensions_password='#{ENV['EXTENSIONS_PASSWORD']}' --namespace=gocd")
     sh("kubectl create -f helm_chart/gocd-init-configmap.yaml --namespace=gocd")
     sh("helm install --name gocd-app --namespace gocd stable/gocd -f helm_chart/gocd-server-override-values.yaml")
+
+  end
+
+  task :expose_gocdserver_lb do
+  
     GO_SERVER_LB=`kubectl get svc gocd-app-server -o=go-template --template='{{(index .status.loadBalancer.ingress 0 ).hostname}}' --namespace=gocd`
     request_to_update_route53={
       "Comment": "changed value for the eks perf run on $time",
