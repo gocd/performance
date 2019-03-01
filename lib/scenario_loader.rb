@@ -138,7 +138,7 @@ class ScenarioLoader
               header(name: 'Accept', value: "application/vnd.go.cd.v1+json")
               header(name: 'Content-Type', value: "application/json")
               post name: 'Get Access Token', url: "#{base_url}/api/current_user/access_tokens", raw_body: { description: "perf testing" }.to_json do
-                extract name: 'access_token', regex: %q{.*"token": "([^"]+)".*}
+                extract name: 'access_token', regex: %q{.*"token" : "([^"]+)".*}
               end
             end
             scenario.loops.each do |jloop|
