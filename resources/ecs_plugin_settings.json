@@ -95,7 +95,7 @@
       },
       {
           "key": "KeyPairName",
-          "value": "rajiesh-ec2-instance"
+          "value": "GoCD-Shared"
       },
       {
           "key": "StopLinuxInstanceAfter"
