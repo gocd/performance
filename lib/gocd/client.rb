@@ -140,9 +140,8 @@ module GoCD
     end
 
     def about_page
-      p base_url
-      @rest_client.get "#{@base_url}/about"
-      
+      response = @rest_client.get "#{@base_url}/about"
+      return response
     end
 
     def setup_config_repo(repo_host)
