@@ -140,6 +140,7 @@ module GoCD
     end
 
     def about_page
+      p base_url
       @rest_client.get "#{@base_url}/about"
       
     end

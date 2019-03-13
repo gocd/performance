@@ -90,7 +90,7 @@ namespace :server do
 
     puts 'Waiting for server start up'
     server_is_running = false
-    Looper.run(interval: 12, times: 35) do
+    Looper.run(interval: 10, times: 25) do
       begin
         gocd_client.about_page
         server_is_running = true
