@@ -102,6 +102,10 @@ initdbScripts:
     #!/bin/sh
     psql -v ON_ERROR_STOP=1 --username "$POSTGRESQL_USERNAME"<<EOSQL
     CREATE DATABASE cruise;
+    CREATE ROLE "gocd_analytics_user" PASSWORD 'gocd_analytics_password' NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT LOGIN;
+    CREATE DATABASE "gocd_analytics";
+    GRANT ALL PRIVILEGES ON DATABASE "gocd_analytics" TO "gocd_analytics_user";
+    ALTER ROLE "gocd_analytics_user" SUPERUSER;
     EOSQL
 
 ## Optional duration in seconds the pod needs to terminate gracefully.

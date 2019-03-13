@@ -12,7 +12,7 @@ namespace :server do
   gocd_client = GoCD::Client.new gocd_server.url
   setup = Configuration::SetUp.new
 
-  task prepare: 'server:stop' do
+  task :check_gocd_server_status do
     v, b = setup.go_version
 
     server_dir = setup.server_install_dir
@@ -90,7 +90,7 @@ namespace :server do
 
     puts 'Waiting for server start up'
     server_is_running = false
-    Looper.run(interval: 10, times: 18) do
+    Looper.run(interval: 12, times: 35) do
       begin
         gocd_client.about_page
         server_is_running = true
@@ -98,10 +98,12 @@ namespace :server do
       end
     end
 
-    raise "Couldn't start GoCD server at #{v}-#{b} at #{server_dir}" unless server_is_running
+    raise "Couldn't start GoCD server #{v}-#{b}" unless server_is_running
 
     revision = setup.include_addons? ? "#{v}-#{b}-PG" : "#{v}-#{b}-H2"
-    sh %(java -jar /var/go/newrelic/newrelic-agent.jar deployment --appname='GoCD Perf Server' --revision="#{revision}")
+    sh("curl -L -o 'resources/newrelic-agent.jar' --fail 'http://central.maven.org/maven2/com/newrelic/agent/java/newrelic-agent/4.7.0/newrelic-agent-4.7.0.jar'")
+    
+    sh %(java -jar resources/newrelic-agent.jar deployment --appname='GoCD Perf Server' --revision="#{revision}")
     puts 'The server is up and running'
   end
 

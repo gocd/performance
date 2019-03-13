@@ -39,7 +39,7 @@
         },
         {
             "key": "name",
-            "value": "analytics"
+            "value": "gocd_analytics"
         },
         {
             "key": "max_connections_idle"
@@ -55,7 +55,7 @@
         },
         {
             "key": "username",
-            "value": "postgres"
+            "value": "gocd_analytics_user"
         }
     ]
   }

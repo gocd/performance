@@ -31,14 +31,14 @@ namespace :pipeline do
 
         if multi_stage_pipeline?(pipeline)
           p << Stage.new(name: 'first') do |s|
-            s << Job.new(name: 'firstJob') do |j|
+            s << Job.new(name: 'firstJob',elastic_profile_id: @setup.k8_elastic_agent_profile) do |j|
               j << ExecTask.new(command: 'ls')
             end
           end
         end
 
         p << Stage.new(name: 'default') do |s|
-          s << Job.new(name: 'defaultJob') do |j|
+          s << Job.new(name: 'defaultJob', elastic_profile_id: @setup.k8_elastic_agent_profile) do |j|
             j << ExecTask.new(command: 'ls')
           end
         end

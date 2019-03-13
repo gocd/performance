@@ -32,17 +32,26 @@ namespace :k8_infra do
     sh("gcloud container clusters delete #{ENV['K8S_CLUSTER_NAME']} --quiet --zone #{ENV['K8S_REGION']}")
   end
 
+  task :setup_new_relic_license do
+    newrelic_config = File.read('resources/newrelic.yml')
+    newrelic_config.gsub!(/<%= license_key %>/,"#{ENV['NEWRELIC_LICENSE_KEY']}")
+    File.open('resources/newrelic.yml', 'w') do |f|
+      f.write newrelic_config
+    end
+    
+  end
 
   task :setup_gocd_server do
 
     sh("kubectl create secret generic gocd-extensions --from-literal=extensions_user=#{ENV['EXTENSIONS_USER']} --from-literal=extensions_password='#{ENV['EXTENSIONS_PASSWORD']}' --namespace=gocd")
     sh("kubectl create -f helm_chart/gocd-init-configmap.yaml --namespace=gocd")
+    sh("kubectl create configmap gocd-config-files-configmap --from-file=resources --namespace=gocd")
     sh("helm install --name gocd-app --namespace gocd stable/gocd -f helm_chart/gocd-server-override-values.yaml")
 
   end
 
   task :expose_gocdserver_lb do
-  
+
     GO_SERVER_LB=`kubectl get svc gocd-app-server -o=go-template --template='{{(index .status.loadBalancer.ingress 0 ).hostname}}' --namespace=gocd`
     request_to_update_route53={
       "Comment": "changed value for the eks perf run on $time",
@@ -99,7 +108,7 @@ namespace :k8_infra do
     
     sh("kubectl delete namespaces gocd")
     sh("helm del --purge postgresdb gocd-app")
-    sh("eksctl delete cluster --name #{ENV['EKS_CLUSTER_NAME']} --region #{ENV['EKS_CLUSTER_REGION']}")
+    #sh("eksctl delete cluster --name #{ENV['EKS_CLUSTER_NAME']} --region #{ENV['EKS_CLUSTER_REGION']}")
 
   end
 

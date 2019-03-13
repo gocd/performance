@@ -48,6 +48,13 @@ module GoCD
                         content_type: :json, accept: 'application/vnd.go.cd.v2+json')
     end
 
+    def create_file_based_auth_config(auth_config)
+      auth_config_json = JSON.parse(File.read(auth_config))
+      auth_config_json = JSON.generate(auth_config_json)
+      @rest_client.post("#{@base_url}/api/admin/security/auth_configs", auth_config_json,
+        content_type: :json, accept: 'application/vnd.go.cd.v1+json')
+    end
+
     def get_pipeline_count(name)
       history = JSON.parse(open("#{@base_url}/api/pipelines/#{name}/history/0", ssl_verify_mode: 0, 'Confirm' => 'true', http_basic_authentication: ['file_based_user', ENV['FILE_BASED_USER_PWD']]).read)
       begin
@@ -134,6 +141,7 @@ module GoCD
 
     def about_page
       @rest_client.get "#{@base_url}/about"
+      
     end
 
     def setup_config_repo(repo_host)

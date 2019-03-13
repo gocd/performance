@@ -18,8 +18,24 @@ data:
         touch 'file'
         git add . &> /dev/null
         git commit -m 'Initial commit' --author 'foo <foo@bar.com>' &> /dev/null
+
+        echo repo-$COUNTER created....
       cd -
-    done
+    done  
+    
+    #Create a common repo for pipelines to share
+    
+    mkdir -p /var/repos/repo-common
+    cd /var/repos/repo-common
+      git init .
+      touch ".git/git-daemon-export-ok"
+      touch 'file'
+      git add . &> /dev/null
+      git commit -m 'Initial commit' --author 'foo <foo@bar.com>' &> /dev/null
+      echo `date +%s` > file
+      git add .;git commit -m 'This is commit at $(date)' --author 'foo <foo@bar.com>'; git gc;
+    cd -
+    
     git daemon --base-path=/var/repos/ --detach --syslog --export-all
 
     current_time=`date +%s`

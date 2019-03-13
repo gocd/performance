@@ -89,7 +89,7 @@ module Configuration
     end
 
     def git_repository_host
-      env('GIT_REPOSITORY_HOST', 'git://localhost')
+      env('GIT_REPOSITORY_HOST', 'git://perf-repo-service')
     end
 
     def support_api_interval
@@ -158,6 +158,10 @@ module Configuration
 
     def agent_identifier
       env('AGENT_IDENTIFIER', 'perf_on_h2')
+    end
+
+    def k8_elastic_agent_profile
+      env('K8_ELASTIC_AGENT_PROFILE', nil)
     end
 
     def go_version
@@ -290,7 +294,7 @@ module Configuration
     end
 
     def pg_db_host
-      env('PG_DB_HOST', 'localhost')
+      env('PG_DB_HOST', 'postgresdb-postgresql')
     end
 
     def pg_db_password
@@ -402,7 +406,7 @@ module Configuration
     end
 
     def url
-      "#{base_url}/go"
+      "#{secure_url}/go"
     end
 
     def secure_url
