@@ -108,7 +108,7 @@ namespace :k8_infra do
     
     sh("kubectl delete namespaces gocd")
     sh("helm del --purge postgresdb gocd-app")
-    #sh("eksctl delete cluster --name #{ENV['EKS_CLUSTER_NAME']} --region #{ENV['EKS_CLUSTER_REGION']}")
+    sh("eksctl delete cluster --name #{ENV['EKS_CLUSTER_NAME']} --region #{ENV['EKS_CLUSTER_REGION']}")
 
   end
 
