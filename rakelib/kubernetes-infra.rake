@@ -46,7 +46,7 @@ namespace :k8_infra do
     sh("kubectl create secret generic gocd-extensions --from-literal=extensions_user=#{ENV['EXTENSIONS_USER']} --from-literal=extensions_password='#{ENV['EXTENSIONS_PASSWORD']}' --namespace=gocd")
     sh("kubectl create -f helm_chart/gocd-init-configmap.yaml --namespace=gocd")
     sh("kubectl create configmap gocd-config-files-configmap --from-file=resources --namespace=gocd")
-    sh("helm install --name gocd-app --namespace gocd stable/gocd -f helm_chart/gocd-server-override-values.yaml")
+    sh("helm install --name gocd-app --namespace gocd stable/gocd --set server.image.repository=#{ENV['SERVER_IMAGE_REPOSITORY']} --set server.image.tag=#{ENV['SERVER_IMAGE_TAG']} -f helm_chart/gocd-server-override-values.yaml")
 
   end
 

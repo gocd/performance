@@ -6,6 +6,7 @@ require 'bundler'
 require 'process_builder'
 require 'bcrypt'
 require 'yaml'
+require 'json'
 
 namespace :server do
   gocd_server = Configuration::Server.new
@@ -13,88 +14,15 @@ namespace :server do
   setup = Configuration::SetUp.new
 
   task :check_gocd_server_status do
-    v, b = setup.go_version
-
-    server_dir = setup.server_install_dir
-    rm_rf server_dir.to_s
-    mkdir_p server_dir.to_s
-
-    Downloader.new(server_dir.to_s) do |q|
-      q.add "#{setup.download_url}/binaries/#{v}-#{b}/generic/go-server-#{v}-#{b}.zip"
-    end.start do |f|
-      f.extract_to(server_dir.to_s)
-    end
-
-    if setup.include_plugins?
-      puts 'Copying the plugins'
-      mkdir_p "#{server_dir}/go-server-#{v}/plugins/external/"
-      cp setup.plugin_src_dir.to_s, "#{server_dir}/go-server-#{v}/plugins/external/"
-    end
-
-    if setup.include_addons?
-      puts 'Copying the addons'
-      mkdir_p "#{server_dir}/go-server-#{v}/addons/"
-      mkdir_p "#{server_dir}/go-server-#{v}/config/"
-      sh "curl -L -o #{server_dir}/go-server-#{v}/addons/postgres-addon.jar --fail -H 'Accept: binary/octet-stream' --user '#{ENV['EXTENSIONS_USER']}:#{ENV['EXTENSIONS_PASSWORD']}'  #{ENV['PG_ADDON_DOWNLOAD_URL']}"
-      open("#{server_dir}/go-server-#{v}/config/postgresqldb.properties", 'w') do |f|
-        f.puts("db.host=#{setup.pg_db_host}")
-        f.puts('db.port=5432')
-        f.puts('db.name=cruise')
-        f.puts('db.user=postgres')
-        f.puts("db.password=#{setup.pg_db_password}")
-      end
-    end
-
-    mkdir_p "#{server_dir}/go-server-#{v}/plugins/external/"
-
-    if setup.include_ecs_elastic_agents?
-      sh "curl -L -o #{server_dir}/go-server-#{v}/plugins/external/ecs-elastic-agents-plugin.jar --fail -H 'Accept: binary/octet-stream' --user '#{ENV['EXTENSIONS_USER']}:#{ENV['EXTENSIONS_PASSWORD']}'  #{ENV['EA_PLUGIN_DOWNLOAD_URL']}"
-    end
-
-    if setup.include_k8s_elastic_agents?
-      sh "curl -L -o #{server_dir}/go-server-#{v}/plugins/external/k8s-elastic-agents-plugin.jar --fail  #{ENV['K8S_EA_PLUGIN_DOWNLOAD_URL']}"
-    end
-
-    if setup.include_analytics_plugin?
-      sh "curl -L -o #{server_dir}/go-server-#{v}/plugins/external/analytics-plugin.jar --fail -H 'Accept: binary/octet-stream' --user '#{ENV['EXTENSIONS_USER']}:#{ENV['EXTENSIONS_PASSWORD']}' #{ENV['ANALYTICS_PLUGIN_DOWNLOAD_URL']}"
-    end
-
-    if setup.include_azure_elastic_agents?
-      sh "curl -L -o #{server_dir}/go-server-#{v}/plugins/external/azure-elastic-agents-plugin.jar --fail -H 'Accept: binary/octet-stream' --user '#{ENV['EXTENSIONS_USER']}:#{ENV['EXTENSIONS_PASSWORD']}' #{ENV['AZURE_EA_PLUGIN_DOWNLOAD_URL']}"
-    end
-
-  end
-
-  task start: ['server:stop', 'server:setup_newrelic_agent'] do
-    v, b = setup.go_version
-
-    server_dir = "#{setup.server_install_dir}/go-server-#{v}"
-    %w[logs libs config].each { |dir| mkdir_p "#{server_dir}/#{dir}/" }
-    cp_r 'scripts/with-java.sh', "#{server_dir}/with-java.sh"
-    chmod_R 0755, "#{server_dir}/"
-    # cp_r "scripts/logback-gelf-1.0.4.jar", "#{server_dir}/libs/"
-    # cp_r "scripts/logback.xml" ,  "#{server_dir}/config/"
-
-    Bundler.with_clean_env do
-      ProcessBuilder.build('./with-java.sh', './server.sh') do |p|
-        p.environment = gocd_server.environment
-        puts 'Environment variables'
-        p.environment.each do |key, value|
-          puts "#{key}=#{value}"
-        end
-        p.directory = server_dir
-        p.redirection[:err] = "#{server_dir}/logs/go-server.startup.out.log"
-        p.redirection[:out] = "#{server_dir}/logs/go-server.startup.out.log"
-      end.spawn
-    end
-
-    puts 'Waiting for server start up'
     server_is_running = false
     Looper.run(interval: 15, times: 35) do
       begin
         puts "Waiting for server start up at #{gocd_server.url}"
         response = gocd_client.about_page
         if (response.code == 200) then
+          server_response = gocd_client.get_version
+          $version = JSON.parse(server_response.body)['version']
+          $build_number = JSON.parse(server_response.body)['build_number']
           server_is_running = true
           break
         end
@@ -102,12 +30,13 @@ namespace :server do
       end
     end
 
-    raise "Couldn't start GoCD server #{v}-#{b}" unless server_is_running
-
-    revision = setup.include_addons? ? "#{v}-#{b}-PG" : "#{v}-#{b}-H2"
-    sh("curl -L -o 'resources/newrelic-agent.jar' --fail 'http://central.maven.org/maven2/com/newrelic/agent/java/newrelic-agent/4.7.0/newrelic-agent-4.7.0.jar'")
+    raise "Couldn't start GoCD server" unless server_is_running
     
-    sh %(java -jar resources/newrelic-agent.jar deployment --appname='GoCD Perf Server' --revision="#{revision}")
+
+    revision = setup.include_addons? ? "#{$version}-#{$build_number}-PG" : "#{$version}-#{$build_number}-H2"
+   sh("curl -L -o 'resources/newrelic-agent.jar' --fail 'http://central.maven.org/maven2/com/newrelic/agent/java/newrelic-agent/4.7.0/newrelic-agent-4.7.0.jar'")
+    
+  sh %(java -jar resources/newrelic-agent.jar deployment --appname='GoCD Perf Server' --revision="#{revision}")
     puts 'The server is up and running'
   end
 
