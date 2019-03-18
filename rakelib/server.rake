@@ -20,10 +20,11 @@ namespace :server do
         puts "Waiting for server start up at #{gocd_server.url}"
         response = gocd_client.about_page
         if (response.code == 200) then
+          server_is_running = true
+          puts "Getting Server Version"
           server_response = gocd_client.get_version
           $version = JSON.parse(server_response.body)['version']
           $build_number = JSON.parse(server_response.body)['build_number']
-          server_is_running = true
           break
         end
       rescue StandardError

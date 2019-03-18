@@ -29,7 +29,7 @@ module GoCD
 
     def get_version
       response = @rest_client.get "#{@base_url}/api/version",
-                          accept: 'application/vnd.go.cd.v1+json', Authorization: @auth_header
+                          accept: 'application/vnd.go.cd.v1+json'
     end
 
     def unpause_pipeline(name)
