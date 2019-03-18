@@ -5,6 +5,6 @@ scenario do
   rampup 100
   name 'ecs plugin status report'
   loop do
-    url '/admin/status_reports/com.thoughtworks.gocd.elastic-agent.ecs'
+    url '/admin/status_reports/cd.go.contrib.elasticagent.kubernetes'
   end
 end
