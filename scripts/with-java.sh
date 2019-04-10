@@ -16,6 +16,8 @@ elif [ "${JAVA_VERSION}" = "1.10" ]; then
   use_jdk "openjdk@1.10.0-2" "tgz+https://nexus.gocd.io/repository/s3-mirrors/local/jdk/openjdk-10.0.2_linux-x64_bin.tar.gz"
 elif [ "${JAVA_VERSION}" = "11" ]; then
   use_jdk "openjdk@1.11.0-28" "tgz+https://nexus.gocd.io/repository/s3-mirrors/local/jdk/openjdk-11-28_linux-x64_bin.tar.gz"
+elif [ "${JAVA_VERSION}" = "12" ]; then
+  use_jdk use_jdk "openjdk@1.12"
 fi
 
 exec "$@"
