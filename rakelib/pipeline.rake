@@ -24,6 +24,10 @@ namespace :pipeline do
           p << material
         end
 
+        suffix = pipeline.gsub(/[^0-9]/, '').to_i
+        p << EnvironmentVariable.new(name: "secret_env_1", value: "{{SECRET:[my_secret1][secret_var_#{suffix}]}}", secure: true)
+        p << EnvironmentVariable.new(name: "secret_env_2", value: "{{SECRET:[my_secret2][secret_var_#{suffix}]}}", secure: true)
+
         if multi_stage_pipeline?(pipeline)
           p << Stage.new(name: 'first') do |s|
             s << Job.new(name: 'firstJob') do |j|
