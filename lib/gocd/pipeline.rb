@@ -146,7 +146,7 @@ module GoCD
 
   class EnvironmentVariable < Configuration
     def default
-      { secure: false }
+      {}
     end
   end
 
