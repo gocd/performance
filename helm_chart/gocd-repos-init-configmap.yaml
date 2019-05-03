@@ -50,4 +50,12 @@ data:
         done
         sleep $GIT_COMMIT_INTERVAL
         current_time=`date +%s`
+    
+    #initate a git repo for config-repos
+
+    mkdir -p /var/repos/config-repo-git
+    cd /var/repos/config-repo-git
+      git init .
+      touch ".git/git-daemon-export-ok"
+    cd -
     done
