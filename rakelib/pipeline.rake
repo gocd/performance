@@ -64,14 +64,14 @@ namespace :pipeline do
 
         if multi_stage_pipeline?(pipeline)
           p << ConfigRepoStage.new(name: 'first') do |s|
-            s << ConfigRepoJob.new(name: 'firstJob') do |j|
+            s << ConfigRepoJob.new(name: 'firstJob',elastic_profile_id: @setup.k8_elastic_agent_profile) do |j|
               j << ConfigRepoExecTask.new(command: 'ls')
             end
           end
         end
 
         p << ConfigRepoStage.new(name: 'default') do |s|
-          s << ConfigRepoJob.new(name: 'defaultJob') do |j|
+          s << ConfigRepoJob.new(name: 'defaultJob',elastic_profile_id: @setup.k8_elastic_agent_profile) do |j|
             j << ConfigRepoExecTask.new(command: 'ls')
           end
         end
