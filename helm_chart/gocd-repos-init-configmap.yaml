@@ -57,5 +57,10 @@ data:
     cd /var/repos/config-repo-git
       git init .
       touch ".git/git-daemon-export-ok"
+      touch 'file'
+      git add . &> /dev/null
+      git commit -m 'Initial commit' --author 'foo <foo@bar.com>' &> /dev/null
+      echo `date +%s` > file
+      git add .;git commit -m 'This is commit at $(date)' --author 'foo <foo@bar.com>'; git gc;
     cd -
     done
