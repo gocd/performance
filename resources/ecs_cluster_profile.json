@@ -1,4 +1,5 @@
 {
+  "id": "perf-ecs-cluster",
   "plugin_id": "com.thoughtworks.gocd.elastic-agent.ecs",
   "configuration": [
       {

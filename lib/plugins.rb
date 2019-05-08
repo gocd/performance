@@ -28,13 +28,22 @@ module Plugins
     end
 
     def create_plugin_settings_with_actual_values(actuals, client)
+      update_request_body_with(actuals)
+      client.create_plugin_settings(@settings.to_json)
+    end
+
+    def create_cluster_profile_with_actual_values(actuals, client)
+      update_request_body_with(actuals)
+      client.create_cluster_profile(@settings.to_json)
+    end
+
+    def update_request_body_with(actuals)
       properties = @settings['configuration'].each{|key_value|
         actuals.each{|key, value|
           key_value['value'] = value if key_value['key'] == key
         }
       }
       @settings.each_with_object({}) { |(key, value), hash| hash[key] = properties if key == 'configuration'}
-      client.create_plugin_settings(@settings.to_json)
     end
   end
 end
