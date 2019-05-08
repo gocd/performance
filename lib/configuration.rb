@@ -186,7 +186,7 @@ module Configuration
     end
 
     def git_root
-      env('GIT_ROOT', 'gitrepos')
+      env('GIT_ROOT', '/var/repos')
     end
 
     def config_repo_commit_duration
