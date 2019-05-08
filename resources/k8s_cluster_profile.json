@@ -1,4 +1,5 @@
 {
+  "id": "perf-k8s-cluster",
   "plugin_id": "cd.go.contrib.elasticagent.kubernetes",
   "configuration": [
     {

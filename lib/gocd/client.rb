@@ -38,9 +38,14 @@ module GoCD
                         content_type: :json, accept: 'application/vnd.go.cd.v1+json', Authorization: @auth_header)
     end
 
-    def create_profile(profile)
-      @rest_client.post("#{@base_url}/api/elastic/profiles", profile,
+    def create_cluster_profile(settings)
+      @rest_client.post("#{@base_url}/api/admin/elastic/cluster_profiles", settings,
                         content_type: :json, accept: 'application/vnd.go.cd.v1+json', Authorization: @auth_header)
+    end
+
+    def create_ea_profile(profile)
+      @rest_client.post("#{@base_url}/api/elastic/profiles", profile,
+                        content_type: :json, accept: 'application/vnd.go.cd.v2+json', Authorization: @auth_header)
     end
 
     def create_environment(environment)
