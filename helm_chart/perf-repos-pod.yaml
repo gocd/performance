@@ -6,45 +6,55 @@ metadata:
   labels:
     app: perf-repo
 spec:
-  volumes:
-    - name: gocd-server-repo-scripts
-      configMap:
-        name: gocd-repo-init-configmap
-        defaultMode: 0755
   containers:
     - name: perf-repo
-      image: centos
+      image: adityasood/gocd-perf-test-repo:0.0.1
       env:
-        - name: NUMBER_OF_REPOS
+        - name: NO_OF_PIPELINES
           valueFrom:
             configMapKeyRef:
               name: perf-keys
-              key: number_of_repos 
-        - name: NUMBER_OF_CONFIG_REPOS
+              key: number_of_pipelines
+        - name: PERFORMANCE_REPO_DIRECTORY
           valueFrom:
             configMapKeyRef:
               name: perf-keys
-              key: number_of_config_repos
-        - name: NUMBER_OF_PIPELINES_IN_CONFIG_REPOS
+              key: performance_repo_directory
+        - name: NO_OF_PIPELINES_CONFIG_REPO
           valueFrom:
             configMapKeyRef:
               name: perf-keys
-              key: number_of_pipelines_in_config_repos
+              key: no_of_pipelines_in_config_repos
         - name: GIT_COMMIT_INTERVAL
           valueFrom:
             configMapKeyRef:
               name: perf-keys
               key: git_commit_interval
-        - name: CONFIG_REPOS_COMMIT_INTERVAL
+        - name: PERF_REPO_BRANCH
           valueFrom:
             configMapKeyRef:
               name: perf-keys
-              key: config_repo_commit_interval
-        - name: TEST_DURATION
+              key: performance_repo_branch
+        - name: LOAD_TEST_DURATION
           valueFrom:
             configMapKeyRef:
               name: perf-keys
-              key: test_duration
+              key: load_test_duration
+        - name: GIT_ROOT
+          valueFrom:
+            configMapKeyRef:
+              name: perf-keys
+              key: git_root
+        - name: K8_ELASTIC_AGENT_PROFILE
+          valueFrom:
+            configMapKeyRef:
+              name: perf-keys
+              key: k8_elastic_agent_profile
+        - name: PERF_REPO_URL
+          valueFrom:
+            configMapKeyRef:
+              name: perf-keys
+              key: perf_repo_url
       ports:
         - name: git-daemon
           containerPort: 9418

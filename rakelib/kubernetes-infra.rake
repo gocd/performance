@@ -84,7 +84,7 @@ namespace :k8_infra do
 
   task :setup_git_repos do
 
-    sh("kubectl create configmap perf-keys --from-literal number_of_repos=#{ENV['NUMBER_OF_REPOS']} --from-literal number_of_config_repos=#{ENV['NUMBER_OF_CONFIG_REPOS']}  --from-literal number_of_pipelines_in_config_repos=#{ENV['NUMBER_OF_CR_PIPELINES']}  --from-literal git_commit_interval=90 --from-literal config_repo_commit_interval=1 --from-literal test_duration=30000 --namespace=gocd")
+    sh("kubectl create configmap perf-keys --from-literal number_of_pipelines=#{ENV['NO_OF_PIPELINES']} --from-literal no_of_pipelines_in_config_repos=#{ENV['NO_OF_PIPELINES_CONFIG_REPO']} --from-literal performance_repo_directory=#{ENV['PERFORMANCE_REPO_DIRECTORY']} --from-literal git_commit_interval=#{ENV['GIT_COMMIT_INTERVAL']} --from-literal load_test_duration=#{ENV['LOAD_TEST_DURATION']} --from-literal performance_repo_branch=#{ENV['PERF_REPO_BRANCH']} --from-literal perf_repo_url=#{ENV['PERF_REPO_URL']} --from-literal git_root=#{ENV['GIT_ROOT']} --from-literal k8_elastic_agent_profile=#{ENV['K8_ELASTIC_AGENT_PROFILE']} --namespace=gocd")
     sh("kubectl create -f helm_chart/perf-repo-service.yaml --namespace=gocd")
     sh("kubectl create -f helm_chart/gocd-repos-init-configmap.yaml --namespace=gocd")
     sh("kubectl create -f helm_chart/perf-repos-pod.yaml --namespace=gocd")
