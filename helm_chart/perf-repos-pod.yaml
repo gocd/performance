@@ -58,9 +58,4 @@ spec:
       ports:
         - name: git-daemon
           containerPort: 9418
-      volumeMounts:
-        - name: gocd-server-repo-scripts
-          mountPath: /preconfigure_git_repos.sh
-          subPath: preconfigure_git_repos.sh
-      command: ["/bin/sh", "-c", "/preconfigure_git_repos.sh"]
           
