@@ -43,8 +43,9 @@ module GoCD
       end
     end
 
-    def create_cluster_profile(settings)
-      @rest_client.post("#{@base_url}/api/admin/elastic/cluster_profiles", settings,
+    def create_cluster_profile(cluster_profile)
+      p "The cluster profile to be requested - #{cluster_profile}"
+      @rest_client.post("#{@base_url}/api/admin/elastic/cluster_profiles", cluster_profile,
                         content_type: :json, accept: 'application/vnd.go.cd.v1+json', Authorization: @auth_header) do |response, _request, _result|
         if response.code != 200
           handle_api_failures(response, "Cluster Profile", "Another Cluster Profile with the same name already exists")
