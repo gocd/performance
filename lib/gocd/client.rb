@@ -35,17 +35,30 @@ module GoCD
 
     def create_plugin_settings(settings)
       @rest_client.post("#{@base_url}/api/admin/plugin_settings", settings,
-                        content_type: :json, accept: 'application/vnd.go.cd.v1+json', Authorization: @auth_header)
+                        content_type: :json, accept: 'application/vnd.go.cd.v1+json', Authorization: @auth_header) do |response, _request, _result|
+        if response.code != 200
+          plugin_id = JSON.parse(settings)["plugin_id"]
+          handle_api_failures(response, "Plugin Settings for #{plugin_id}", %(Plugin settings for the plugin `#{plugin_id}` already exist))
+        end
+      end
     end
 
     def create_cluster_profile(settings)
       @rest_client.post("#{@base_url}/api/admin/elastic/cluster_profiles", settings,
-                        content_type: :json, accept: 'application/vnd.go.cd.v1+json', Authorization: @auth_header)
+                        content_type: :json, accept: 'application/vnd.go.cd.v1+json', Authorization: @auth_header) do |response, _request, _result|
+        if response.code != 200
+          handle_api_failures(response, "Cluster Profile", "Another Cluster Profile with the same name already exists")
+        end
+      end
     end
 
     def create_ea_profile(profile)
       @rest_client.post("#{@base_url}/api/elastic/profiles", profile,
-                        content_type: :json, accept: 'application/vnd.go.cd.v2+json', Authorization: @auth_header)
+                        content_type: :json, accept: 'application/vnd.go.cd.v2+json', Authorization: @auth_header) do |response, _request, _result|
+        if response.code != 200
+          handle_api_failures(response, "EA Profile", "Another elasticProfile with the same name already exists")
+        end
+      end
     end
 
     def create_environment(environment)
@@ -157,33 +170,29 @@ module GoCD
       })
 
       @rest_client.post("#{@base_url}/api/admin/config_repos",
-                        config_repo, content_type: :json,  accept: 'application/vnd.go.cd.v1+json', Authorization: @auth_header)
+                        config_repo, content_type: :json, accept: 'application/vnd.go.cd.v1+json', Authorization: @auth_header) do |response, _request, _result|
+        if response.code != 200
+          handle_api_failures(response, "Config repo", "Another config-repo with the same name already exists")
+        end
+      end
     end
 
-    def set_file_based_auth_config(file)
-      config, md5 = config_xml
-      xml = @nokogiri::XML config
+    def setup_file_based_auth_config(file_path)
+      auth_config = %({
+        "id": "pwd_file",
+        "plugin_id": "cd.go.authentication.passwordfile",
+          "properties":[
+          {"key":"PasswordFilePath","value":"#{file_path}"}
+        ]
+      })
 
-      security = Nokogiri::XML::Node.new('security', xml)
-      auth_configs = Nokogiri::XML::Node.new('authConfigs', security)
-      auth_config = Nokogiri::XML::Node.new('authConfig', auth_configs)
-      auth_config['id'] = 'pwd_file'
-      auth_config['pluginId'] = 'cd.go.authentication.passwordfile'
-      property = Nokogiri::XML::Node.new('property', auth_config)
-      key = Nokogiri::XML::Node.new('key', property)
-      key.content = 'PasswordFilePath'
-      value = Nokogiri::XML::Node.new('value', property)
-      value.content = file
-      property.add_child key
-      property.add_child value
+      @rest_client.post("#{@base_url}/api/admin/security/auth_configs",
+                        auth_config, content_type: :json, accept: 'application/vnd.go.cd.v1+json') do |response, _request, _result|
+        if response.code != 200
+          handle_api_failures(response, "Auth Config", %(Security authorization configuration id 'pwd_file' is not unique))
+        end
+      end
 
-      auth_config.add_child property
-      auth_configs.add_child auth_config
-      security.add_child auth_configs
-
-      xml.search('//server').first.add_child security
-
-      save_config_xml xml.to_xml, md5
     end
 
     def set_ldap_auth_config(ldap_ip)
@@ -235,6 +244,12 @@ module GoCD
         ele.set_attribute(attribute, value)
       end
       save_config_xml xml.to_xml, md5
+    end
+
+    def handle_api_failures(response, entity, message_safe_to_ignore)
+      p "Setup #{entity} call failed with response code #{response.code} and body #{response.body}"
+      raise "#{entity} setup failed" unless response.body.include? message_safe_to_ignore
+      p "#{entity} is already setup, continuing other setup. If things fail, please check the server"
     end
   end
 end
