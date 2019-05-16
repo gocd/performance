@@ -138,6 +138,13 @@ module GoCD
                         content_type: :json, Authorization: @auth_header, Confirm: true)
     end
 
+    def cancel_pipeline(pipeline_name, stage)
+      headers = { Authorization: @auth_header, Confirm: 'true' }
+      RestClient::Request.execute(url: "#{@base_url}/api/stages/#{pipeline_name}/#{stage}/cancel",
+                                        method: :post, verify_ssl: false, headers: headers)
+      p "Cancelled #{pipeline_name}"
+    end
+
     def analyze_thread_dump(file, apikey)
       @rest_client.post "http://api.fastthread.io/fastthread-api?apiKey=#{apikey}", file, content_type: :text
     end
