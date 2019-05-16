@@ -37,7 +37,7 @@ namespace :server do
     revision = setup.include_addons? ? "#{$version}-#{$build_number}-PG" : "#{$version}-#{$build_number}-H2"
    sh("curl -L -o 'resources/newrelic-agent.jar' --fail 'http://central.maven.org/maven2/com/newrelic/agent/java/newrelic-agent/4.7.0/newrelic-agent-4.7.0.jar'")
     
-  sh %(java -jar resources/newrelic-agent.jar deployment --appname='GoCD Perf Server' --revision="#{revision}")
+  sh %(java -jar resources/newrelic-agent.jar deployment --appname='GoCD K8s Perf Server' --revision="#{revision}")
     puts 'The server is up and running'
   end
 
