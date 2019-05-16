@@ -234,4 +234,16 @@ namespace :performance do
     end
   end
 
+  # Just a helper task in case we need to cancel all the pipelines running on perf server
+
+  task :cancel_pipelines do
+    (750..1000).each do |suffix|
+      begin
+        gocd_client.cancel_pipeline("gocd.perf#{suffix}", 'default')
+      rescue StandardError => e
+        p "ignore failure. Error #{e.message}"
+      end
+    end
+  end
+
 end
