@@ -93,7 +93,7 @@ namespace :k8_infra do
 
   task :prepare_eks_k8s_cluster do
 
-    sh("eksctl create cluster --ssh-access  --ssh-public-key=#{ENV['ECS_SSH_KEY_NAME']} --name #{ENV['EKS_CLUSTER_NAME']} --nodes #{ENV['EKS_WORKER_NODES']} --node-type=#{ENV['EKS_WORKER_NODE_TYPE']} --region #{ENV['EKS_CLUSTER_REGION']} --verbose 4")
+    sh("eksctl create cluster --ssh-access  --ssh-public-key=#{ENV['ECS_SSH_KEY_NAME']} --name #{ENV['EKS_CLUSTER_NAME']} --nodes #{ENV['EKS_WORKER_NODES']} --node-type=#{ENV['EKS_WORKER_NODE_TYPE']} --region #{ENV['EKS_CLUSTER_REGION']} --max-pods-per-node #{ENV['MAX_PODS_PER_NODE']} --verbose 4")
     sh("Kubectl delete clusterrolebinding clusterRoleBinding || true")
     sh("kubectl create clusterrolebinding clusterRoleBinding --clusterrole=cluster-admin --serviceaccount=kube-system:default")
     sh("kubectl create serviceaccount tiller --namespace kube-system")
