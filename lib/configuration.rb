@@ -193,7 +193,7 @@ module Configuration
       interval = env('CONFIG_REPO_COMMIT_INTERVAL', 3600).to_i
       {
         interval: interval,
-        times: load_test_duration / interval
+        times: (load_test_duration + 3600) / interval
       }
     end
 
