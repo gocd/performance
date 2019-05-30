@@ -103,6 +103,7 @@ namespace :k8_infra do
     sh("kubectl delete clusterrolebinding tiller --ignore-not-found=true")
     sh("kubectl delete serviceaccount tiller --namespace kube-system --ignore-not-found=true")
     sh("kubectl delete namespaces gocd --ignore-not-found=true")
+
     sh("kubectl create clusterrolebinding clusterRoleBinding --clusterrole=cluster-admin --serviceaccount=kube-system:default")
     sh("kubectl create serviceaccount tiller --namespace kube-system")
     sh("kubectl apply -f helm_chart/rbac-config.yaml")
@@ -114,7 +115,7 @@ namespace :k8_infra do
 
   task :delete_eks_k8s_cluster do
     
-    sh("kubectl delete namespaces gocd")
+    sh("kubectl delete namespaces gocd --ignore-not-found=true")
     sh("helm del --purge postgresdb gocd-app")
     sh("eksctl delete cluster --name #{ENV['EKS_CLUSTER_NAME']} --region #{ENV['EKS_CLUSTER_REGION']}")
 
