@@ -46,7 +46,7 @@ namespace :k8_infra do
     sh("kubectl create secret generic gocd-extensions --from-literal=extensions_user=#{ENV['EXTENSIONS_USER']} --from-literal=extensions_password='#{ENV['EXTENSIONS_PASSWORD']}' --namespace=gocd")
     sh("kubectl create -f helm_chart/gocd-init-configmap.yaml --namespace=gocd")
     sh("kubectl create configmap gocd-config-files-configmap --from-file=resources --namespace=gocd")
-    sh("helm install --name gocd-app --namespace gocd stable/gocd --set server.image.repository=#{ENV['SERVER_IMAGE_REPOSITORY']} --set server.image.tag=#{ENV['SERVER_IMAGE_TAG']} -f helm_chart/gocd-server-override-values.yaml")
+    sh("helm install --name gocd-app --namespace gocd stable/gocd --set server.image.repository=#{ENV['SERVER_IMAGE_REPOSITORY']} --set server.image.tag=#{ENV['SERVER_IMAGE_TAG']} --set server.shouldPreconfigure=#{ENV['GOCD_SHOULD_PRECONFIGURE']} -f helm_chart/gocd-server-override-values.yaml")
 
   end
 
@@ -94,6 +94,11 @@ namespace :k8_infra do
   task :prepare_eks_k8s_cluster do
 
     sh("eksctl create cluster --ssh-access  --ssh-public-key=#{ENV['ECS_SSH_KEY_NAME']} --name #{ENV['EKS_CLUSTER_NAME']} --nodes #{ENV['EKS_WORKER_NODES']} --node-type=#{ENV['EKS_WORKER_NODE_TYPE']} --region #{ENV['EKS_CLUSTER_REGION']} --max-pods-per-node #{ENV['MAX_PODS_PER_NODE']} --verbose 4")
+
+  end
+
+  task :k8_preconfigure do
+
     sh("Kubectl delete clusterrolebinding clusterRoleBinding || true")
     sh("kubectl create clusterrolebinding clusterRoleBinding --clusterrole=cluster-admin --serviceaccount=kube-system:default")
     sh("kubectl create serviceaccount tiller --namespace kube-system")
