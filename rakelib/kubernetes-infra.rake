@@ -103,6 +103,7 @@ namespace :k8_infra do
     sh("kubectl create clusterrolebinding clusterRoleBinding --clusterrole=cluster-admin --serviceaccount=kube-system:default")
     sh("kubectl delete clusterrolebinding tiller --ignore-not-found=true")
     sh("kubectl delete serviceaccount tiller --namespace kube-system --ignore-not-found=true")
+    sh("kubectl delete namespaces gocd --ignore-not-found=true")
     sh("kubectl create serviceaccount tiller --namespace kube-system")
     sh("kubectl apply -f helm_chart/rbac-config.yaml")
     sh("helm init --service-account tiller --wait")
