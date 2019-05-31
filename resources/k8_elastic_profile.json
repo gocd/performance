@@ -1,0 +1,22 @@
+{
+  "id": "demo-app",
+  "cluster_profile_id": "k8-cluster-profile",
+  "properties": [
+    {
+      "key": "Image",
+      "value": "#GO_AGENT_IMAGE"
+    },
+    {
+"key" : "PodConfiguration",
+"value" : "apiVersion: v1\nkind: Pod\nmetadata:\n  name: pod-name-prefix-{{ POD_POSTFIX }}\n  labels:\n    app: web\nspec:\n  containers:\n    - name: gocd-agent-container-{{ CONTAINER_POSTFIX }}\n      resources:\n        limits:\n          memory: 768Mi\n        requests:\n          memory: 256Mi"
+},
+    {
+      "key": "PodSpecType",
+      "value": "yaml"
+    },
+    {
+      "key": "Privileged",
+      "value": "true"
+    }
+  ]
+}

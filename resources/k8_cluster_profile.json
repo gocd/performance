@@ -1,0 +1,26 @@
+{
+    "id" : "k8-cluster-profile",
+    "plugin_id" : "cd.go.contrib.elasticagent.kubernetes",
+    "properties" : [ {
+      "key" : "go_server_url",
+      "value" : "#GO_SERVER_SERVICE_URL"
+    }, {
+      "key" : "auto_register_timeout",
+      "value" : "#K8_AGENT_AUTO_REGISTER_TIMEOUT"
+    }, {
+      "key" : "pending_pods_count",
+      "value" : "#K8_PENDING_POD_COUNT"
+    }, {
+      "key" : "kubernetes_cluster_url",
+      "value" : "#K8_CLUSTER_URL"
+    }, {
+      "key" : "namespace",
+      "value" : "#K8_NAMESPACE"
+    }, {
+      "key" : "security_token",
+      "value": "#K8_SECURITY_TOKEN"
+    }, {
+      "key" : "kubernetes_cluster_ca_cert",
+      "value":"#K8_CLUSTER_CA_CERT"
+    } ]
+  }

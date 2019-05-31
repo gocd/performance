@@ -278,7 +278,7 @@ module Configuration
     end
 
     def k8s_namespace
-      key = env('K8s_NAMESPACE', 'default')
+      key = env('K8s_NAMESPACE', 'gocd')
       raise 'Please set K8s_NAMESPACE environment variable if need to setup Kubernetes EA plugin' unless key
       key
     end
@@ -321,6 +321,25 @@ module Configuration
       key
     end
 
+    def go_k8_service_url
+      env('GO_SERVER_SERVICE_URL', "https://gocd-app-server:8154/go")
+    end
+
+    def k8_auto_register_timeout
+      env('K8_AGENT_AUTO_REGISTER_TIMEOU','10')
+    end
+
+    def k8_pending_pods_count
+      env('K8_PENDING_POD_COUNT','100')
+    end
+
+    def k8_service_account
+      env('K8_SERVICE_ACCOUNT','gocd-app')
+    end
+
+    def gocd_agent_image
+      env('GO_AGENT_IMAGE', 'gocd/gocd-agent-alpine-3.9:v19.4.0')
+    end
     private
 
     def number_of_pipelines
@@ -367,6 +386,7 @@ module Configuration
     def gocd_host
       "#{server_url}/go"
     end
+
   end
 
   class Agent

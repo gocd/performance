@@ -58,4 +58,10 @@ spec:
       ports:
         - name: git-daemon
           containerPort: 9418
-          
+      resources:
+        requests:
+          memory: "512Mi"
+          cpu: "2"
+        limits:
+          memory: "2048Mi"
+          cpu: "4"    

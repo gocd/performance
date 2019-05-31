@@ -36,13 +36,13 @@ server:
   ## Configure GoCD server resource requests and limits
   ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
   ##
-  resources: {}
-  #   requests:
-  #     memory: 512Mi
-  #     cpu: 300m
-  #   limits:
-  #     cpu: 100m
-  #     memory: 1024Mi
+  resources:
+    requests:
+      memory: 2048Mi
+      cpu: "2"
+    limits:
+      cpu: 1000m
+      memory: "8"
 
   ## Additional GoCD server pod labels
   ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
