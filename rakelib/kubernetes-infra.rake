@@ -116,6 +116,11 @@ namespace :k8_infra do
     sh("kubectl create namespace gocd")
   end
 
+  tasl :initialize_helm_client do
+    sh("helm init --client-only")
+    sh("helm repo update")
+  end
+
   task :delete_eks_k8s_cluster do
     
     sh("kubectl delete namespaces gocd --ignore-not-found=true")
