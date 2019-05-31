@@ -116,7 +116,7 @@ namespace :k8_infra do
     sh("kubectl create namespace gocd")
   end
 
-  tasl :initialize_helm_client do
+  task :initialize_helm_client do
     sh("helm init --client-only")
     sh("helm repo update")
   end
