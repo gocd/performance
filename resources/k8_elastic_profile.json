@@ -1,5 +1,5 @@
 {
-  "id": "demo-app",
+  "id": "demo-app-2",
   "cluster_profile_id": "k8-cluster-profile",
   "properties": [
     {
@@ -8,15 +8,11 @@
     },
     {
 "key" : "PodConfiguration",
-"value" :  "apiVersion: v1\nkind: Pod\nmetadata:\n  name: gocd-agent-{{ POD_POSTFIX }}\n  labels:\n    app: web\nspec:\n  serviceAccountName: gocd-app\n  containers:\n    - name: gocd-agent-container-{{ CONTAINER_POSTFIX }}\n      image: gocd/gocd-agent-docker-dind:v19.4.0\n      securityContext:\n        privileged: true\n      resources:\n        limits:\n          memory: 768Mi\n        requests:\n          memory: 256Mi"
+"value" :  "apiVersion: v1\nkind: Pod\nmetadata:\n  name: gocd-agent-{{ POD_POSTFIX }}\n  labels:\n    app: web\nspec:\n  serviceAccountName: gocd-app\n  containers:\n    - name: gocd-agent-container-{{ CONTAINER_POSTFIX }}\n      image: gocd/gocd-agent-alpine-3.9:v19.4.0\n      securityContext:\n      resources:\n        limits:\n          memory: 768Mi\n        requests:\n          memory: 256Mi"
 },
     {
       "key": "PodSpecType",
       "value": "yaml"
-    },
-    {
-      "key": "Privileged",
-      "value": "true"
     }
   ]
 }
