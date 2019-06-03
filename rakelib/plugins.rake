@@ -37,7 +37,7 @@ namespace :plugins do
     secret_name=`kubectl --namespace=#{setup.k8s_namespace} get serviceaccount #{setup.k8_service_account} -o jsonpath="{.secrets[0].name}"`
     secret_token=`kubectl --namespace=#{setup.k8s_namespace} get secret #{secret_name} -o jsonpath="{.data['token']}" | base64 --decode`
     k8_cluster_url=`kubectl config view --minify | grep server | cut -f 2- -d ":" | tr -d " "`
-    k8_cluster_ca_cert=`kubectl config view --raw --flatten -o json | jq -r '.clusters[] | select(.name == "'$(kubectl config current-context)'") | .cluster."certificate-authority-data"'`
+    k8_cluster_ca_cert=`kubectl config view --raw --minify --flatten -o jsonpath='{.clusters[].cluster.certificate-authority-data}'`
 
     cluster_profile = Plugins::Elastic_agent.new('resources/k8_cluster_profile.json')
     cluster_profile.create_cluster_profile_with_actual_values({'go_server_url' => setup.go_k8_service_url,
