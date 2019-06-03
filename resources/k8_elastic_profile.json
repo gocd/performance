@@ -1,5 +1,5 @@
 {
-  "id": "demo-app-2",
+  "id": "demo-app",
   "cluster_profile_id": "k8-cluster-profile",
   "properties": [
     {
