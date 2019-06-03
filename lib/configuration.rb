@@ -326,7 +326,7 @@ module Configuration
     end
 
     def k8_auto_register_timeout
-      env('K8_AGENT_AUTO_REGISTER_TIMEOU','10')
+      env('K8_AGENT_AUTO_REGISTER_TIMEOUT','10')
     end
 
     def k8_pending_pods_count

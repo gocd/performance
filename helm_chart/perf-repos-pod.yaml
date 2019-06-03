@@ -60,8 +60,8 @@ spec:
           containerPort: 9418
       resources:
         requests:
-          memory: "512Mi"
+          memory: "1024Mi"
           cpu: "2"
         limits:
-          memory: "2048Mi"
+          memory: "4096Mi"
           cpu: "4"    
