@@ -1,67 +1,75 @@
 
-apiVersion: v1
-kind: Pod
+apiVersion: extensions/v1beta1
+kind: Deployment
 metadata:
   name: perf-repo
   labels:
     app: perf-repo
+
 spec:
-  containers:
-    - name: perf-repo
-      image: adityasood/gocd-perf-test-repo:0.0.1
-      env:
-        - name: NO_OF_PIPELINES
-          valueFrom:
-            configMapKeyRef:
-              name: perf-keys
-              key: number_of_pipelines
-        - name: PERFORMANCE_REPO_DIRECTORY
-          valueFrom:
-            configMapKeyRef:
-              name: perf-keys
-              key: performance_repo_directory
-        - name: NO_OF_PIPELINES_CONFIG_REPO
-          valueFrom:
-            configMapKeyRef:
-              name: perf-keys
-              key: no_of_pipelines_in_config_repos
-        - name: GIT_COMMIT_INTERVAL
-          valueFrom:
-            configMapKeyRef:
-              name: perf-keys
-              key: git_commit_interval
-        - name: PERF_REPO_BRANCH
-          valueFrom:
-            configMapKeyRef:
-              name: perf-keys
-              key: performance_repo_branch
-        - name: LOAD_TEST_DURATION
-          valueFrom:
-            configMapKeyRef:
-              name: perf-keys
-              key: load_test_duration
-        - name: GIT_ROOT
-          valueFrom:
-            configMapKeyRef:
-              name: perf-keys
-              key: git_root
-        - name: K8_ELASTIC_AGENT_PROFILE
-          valueFrom:
-            configMapKeyRef:
-              name: perf-keys
-              key: k8_elastic_agent_profile
-        - name: PERF_REPO_URL
-          valueFrom:
-            configMapKeyRef:
-              name: perf-keys
-              key: perf_repo_url
-      ports:
-        - name: git-daemon
-          containerPort: 9418
-      resources:
-        requests:
-          memory: "1024Mi"
-          cpu: "2"
-        limits:
-          memory: "4096Mi"
-          cpu: "4"    
+  replicas: 1
+  template:
+    metadata:
+      name: perf-repo
+      labels:
+        app: perf-repo
+    spec:
+      containers:
+        - name: perf-repo
+          image: adityasood/gocd-perf-test-repo:0.0.1
+          env:
+            - name: NO_OF_PIPELINES
+              valueFrom:
+                configMapKeyRef:
+                  name: perf-keys
+                  key: number_of_pipelines
+            - name: PERFORMANCE_REPO_DIRECTORY
+              valueFrom:
+                configMapKeyRef:
+                  name: perf-keys
+                  key: performance_repo_directory
+            - name: NO_OF_PIPELINES_CONFIG_REPO
+              valueFrom:
+                configMapKeyRef:
+                  name: perf-keys
+                  key: no_of_pipelines_in_config_repos
+            - name: GIT_COMMIT_INTERVAL
+              valueFrom:
+                configMapKeyRef:
+                  name: perf-keys
+                  key: git_commit_interval
+            - name: PERF_REPO_BRANCH
+              valueFrom:
+                configMapKeyRef:
+                  name: perf-keys
+                  key: performance_repo_branch
+            - name: LOAD_TEST_DURATION
+              valueFrom:
+                configMapKeyRef:
+                  name: perf-keys
+                  key: load_test_duration
+            - name: GIT_ROOT
+              valueFrom:
+                configMapKeyRef:
+                  name: perf-keys
+                  key: git_root
+            - name: K8_ELASTIC_AGENT_PROFILE
+              valueFrom:
+                configMapKeyRef:
+                  name: perf-keys
+                  key: k8_elastic_agent_profile
+            - name: PERF_REPO_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: perf-keys
+                  key: perf_repo_url
+          ports:
+            - name: git-daemon
+              containerPort: 9418
+          resources:
+            requests:
+              memory: "1024Mi"
+              cpu: "2"
+            limits:
+              memory: "4096Mi"
+              cpu: "4"    
