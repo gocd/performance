@@ -121,7 +121,7 @@ server:
     enabled: true
     accessMode: "ReadWriteOnce"
     # The storage space that should be claimed from the persistent volume
-    size: 2Gi
+    size: 100Gi
     # If defined, storageClassName: <storageClass>
     # If set to "-", storageClassName: "", which disables dynamic provisioning
     # If undefined (the default) or set to null, no storageClassName spec is
