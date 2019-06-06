@@ -15,10 +15,17 @@ module GoCD
       @auth_header = "Basic #{Base64.encode64(['file_based_user', ENV['FILE_BASED_USER_PWD']].join(':'))}"
     end
 
+    def create_secret_config(data)
+      @rest_client.post("#{@base_url}/api/admin/secret_configs",
+                        data,
+                        accept: 'application/vnd.go.cd.v1+json',
+                        content_type: 'application/json', Authorization: @auth_header)
+    end
+
     def create_pipeline(data)
       @rest_client.post("#{@base_url}/api/admin/pipelines",
                         data,
-                        accept: 'application/vnd.go.cd.v6+json',
+                        accept: 'application/vnd.go.cd.v7+json',
                         content_type: 'application/json', Authorization: @auth_header)
     end
 
