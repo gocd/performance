@@ -19,7 +19,7 @@ module GoCD
       @rest_client.post("#{@base_url}/api/admin/secret_configs",
                         data,
                         accept: 'application/vnd.go.cd.v1+json',
-                        content_type: 'application/json', Authorization: @auth_header)
+                        content_type: 'application/json')
     end
 
     def create_pipeline(data)
