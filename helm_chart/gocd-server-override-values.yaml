@@ -38,7 +38,7 @@ server:
   ##
   resources:
     requests:
-      memory: 10240Mi
+      memory: 12288Mi
       cpu: "2"
     limits:
       cpu: "8"
