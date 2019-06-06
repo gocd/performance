@@ -24,8 +24,8 @@ namespace :pipeline do
           p << material
         end
 
-        suffix = pipeline.gsub(/[^0-9]/, '').to_i
-        p << EnvironmentVariable.new(name: "secret_env_#{suffix}", value: "{{SECRET:[perf_secret][secret_var_#{suffix}]}}", secure: true)
+        secret_counter = rand(1..100)
+        p << EnvironmentVariable.new(name: "secret_env_#{secret_counter}", value: "{{SECRET:[perf_secret][secret_var_#{secret_counter}]}}", secure: true)
 
         if multi_stage_pipeline?(pipeline)
           p << Stage.new(name: 'first') do |s|
