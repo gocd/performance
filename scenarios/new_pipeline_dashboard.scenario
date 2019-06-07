@@ -1,7 +1,7 @@
 # Scenario : Users visit New Dashboard page
 scenario do
   name 'new dashboard page'
-  version 'application/vnd.go.cd.v2+json'
+  version 'application/vnd.go.cd.v3+json'
   loop do
     url '/api/dashboard'
   end
