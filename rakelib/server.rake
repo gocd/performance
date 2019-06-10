@@ -139,8 +139,9 @@ namespace :server do
     sh %(java -jar /var/go/newrelic/newrelic-agent.jar deployment --appname='GoCD Perf Server' --revision="#{revision}")
     puts 'The server is up and running'
 
-    file_path = setup_secrets_config_file(server_dir)
-    setup_secrets_config(file_path)
+    # Not releasing secrets as part of 19.5 release, so commenting this out, revert this change for 19.6
+    # file_path = setup_secrets_config_file(server_dir)
+    # setup_secrets_config(file_path)
   end
 
   task :setup_auth do
