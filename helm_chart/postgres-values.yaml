@@ -186,6 +186,7 @@ resources:
   requests:
     memory: 256Mi
     cpu: 250m
+    ephemeral-storage: "8Gi"
 
 networkPolicy:
   ## Enable creation of NetworkPolicy resources.
