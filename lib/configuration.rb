@@ -201,7 +201,7 @@ module Configuration
       interval = env('GIT_COMMIT_INTERVAL', 10).to_i
       {
         interval: interval,
-        times: load_test_duration / interval
+        times: (load_test_duration + 3600) / interval
       }
     end
 
