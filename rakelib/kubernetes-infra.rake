@@ -123,6 +123,7 @@ namespace :k8_infra do
 
   task :delete_eks_k8s_cluster do
     
+    sh("kubectl get pods -n gocd --no-headers=true | awk '/pattern1|gocd-agent-/{print $1}'| xargs  kubectl delete -n gocd --grace-period=0 --force pod")
     sh("kubectl delete namespaces gocd --ignore-not-found=true")
     sh("helm del --purge postgresdb gocd-app")
     sh("eksctl delete cluster --name #{ENV['EKS_CLUSTER_NAME']} --region #{ENV['EKS_CLUSTER_REGION']}")
