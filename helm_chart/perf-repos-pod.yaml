@@ -70,8 +70,8 @@ spec:
             requests:
               memory: "1024Mi"
               cpu: "2"
-              ephemeral-storage: "2Gi"
+              ephemeral-storage: "12Gi"
             limits:
               memory: "4096Mi"
               cpu: "4"
-              ephemeral-storage: "4Gi"
+              ephemeral-storage: "24Gi"    

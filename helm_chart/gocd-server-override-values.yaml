@@ -40,11 +40,11 @@ server:
     requests:
       memory: 8192Mi
       cpu: "2"
-      ephemeral-storage: "4Gi"
+      ephemeral-storage: "24Gi"
     limits:
       cpu: "8"
       memory: 12288Mi
-      ephemeral-storage: "8Gi"
+      ephemeral-storage: "48Gi"
 
   ## Additional GoCD server pod labels
   ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
