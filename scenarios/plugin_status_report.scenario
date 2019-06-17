@@ -1,10 +1,10 @@
-# Scenario : Users visit ecs plugin status report page
+# Scenario : Users visit k8s plugin status report page
 
 scenario do
   count 20
   rampup 100
-  name 'ecs plugin status report'
+  name 'k8s plugin status report'
   loop do
-    url '/admin/status_reports/cd.go.contrib.elasticagent.kubernetes'
+    url 'go/admin/status_reports/cd.go.contrib.elasticagent.kubernetes/cluster/k8-cluster-profile'
   end
 end
