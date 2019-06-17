@@ -5,6 +5,6 @@ scenario do
   rampup 100
   name 'k8s plugin status report'
   loop do
-    url 'go/admin/status_reports/cd.go.contrib.elasticagent.kubernetes/cluster/k8-cluster-profile'
+    url '/admin/status_reports/cd.go.contrib.elasticagent.kubernetes/cluster/k8-cluster-profile'
   end
 end
