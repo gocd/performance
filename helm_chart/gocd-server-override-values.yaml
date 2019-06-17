@@ -97,9 +97,9 @@ server:
     annotations:
       ## When using LoadBalancer service type, use the following AWS certificate from ACM
       ## https://aws.amazon.com/documentation/acm/
-      # service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:eu-west-1:123456789:certificate/abc123-abc123-abc123-abc123"
-      # service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "https"
-      # service.beta.kubernetes.io/aws-load-balancer-backend-port: "https"
+      service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:us-west-2:369170619674:certificate/665bd51a-995d-462b-999e-8ef105d597e7"
+      service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "https"
+      service.beta.kubernetes.io/aws-load-balancer-backend-port: "https"
     ## When using LoadBalancer service type, whitelist these source IP ranges
     ## https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/
     # loadBalancerSourceRanges:
