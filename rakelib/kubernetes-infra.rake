@@ -135,7 +135,9 @@ namespace :k8_infra do
 
     sh("helm install --name prometheus-operator --namespace gocd  stable/prometheus-operator -f helm_chart/prometheus-values.yaml")
     sh("kubectl create -f helm_chart/grafana-dashboard-configmap.yaml  --namespace=gocd")
+  end
 
+  task :expose_grafana_lb do
     GRAFANA_LB=`kubectl get svc prometheus-operator-grafana -o=go-template --template='{{(index .status.loadBalancer.ingress 0 ).hostname}}' --namespace=gocd`
     request_to_update_route53={
       "Comment": "changed value for the eks perf run on $time",
