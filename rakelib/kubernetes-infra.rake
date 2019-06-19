@@ -108,7 +108,7 @@ namespace :k8_infra do
     sh("helm init --service-account tiller --wait")
     sh("helm repo add stable https://kubernetes-charts.storage.googleapis.com")
     sh("kubectl get nodes | awk 'NR>=#{ENV['ECS_NODE_LOWER_LIMIT']} && NR<=#{ENV['ECS_NODE_UPPER_LIMIT']} {print $1}' | xargs -I{} kubectl label nodes {} app=gocd")
-    sh("kubectl get nodes | awk 'NR==#{ENV['ECS_NODE_MAX']} {print $1} | xargs -I{} kubectl label nodes {} app=monitoring")
+    sh("kubectl get nodes | awk 'NR==#{ENV['ECS_NODE_MAX']} {print $1}' | xargs -I{} kubectl label nodes {} app=monitoring")
   end
 
   task :k8_create_namespace do

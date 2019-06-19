@@ -49,7 +49,7 @@ server:
   ## Additional GoCD server pod labels
   ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
   nodeSelector:
-    app=gocd
+    app: gocd
 
   ## Affinity for assigning pods to specific nodes
   ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
