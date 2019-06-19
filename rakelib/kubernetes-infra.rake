@@ -107,8 +107,8 @@ namespace :k8_infra do
     sh("kubectl apply -f helm_chart/rbac-config.yaml")
     sh("helm init --service-account tiller --wait")
     sh("helm repo add stable https://kubernetes-charts.storage.googleapis.com")
-    
-
+    sh("kubectl get nodes | awk 'NR>=#{ENV['ECS_NODE_LOWER_LIMIT']} && NR<=#{ENV['ECS_NODE_UPPER_LIMIT']} {print $1}' | xargs -I{} kubectl label nodes {} app=gocd")
+    sh("kubectl get nodes | awk 'NR==#{ENV['ECS_NODE_MAX']} {print $1} | xargs -I{} kubectl label nodes {} app=monitoring")
   end
 
   task :k8_create_namespace do
@@ -123,7 +123,7 @@ namespace :k8_infra do
 
   task :delete_eks_k8s_cluster do
     
-    sh("kubectl get pods -n gocd --no-headers=true | awk '/pattern1|gocd-agent-/{print $1}'| xargs  kubectl delete -n gocd --grace-period=0 --force pod")
+    sh("kubectl delete -n gocd --grace-period=0 --force --all pod")
     sh("kubectl delete namespaces gocd --ignore-not-found=true")
     sh("kubectl delete crd prometheusrules.monitoring.coreos.com alertmanagers.monitoring.coreos.com servicemonitors.monitoring.coreos.com -n gocd")
     sh("helm del --purge postgresdb gocd-app prometheus-operator")

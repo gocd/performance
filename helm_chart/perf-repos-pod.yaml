@@ -75,3 +75,5 @@ spec:
               memory: "4096Mi"
               cpu: "4"
               ephemeral-storage: "10240Mi"
+          nodeSelector:
+            app: gocd
