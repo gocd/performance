@@ -277,7 +277,7 @@ alertmanager:
     ## ref: https://kubernetes.io/docs/user-guide/node-selection/
     ##
     nodeSelector:
-      app: prometheus
+      app: monitoring
 
     ## Define resources requests and limits for single Pods.
     ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
@@ -399,7 +399,7 @@ grafana:
     #   hosts:
     #   - grafana.example.com
   nodeSelector:
-    app: prometheus
+    app: monitoring
 
   sidecar:
     dashboards:
@@ -970,7 +970,7 @@ prometheusOperator:
   ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
   nodeSelector:
-    app: prometheus
+    app: monitoring
 
   ## Tolerations for use with node taints
   ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
@@ -1212,7 +1212,7 @@ prometheus:
     ## ref: https://kubernetes.io/docs/user-guide/node-selection/
     ##
     nodeSelector:
-      app: prometheus
+      app: monitoring
 
     ## Secrets is a list of Secrets in the same namespace as the Prometheus object, which shall be mounted into the Prometheus Pods.
     ## The Secrets are mounted into /etc/prometheus/secrets/. Secrets changes after initial creation of a Prometheus object are not
@@ -1312,8 +1312,8 @@ prometheus:
     ##
     podMetadata: {}
     # labels:
-    #   app: prometheus
-    #   k8s-app: prometheus
+    #   app: monitoring
+    #   k8s-app: monitoring
 
     ## Pod anti-affinity can prevent the scheduler from placing Prometheus replicas on the same node.
     ## The default value "soft" means that the scheduler should *prefer* to not schedule two replica pods onto the same node but no guarantee is provided.
