@@ -59,7 +59,7 @@ namespace :k8_infra do
             {
               "Action": "UPSERT",
               "ResourceRecordSet": {
-            "Name": "perf-eks-test.gocd.org.",
+            "Name": "kubernetes-performance.gocd.org.",
             "Type": "CNAME",
             "TTL": 300,
             "ResourceRecords": [
@@ -125,9 +125,40 @@ namespace :k8_infra do
     
     sh("kubectl get pods -n gocd --no-headers=true | awk '/pattern1|gocd-agent-/{print $1}'| xargs  kubectl delete -n gocd --grace-period=0 --force pod")
     sh("kubectl delete namespaces gocd --ignore-not-found=true")
-    sh("helm del --purge postgresdb gocd-app")
+    sh("kubectl delete crd prometheusrules.monitoring.coreos.com alertmanagers.monitoring.coreos.com servicemonitors.monitoring.coreos.com -n gocd")
+    sh("helm del --purge postgresdb gocd-app prometheus-operator")
     sh("eksctl delete cluster --name #{ENV['EKS_CLUSTER_NAME']} --region #{ENV['EKS_CLUSTER_REGION']}")
 
+  end
+
+  task :setup_prometheus_operator do
+
+    sh("helm install --name prometheus-operator --namespace gocd  stable/prometheus-operator -f helm_chart/prometheus-values.yaml")
+    sh("kubectl create -f helm_chart/grafana-dashboard-configmap.yaml  --namespace=gocd")
+
+    GRAFANA_LB=`kubectl get svc prometheus-operator-grafana -o=go-template --template='{{(index .status.loadBalancer.ingress 0 ).hostname}}' --namespace=gocd`
+    request_to_update_route53={
+      "Comment": "changed value for the eks perf run on $time",
+          "Changes": [
+            {
+              "Action": "UPSERT",
+              "ResourceRecordSet": {
+            "Name": "kubernetes-grafana.gocd.org.",
+            "Type": "CNAME",
+            "TTL": 300,
+            "ResourceRecords": [
+                {
+                    "Value": "#{GRAFANA_LB}"
+                }
+            ]
+              }
+        }
+      ]
+    }.to_json
+
+    File.open("helm_chart/batch-change-grafana.json", 'w') { |file| file.write(request_to_update_route53) }
+    sh("aws route53 change-resource-record-sets --hosted-zone-id Z2I0AUBABYDS9 --change-batch file://helm_chart/batch-change-grafana.json")
+  
   end
 
 end
