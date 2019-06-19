@@ -13,7 +13,10 @@ spec:
       name: perf-repo
       labels:
         app: perf-repo
+      
     spec:
+      nodeSelector:
+        app: gocd
       containers:
         - name: perf-repo
           image: adityasood/gocd-perf-test-repo:0.0.1
@@ -75,5 +78,3 @@ spec:
               memory: "4096Mi"
               cpu: "4"
               ephemeral-storage: "10240Mi"
-          nodeSelector:
-            app: gocd
