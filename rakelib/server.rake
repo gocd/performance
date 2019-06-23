@@ -110,13 +110,14 @@ namespace :server do
     # cp_r "scripts/logback-gelf-1.0.4.jar", "#{server_dir}/libs/"
     # cp_r "scripts/logback.xml" ,  "#{server_dir}/config/"
 
+    File.open("#{server_dir}/wrapper-config/wrapper-properties.conf", 'w') do |file|
+      @gocd_server.environment.each_with_index  do |item, index|
+        file.puts("wrapper.java.additional.#{index.to_i + 100}=#{item}")
+      end
+    end
+
     Bundler.with_clean_env do
-      ProcessBuilder.build('./with-java.sh', './server.sh') do |p|
-        p.environment = @gocd_server.environment
-        puts 'Environment variables'
-        p.environment.each do |key, value|
-          puts "#{key}=#{value}"
-        end
+      ProcessBuilder.build('./with-java.sh', 'bin/go-server', 'start') do |p|
         p.directory = server_dir
         p.redirection[:err] = "#{server_dir}/logs/go-server.startup.out.log"
         p.redirection[:out] = "#{server_dir}/logs/go-server.startup.out.log"
