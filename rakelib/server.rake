@@ -111,7 +111,7 @@ namespace :server do
     # cp_r "scripts/logback.xml" ,  "#{server_dir}/config/"
 
     File.open("#{server_dir}/wrapper-config/wrapper-properties.conf", 'w') do |file|
-      @gocd_server.environment.each_with_index  do |item, index|
+      @gocd_server.environment.split(',').each_with_index  do |item, index|
         file.puts("wrapper.java.additional.#{index.to_i + 100}=#{item}")
       end
     end

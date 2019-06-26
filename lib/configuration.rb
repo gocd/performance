@@ -410,13 +410,7 @@ module Configuration
     end
 
     def environment
-      {
-        'GO_SERVER_SYSTEM_PROPERTIES' => env('GO_SERVER_SYSTEM_PROPERTIES', ''),
-        'GO_SERVER_PORT' => port,
-        'GO_SERVER_SSL_PORT' => secure_port,
-        'SERVER_MEM' => run_config('SERVER_MEM', '4g', '2g'),
-        'SERVER_MAX_MEM' => run_config('SERVER_MAX_MEM', '6g', '4g')
-      }
+      env('GO_SERVER_SYSTEM_PROPERTIES', '')
     end
   end
 end
