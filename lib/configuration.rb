@@ -410,7 +410,9 @@ module Configuration
     end
 
     def environment
-      env('GO_SERVER_SYSTEM_PROPERTIES', '')
+      {
+        'GO_SERVER_SYSTEM_PROPERTIES' => env('GO_SERVER_SYSTEM_PROPERTIES', '')
+      }
     end
   end
 end
