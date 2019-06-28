@@ -110,14 +110,14 @@ namespace :server do
     # cp_r "scripts/logback-gelf-1.0.4.jar", "#{server_dir}/libs/"
     # cp_r "scripts/logback.xml" ,  "#{server_dir}/config/"
 
-    File.open("#{server_dir}/wrapper-config/wrapper-properties.conf", 'w') do |file|
-      @gocd_server.environment.split(',').each_with_index  do |item, index|
-        file.puts("wrapper.java.additional.#{index.to_i + 100}=#{item}")
-      end
-    end
 
     Bundler.with_clean_env do
-      ProcessBuilder.build('./with-java.sh', 'bin/go-server', 'start') do |p|
+      ProcessBuilder.build('./with-java.sh', './server.sh') do |p|
+        p.environment = @gocd_server.environment
+        puts 'Environment variables'
+        p.environment.each do |key, value|
+          puts "#{key}=#{value}"
+        end
         p.directory = server_dir
         p.redirection[:err] = "#{server_dir}/logs/go-server.startup.out.log"
         p.redirection[:out] = "#{server_dir}/logs/go-server.startup.out.log"
@@ -140,8 +140,6 @@ namespace :server do
     sh %(java -jar /var/go/newrelic/newrelic-agent.jar deployment --appname='GoCD Perf Server' --revision="#{revision}")
     puts 'The server is up and running'
 
-    file_path = setup_secrets_config_file(server_dir)
-    setup_secrets_config(file_path)
   end
 
   task :setup_auth do
