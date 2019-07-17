@@ -128,6 +128,10 @@ module Configuration
       env('INCLUDE_ADDONS') == 'Y'
     end
 
+    def secrets_count
+      env('NUMBER_OF_SECRETS', '50').to_i
+    end
+
     def addons_src_dir
       Pathname.new(env('ADDONS_SRC_DIR', './addons'))
     end
