@@ -32,11 +32,11 @@ namespace :server do
     end
 
     raise "Couldn't start GoCD server" unless server_is_running
-    
+
 
     revision = setup.include_addons? ? "#{$version}-#{$build_number}-PG" : "#{$version}-#{$build_number}-H2"
    sh("curl -L -o 'resources/newrelic-agent.jar' --fail 'http://central.maven.org/maven2/com/newrelic/agent/java/newrelic-agent/4.7.0/newrelic-agent-4.7.0.jar'")
-    
+
   sh %(java -jar resources/newrelic-agent.jar deployment --appname='GoCD K8s Perf Server' --revision="#{revision}")
     puts 'The server is up and running'
   end
@@ -72,13 +72,13 @@ namespace :server do
   end
 
   task :setup_newrelic_agent do
-    rm_rf '/var/go/newrelic'
-    mkdir_p '/var/go/newrelic'
-    sh %(wget http://central.maven.org/maven2/com/newrelic/agent/java/newrelic-agent/4.12.0/newrelic-agent-4.12.0.jar -O /var/go/newrelic/newrelic-agent.jar)
-    sh %(wget http://central.maven.org/maven2/com/newrelic/agent/java/newrelic-api/4.12.0/newrelic-api-4.12.0.jar -O /var/go/newrelic/newrelic-api.jar)
+    rm_rf '/godata/newrelic'
+    mkdir_p '/godata/newrelic'
+    sh %(wget http://central.maven.org/maven2/com/newrelic/agent/java/newrelic-agent/4.12.0/newrelic-agent-4.12.0.jar -O /godata/newrelic/newrelic-agent.jar)
+    sh %(wget http://central.maven.org/maven2/com/newrelic/agent/java/newrelic-api/4.12.0/newrelic-api-4.12.0.jar -O /godata/newrelic/newrelic-api.jar)
     newrelic_config = File.read('resources/newrelic.yml')
     newrelic_config.gsub!(/<%= license_key %>/, setup.newrelic_license_key)
-    File.open('/var/go/newrelic/newrelic.yml', 'w') do |f|
+    File.open('/godata/newrelic/newrelic.yml', 'w') do |f|
       f.write newrelic_config
     end
   end
