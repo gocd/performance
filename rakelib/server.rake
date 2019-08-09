@@ -30,7 +30,8 @@ namespace :server do
     end
 
     # Copy all the files from previous run of performance
-    %w[config artifacts db secrets].each do |fldr|
+    mv "#{server_dir}/go-server-19.7.0/artifacts", "#{server_dir}/go-server-#{v}/"
+    %w[config db secrets].each do |fldr|
       cp_r "#{server_dir}/go-server-19.7.0/#{fldr}", "#{server_dir}/go-server-#{v}/"
     end
 
