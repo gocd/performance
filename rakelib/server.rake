@@ -31,7 +31,7 @@ namespace :server do
 
     # Copy all the files from previous run of performance
     %w[config artifacts db secrets].each do |fldr|
-      cp_r "/var/go/server/go-server/19.7.0/#{fldr}", "#{server_dir}/go-server-#{v}/"
+      cp_r "#{server_dir}/go-server-19.7.0/#{fldr}", "#{server_dir}/go-server-#{v}/"
     end
 
     if @setup.include_addons?
