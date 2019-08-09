@@ -16,8 +16,6 @@ namespace :server do
     v, b = @setup.go_version
 
     server_dir = @setup.server_install_dir
-    rm_rf server_dir.to_s
-    mkdir_p server_dir.to_s
 
     Downloader.new(server_dir.to_s) do |q|
       q.add "#{@setup.download_url}/binaries/#{v}-#{b}/generic/go-server-#{v}-#{b}.zip"
