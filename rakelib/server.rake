@@ -31,18 +31,15 @@ namespace :server do
       cp @setup.plugin_src_dir.to_s, "#{server_dir}/go-server-#{v}/plugins/external/"
     end
 
+    # Copy all the files from previous run of performance
+    %w[config artifacts db secrets].each do |fldr|
+      cp_r "/var/go/server/go-server/19.7.0/#{fldr}", "#{server_dir}/go-server-#{v}/"
+    end
+
     if @setup.include_addons?
       puts 'Copying the addons'
       mkdir_p "#{server_dir}/go-server-#{v}/addons/"
-      mkdir_p "#{server_dir}/go-server-#{v}/config/"
       sh "curl -L -o #{server_dir}/go-server-#{v}/addons/postgres-addon.jar --fail -H 'Accept: binary/octet-stream' --user '#{ENV['EXTENSIONS_USER']}:#{ENV['EXTENSIONS_PASSWORD']}'  #{ENV['PG_ADDON_DOWNLOAD_URL']}"
-      open("#{server_dir}/go-server-#{v}/config/postgresqldb.properties", 'w') do |f|
-        f.puts("db.host=#{@setup.pg_db_host}")
-        f.puts('db.port=5432')
-        f.puts('db.name=cruise')
-        f.puts('db.user=postgres')
-        f.puts("db.password=#{@setup.pg_db_password}")
-      end
     end
 
     mkdir_p "#{server_dir}/go-server-#{v}/plugins/external/"
@@ -62,56 +59,18 @@ namespace :server do
     if @setup.include_azure_elastic_agents?
       sh "curl -L -o #{server_dir}/go-server-#{v}/plugins/external/azure-elastic-agents-plugin.jar --fail -H 'Accept: binary/octet-stream' --user '#{ENV['EXTENSIONS_USER']}:#{ENV['EXTENSIONS_PASSWORD']}' #{ENV['AZURE_EA_PLUGIN_DOWNLOAD_URL']}"
     end
-
-  end
-
-  def setup_secrets_config_file(server_dir)
-    v, b = @setup.go_version
-    mkdir_p "#{server_dir}/secrets"
-
-    sh %(java -jar #{server_dir}/plugins/bundled/gocd-file-based-secrets-plugin.jar init -f #{server_dir}/secrets/secret.db)
-    (1..100).each do |counter|
-      sh %(java -jar #{server_dir}/plugins/bundled/gocd-file-based-secrets-plugin.jar add -f #{server_dir}/secrets/secret.db -n secret_var_#{counter} -v value)
-    end
-    "#{server_dir}/secrets/secret.db"
-  end
-
-  def setup_secrets_config(secret_file_path)
-    secret_config = %({
-                      "id": "perf_secret",
-                      "plugin_id": "cd.go.secrets.file-based-plugin",
-                      "description": "",
-                      "properties": [
-                          {
-                              "key": "SecretsFilePath",
-                              "value": "#{secret_file_path}"
-                          }
-                      ],
-                      "rules": [
-                          {
-                              "directive": "allow",
-                              "action": "refer",
-                              "type": "*",
-                              "resource": "*"
-                          }
-                      ]
-
-                    })
-    @gocd_client.create_secret_config(secret_config)
   end
 
   task start: ['server:stop', 'server:setup_newrelic_agent'] do
     v, b = @setup.go_version
 
     server_dir = "#{@setup.server_install_dir}/go-server-#{v}"
-    %w[logs libs config].each { |dir| mkdir_p "#{server_dir}/#{dir}/" }
+    %w[logs libs].each { |dir| mkdir_p "#{server_dir}/#{dir}/" }
     cp_r 'scripts/with-java.sh', "#{server_dir}/with-java.sh"
-    chmod_R 0755, "#{server_dir}/"
-    # cp_r "scripts/logback-gelf-1.0.4.jar", "#{server_dir}/libs/"
-    # cp_r "scripts/logback.xml" ,  "#{server_dir}/config/"
+    chmod_R 0o755, "#{server_dir}/"
 
     File.open("#{server_dir}/wrapper-config/wrapper-properties.conf", 'w') do |file|
-      @gocd_server.environment.split(',').each_with_index  do |item, index|
+      @gocd_server.environment.split(',').each_with_index do |item, index|
         file.puts("wrapper.java.additional.#{index.to_i + 100}=#{item}")
       end
     end
@@ -139,31 +98,6 @@ namespace :server do
     revision = @setup.include_addons? ? "#{v}-#{b}-PG" : "#{v}-#{b}-H2"
     sh %(java -jar /var/go/newrelic/newrelic-agent.jar deployment --appname='GoCD Perf Server' --revision="#{revision}")
     puts 'The server is up and running'
-
-    file_path = setup_secrets_config_file(server_dir)
-    setup_secrets_config(file_path)
-  end
-
-  task :setup_auth do
-    if !@gocd_client.auth_enabled?
-      # @gocd_client.set_ldap_auth_config(@setup.ldap_server_ip)
-      File.open("#{@setup.server_install_dir}/password.properties", 'w') { |file| file.write("file_based_user:#{BCrypt::Password.create(ENV['FILE_BASED_USER_PWD'])}") }
-      @gocd_client.setup_file_based_auth_config("#{@setup.server_install_dir}/password.properties")
-    else
-      p 'Auth config already setup on the server, skipping.'
-    end
-  end
-
-  task :setup_config_repo do
-    @gocd_client.setup_config_repo(@setup.git_repository_host)
-  end
-
-  task :create_environment do
-    @gocd_client.create_environment('performance')
-  end
-
-  task :enable_new_dashboard do
-    @gocd_client.enable_toggle('quicker_dashboard_key')
   end
 
   task :stop do
@@ -184,10 +118,6 @@ namespace :server do
     File.open('/var/go/newrelic/newrelic.yml', 'w') do |f|
       f.write newrelic_config
     end
-  end
-
-  task :auto_register do
-    @gocd_client.auto_register_key 'perf-auto-register-key'
   end
 
 end
