@@ -23,7 +23,7 @@ namespace :agents do
 
     cd agents_dir do
       %w[agent.jar tfs-impl.jar agent-plugins.zip].each do |file|
-        sh %(curl -k -u file_based_user:#{FILE_BASED_USER_PWD} https://#{gocd_server.host}:#{gocd_server.secure_port}/go/admin/#{file} -o #{file})
+        sh %(curl -k -u file_based_user:#{ENV['FILE_BASED_USER_PWD']} https://#{gocd_server.host}:#{gocd_server.secure_port}/go/admin/#{file} -o #{file})
       end
     end
 
