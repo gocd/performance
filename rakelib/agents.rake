@@ -56,7 +56,7 @@ namespace :agents do
     Looper.run(interval: 10, times: 120) do
       break if gocd_client.get_agents_count >= setup.agents.length
     end
-    if gocd_client.get_agents_count < setup.agents.length
+    if gocd_client.get_agents_count < (setup.agents.length - 10)
       raise "All agents are not up as expected. Expected agents #{setup.agents.length} and actual is #{gocd_client.get_agents_count}"
     end
     puts 'All agents running'
