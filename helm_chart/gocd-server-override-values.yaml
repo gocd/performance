@@ -89,11 +89,11 @@ server:
   env:
     # server.env.goServerSystemProperties is a list of Java system properties, which needs to be provided to the GoCD Server, typically prefixed with -D unless otherwise stated.
     # Example: "-Xmx4096mb -Dfoo=bar"
-    goServerJvmOpts: "-Dgo.database.provider=com.thoughtworks.go.postgresql.PostgresqlDatabase -Xms8192m -Xmx10240m -javaagent:/godata/newrelic/newrelic-agent.jar  -XX:+HeapDumpOnOutOfMemoryError -XX:+UseSerialGC -Dgo.security.reauthentication.enabled=true -Dgo.security.reauthentication.interval=1800000 -Dgo.config.repo.gc.periodic=Y -Dgo.config.repo.gc.cron='0 0 0/3 1/1 * ?' -XX:+PrintGCDetails -Xloggc:gc.log  -XX:+UnlockDiagnosticVMOptions -Dkubernetes.request.timeout=60000"
+    goServerJvmOpts: "-Dgo.database.provider=com.thoughtworks.go.postgresql.PostgresqlDatabase -Xms8192m -Xmx10240m -javaagent:/godata/newrelic/newrelic-agent.jar  -XX:+HeapDumpOnOutOfMemoryError -XX:+UseSerialGC -Dgo.security.reauthentication.enabled=true -Dgo.security.reauthentication.interval=1800000 -Dgo.config.repo.gc.periodic=Y -Dgo.config.repo.gc.cron='0 0 0/3 1/1 * ?' -XX:+PrintGCDetails -Xloggc:gc.log  -XX:+UnlockDiagnosticVMOptions"
     #  server.env.extraEnvVars is the list of environment variables passed to GoCD Server
     extraEnvVars:
       - name: GOCD_PLUGIN_INSTALL_kubernetes-elastic-agents
-        value: https://github.com/gocd/kubernetes-elastic-agents/releases/download/v3.0.0-173-exp/kubernetes-elastic-agent-3.0.0-173.jar
+        value: https://github.com/gocd/kubernetes-elastic-agents/releases/download/v3.0.0-156/kubernetes-elastic-agent-3.0.0-156.jar
       - name: GOCD_PLUGIN_INSTALL_docker-registry-artifact-plugin
         value: https://github.com/gocd/docker-registry-artifact-plugin/releases/download/v1.0.1-92/docker-registry-artifact-plugin-1.0.1-92.jar
       - name: EXTENSION_USERNAME
