@@ -44,7 +44,7 @@ module GoCD
       @rest_client.post("#{@base_url}/api/admin/plugin_settings", settings,
                         content_type: :json, accept: 'application/vnd.go.cd.v1+json', Authorization: @auth_header) do |response, _request, _result|
         if response.code != 200
-          plugin_id = JSON.parse(settings)["plugin_id"]
+          plugin_id = JSON.parse(settings)['plugin_id']
           handle_api_failures(response, "Plugin Settings for #{plugin_id}", %(Plugin settings for the plugin `#{plugin_id}` already exist))
         end
       end
@@ -54,7 +54,22 @@ module GoCD
       @rest_client.post("#{@base_url}/api/admin/elastic/cluster_profiles", cluster_profile,
                         content_type: :json, accept: 'application/vnd.go.cd.v1+json', Authorization: @auth_header) do |response, _request, _result|
         if response.code != 200
-          handle_api_failures(response, "Cluster Profile", "Another Cluster Profile with the same name already exists")
+          handle_api_failures(response, 'Cluster Profile', 'Another Cluster Profile with the same name already exists')
+        end
+      end
+    end
+
+    def get_cluster_profile(profile_name)
+      @rest_client.get("#{@base_url}/api/admin/elastic/cluster_profiles/#{profile_name}",
+                       accept: 'application/vnd.go.cd+json', Authorization: @auth_header)
+    end
+
+    def update_cluster_profile(cluster_profile)
+      etag = get_cluster_profile('perf-ecs-cluster').headers[:etag]
+      @rest_client.post("#{@base_url}/api/admin/elastic/cluster_profiles", cluster_profile,
+                        content_type: :json, if_match: etag, accept: 'application/vnd.go.cd+json', Authorization: @auth_header) do |response, _request, _result|
+        if response.code != 200
+          handle_api_failures(response, 'Cluster Profile', 'Failed to update cluster profile perf-ecs-cluster')
         end
       end
     end
@@ -63,7 +78,7 @@ module GoCD
       @rest_client.post("#{@base_url}/api/elastic/profiles", profile,
                         content_type: :json, accept: 'application/vnd.go.cd.v2+json', Authorization: @auth_header) do |response, _request, _result|
         if response.code != 200
-          handle_api_failures(response, "EA Profile", "Another elasticProfile with the same name already exists")
+          handle_api_failures(response, 'EA Profile', 'Another elasticProfile with the same name already exists')
         end
       end
     end
@@ -148,7 +163,7 @@ module GoCD
     def cancel_pipeline(pipeline_name, stage)
       headers = { Authorization: @auth_header, Confirm: 'true' }
       RestClient::Request.execute(url: "#{@base_url}/api/stages/#{pipeline_name}/#{stage}/cancel",
-                                        method: :post, verify_ssl: false, headers: headers)
+                                  method: :post, verify_ssl: false, headers: headers)
       p "Cancelled #{pipeline_name}"
     end
 
@@ -186,7 +201,7 @@ module GoCD
       @rest_client.post("#{@base_url}/api/admin/config_repos",
                         config_repo, content_type: :json, accept: 'application/vnd.go.cd.v1+json', Authorization: @auth_header) do |response, _request, _result|
         if response.code != 200
-          handle_api_failures(response, "Config repo", "Another config-repo with the same name already exists")
+          handle_api_failures(response, 'Config repo', 'Another config-repo with the same name already exists')
         end
       end
     end
@@ -203,10 +218,9 @@ module GoCD
       @rest_client.post("#{@base_url}/api/admin/security/auth_configs",
                         auth_config, content_type: :json, accept: 'application/vnd.go.cd.v1+json') do |response, _request, _result|
         if response.code != 200
-          handle_api_failures(response, "Auth Config", %(Security authorization configuration id 'pwd_file' is not unique))
+          handle_api_failures(response, 'Auth Config', %(Security authorization configuration id 'pwd_file' is not unique))
         end
       end
-
     end
 
     def set_ldap_auth_config(ldap_ip)

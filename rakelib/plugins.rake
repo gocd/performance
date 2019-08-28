@@ -22,6 +22,14 @@ namespace :plugins do
     end
   end
 
+  task :update_ecs_cluster_profile do
+    ecs = Plugins::Elastic_agent.new('resources/ecs_cluster_profile.json')
+    ecs.update_cluster_profile_with_actual_values({ 'GoServerUrl' => "#{gocd_server.secure_url}/go",
+                                                    'AWSSecretAccessKey' => setup.aws_secret,
+                                                    'AWSAccessKeyId' => setup.aws_access_key,
+                                                    'IamInstanceProfile' => setup.aws_iam_profile }, gocd_client)
+  end
+
   task :setup_ecs_ea_profile do
     gocd_client.create_ea_profile(JSON.parse(File.read('resources/ecs_agent_profile.json')).to_json) if setup.include_ecs_elastic_agents?
   end

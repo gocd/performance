@@ -37,6 +37,11 @@ module Plugins
       client.create_cluster_profile(@settings.to_json)
     end
 
+    def update_cluster_profile_with_actual_values(actuals, client)
+      update_request_body_with(actuals, 'properties')
+      client.update_cluster_profile(@settings.to_json)
+    end
+
     def update_request_body_with(actuals, entity_name)
       properties = @settings["#{entity_name}"].each{|key_value|
         actuals.each{|key, value|
