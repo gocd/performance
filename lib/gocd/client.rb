@@ -66,7 +66,7 @@ module GoCD
 
     def update_cluster_profile(cluster_profile)
       etag = get_cluster_profile('perf-ecs-cluster').headers[:etag]
-      @rest_client.put("#{@base_url}/api/admin/elastic/cluster_profiles/#{profile_name}", cluster_profile,
+      @rest_client.put("#{@base_url}/api/admin/elastic/cluster_profiles/perf-ecs-cluster", cluster_profile,
                         content_type: :json, if_match: etag, accept: 'application/vnd.go.cd+json', Authorization: @auth_header) do |response, _request, _result|
         if response.code != 200
           handle_api_failures(response, 'Cluster Profile', 'Failed to update cluster profile perf-ecs-cluster')
