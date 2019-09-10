@@ -104,7 +104,7 @@ module GoCD
     end
 
     def get_agents_count
-      agents = JSON.parse(open("#{@base_url}/api/agents", 'Accept' => 'application/vnd.go.cd.v4+json', http_basic_authentication: ['file_based_user', ENV['FILE_BASED_USER_PWD']], read_timeout: 300, ssl_verify_mode: 0).read)
+      agents = JSON.parse(open("#{@base_url}/api/agents", 'Accept' => 'application/vnd.go.cd+json', http_basic_authentication: ['file_based_user', ENV['FILE_BASED_USER_PWD']], read_timeout: 300, ssl_verify_mode: 0).read)
       agents['_embedded']['agents'].length
     end
 
