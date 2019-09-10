@@ -18,20 +18,20 @@ module GoCD
     def create_secret_config(data)
       @rest_client.post("#{@base_url}/api/admin/secret_configs",
                         data,
-                        accept: 'application/vnd.go.cd.v1+json',
+                        accept: 'application/vnd.go.cd+json',
                         content_type: 'application/json')
     end
 
     def create_pipeline(data)
       @rest_client.post("#{@base_url}/api/admin/pipelines",
                         data,
-                        accept: 'application/vnd.go.cd.v7+json',
+                        accept: 'application/vnd.go.cd+json',
                         content_type: 'application/json', Authorization: @auth_header)
     end
 
     def delete_pipeline(pipeline)
       @rest_client.delete "#{@base_url}/api/admin/pipelines/#{pipeline}",
-                          accept: 'application/vnd.go.cd.v6+json', Authorization: @auth_header
+                          accept: 'application/vnd.go.cd+json', Authorization: @auth_header
     end
 
     def unpause_pipeline(name)
@@ -42,7 +42,7 @@ module GoCD
 
     def create_plugin_settings(settings)
       @rest_client.post("#{@base_url}/api/admin/plugin_settings", settings,
-                        content_type: :json, accept: 'application/vnd.go.cd.v1+json', Authorization: @auth_header) do |response, _request, _result|
+                        content_type: :json, accept: 'application/vnd.go.cd+json', Authorization: @auth_header) do |response, _request, _result|
         if response.code != 200
           plugin_id = JSON.parse(settings)['plugin_id']
           handle_api_failures(response, "Plugin Settings for #{plugin_id}", %(Plugin settings for the plugin `#{plugin_id}` already exist))
@@ -52,7 +52,7 @@ module GoCD
 
     def create_cluster_profile(cluster_profile)
       @rest_client.post("#{@base_url}/api/admin/elastic/cluster_profiles", cluster_profile,
-                        content_type: :json, accept: 'application/vnd.go.cd.v1+json', Authorization: @auth_header) do |response, _request, _result|
+                        content_type: :json, accept: 'application/vnd.go.cd+json', Authorization: @auth_header) do |response, _request, _result|
         if response.code != 200
           handle_api_failures(response, 'Cluster Profile', 'Another Cluster Profile with the same name already exists')
         end
@@ -76,7 +76,7 @@ module GoCD
 
     def create_ea_profile(profile)
       @rest_client.post("#{@base_url}/api/elastic/profiles", profile,
-                        content_type: :json, accept: 'application/vnd.go.cd.v2+json', Authorization: @auth_header) do |response, _request, _result|
+                        content_type: :json, accept: 'application/vnd.go.cd+json', Authorization: @auth_header) do |response, _request, _result|
         if response.code != 200
           handle_api_failures(response, 'EA Profile', 'Another elasticProfile with the same name already exists')
         end
@@ -85,7 +85,7 @@ module GoCD
 
     def create_environment(environment)
       @rest_client.post("#{@base_url}/api/admin/environments", %({ "name" : "#{environment}"}),
-                        content_type: :json, accept: 'application/vnd.go.cd.v2+json')
+                        content_type: :json, accept: 'application/vnd.go.cd+json')
     end
 
     def get_pipeline_count(name)
@@ -98,7 +98,7 @@ module GoCD
     end
 
     def get_agent_id(idx)
-      response = JSON.parse(open("#{@base_url}/api/agents", 'Accept' => 'application/vnd.go.cd.v4+json', http_basic_authentication: ['file_based_user', ENV['FILE_BASED_USER_PWD']], read_timeout: 300, ssl_verify_mode: 0).read)
+      response = JSON.parse(open("#{@base_url}/api/agents", 'Accept' => 'application/vnd.go.cd+json', http_basic_authentication: ['file_based_user', ENV['FILE_BASED_USER_PWD']], read_timeout: 300, ssl_verify_mode: 0).read)
       all_agents = response['_embedded']['agents']
       all_agents.map { |a| a['uuid'] unless a.key?('elastic_agent_id') }.compact[idx - 1] # pick only the physical agents, elastic agents are not long living
     end
@@ -199,7 +199,7 @@ module GoCD
       })
 
       @rest_client.post("#{@base_url}/api/admin/config_repos",
-                        config_repo, content_type: :json, accept: 'application/vnd.go.cd.v1+json', Authorization: @auth_header) do |response, _request, _result|
+                        config_repo, content_type: :json, accept: 'application/vnd.go.cd+json', Authorization: @auth_header) do |response, _request, _result|
         if response.code != 200
           handle_api_failures(response, 'Config repo', 'Another config-repo with the same name already exists')
         end
@@ -216,7 +216,7 @@ module GoCD
       })
 
       @rest_client.post("#{@base_url}/api/admin/security/auth_configs",
-                        auth_config, content_type: :json, accept: 'application/vnd.go.cd.v1+json') do |response, _request, _result|
+                        auth_config, content_type: :json, accept: 'application/vnd.go.cd+json') do |response, _request, _result|
         if response.code != 200
           handle_api_failures(response, 'Auth Config', %(Security authorization configuration id 'pwd_file' is not unique))
         end
