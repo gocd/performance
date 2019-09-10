@@ -30,9 +30,8 @@ namespace :server do
     end
 
     # Copy all the files from previous run of performance
-    mv "#{server_dir}/go-server-19.7.0/artifacts", "#{server_dir}/go-server-#{v}/", force: true
-    %w[config db secrets].each do |fldr|
-      cp_r "#{server_dir}/go-server-19.7.0/#{fldr}", "#{server_dir}/go-server-#{v}/"
+    %w[artifacts config db secrets].each do |fldr|
+      mv "#{server_dir}/go-server-19.7.0/#{fldr}", "#{server_dir}/go-server-#{v}/", force: true
     end
 
     if @setup.include_addons?
@@ -66,7 +65,6 @@ namespace :server do
     server_dir = "#{@setup.server_install_dir}/go-server-#{v}"
     %w[logs libs].each { |dir| mkdir_p "#{server_dir}/#{dir}/" }
     cp_r 'scripts/with-java.sh', "#{server_dir}/with-java.sh"
-    chmod_R 0o755, "#{server_dir}/"
 
     File.open("#{server_dir}/wrapper-config/wrapper-properties.conf", 'w') do |file|
       @gocd_server.environment.split(',').each_with_index do |item, index|
