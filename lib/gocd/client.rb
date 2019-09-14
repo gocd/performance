@@ -180,7 +180,10 @@ module GoCD
     end
 
     def about_page
-      @rest_client.get "#{@base_url}/about"
+      @rest_client.get "#{@base_url}/about", Authorization: @auth_header do |response, _request, _result|
+        p "Server ping failed with response code #{response.code} and message #{response.body}" unless response.code == 200
+        return response
+      end
     end
 
     def setup_config_repo(repo_host)
