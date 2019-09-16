@@ -86,6 +86,7 @@ namespace :server do
     server_is_running = false
     Looper.time_out(interval: 10, times: 10) do
       res = @gocd_client.about_page
+      p "here is the response from server #{res.body} and code #{res.code}"
       if res.code == 200
         server_is_running = true
         break
