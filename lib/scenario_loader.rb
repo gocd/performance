@@ -135,7 +135,7 @@ class ScenarioLoader
             synchronizing_timer groupSize: 100 if spike == true
             Once do
               header(name: 'Authorization', value: "Basic #{Base64.encode64(['file_based_user', ENV['FILE_BASED_USER_PWD']].join(':'))}".strip)
-              header(name: 'Accept', value: "application/vnd.go.cd.v1+json")
+              header(name: 'Accept', value: "application/vnd.go.cd+json")
               header(name: 'Content-Type', value: "application/json")
               post name: 'Get Access Token', url: "#{base_url}/api/current_user/access_tokens", raw_body: { description: "perf testing" }.to_json do
                 extract name: 'access_token', regex: %q{.*"token" : "([^"]+)".*}

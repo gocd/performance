@@ -2,7 +2,7 @@
 
 scenario do
   name 'server messages'
-  version 'application/vnd.go.cd.v1+json'
+  version 'application/vnd.go.cd+json'
   loop do
     url '/api/server_health_messages'
   end

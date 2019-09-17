@@ -19,7 +19,6 @@ target
 *.log
 *.jmx
 *.jtl
-*.lock
 .DS_Store
 .bundle
 vendor
@@ -32,6 +31,5 @@ tools
 go-agents
 go-server
 gitrepos
-Gemfile.lock
 reports
 thread_dumps

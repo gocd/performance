@@ -22,9 +22,8 @@ namespace :agents do
     mkdir_p agents_dir
 
     cd agents_dir do
-      sh %(wget --no-check-certificate https://#{gocd_server.host}:#{gocd_server.secure_port}/go/admin/agent.jar), verbose: false
-      %w[tfs-impl.jar agent-plugins.zip].each do |file|
-        sh %(wget --no-check-certificate https://#{gocd_server.host}:#{gocd_server.secure_port}/go/admin/#{file}), verbose: false
+      %w[agent.jar tfs-impl.jar agent-plugins.zip].each do |file|
+        sh %(curl -k -u file_based_user:#{ENV['FILE_BASED_USER_PWD']} https://#{gocd_server.host}:#{gocd_server.secure_port}/go/admin/#{file} -o #{file})
       end
     end
 
@@ -57,7 +56,7 @@ namespace :agents do
     Looper.run(interval: 10, times: 120) do
       break if gocd_client.get_agents_count >= setup.agents.length
     end
-    if gocd_client.get_agents_count < setup.agents.length
+    if gocd_client.get_agents_count < (setup.agents.length - 10)
       raise "All agents are not up as expected. Expected agents #{setup.agents.length} and actual is #{gocd_client.get_agents_count}"
     end
     puts 'All agents running'
@@ -73,7 +72,7 @@ namespace :agents do
 
   task :monitor do
     Looper.run(interval: 300, times: setup.load_test_duration.to_i / 300) do
-      response = RestClient.get("#{gocd_server.url}/api/agents", accept: 'application/vnd.go.cd.v4+json', Authorization: "Basic #{Base64.encode64(['file_based_user', ENV['FILE_BASED_USER_PWD']].join(':'))}")
+      response = RestClient.get("#{gocd_server.url}/api/agents", accept: 'application/vnd.go.cd+json', Authorization: "Basic #{Base64.encode64(['file_based_user', ENV['FILE_BASED_USER_PWD']].join(':'))}")
       JSON.parse(response.body)['_embedded']['agents'].each do |agent|
         raise 'Agents went missing' if %w[Missing LostContact].include?(agent['agent_state'])
       end
