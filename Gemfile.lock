@@ -8,7 +8,7 @@ GEM
       tzinfo (~> 1.1)
     assert_json (0.4.1)
       activesupport
-    bcrypt (3.1.11)
+    bcrypt (3.1.13)
     builder (3.2.3)
     coderay (1.1.1)
     concurrent-ruby (1.0.5)
