@@ -40,8 +40,6 @@ namespace :agents do
     p "setting up Java 11"
     sh 'curl https://download.java.net/openjdk/jdk11/ri/openjdk-11+28_linux-x64_bin.tar.gz -o /var/go/openjdk-11+28_linux-x64_bin.tar.gz'
     sh 'tar -xvf /var/go/openjdk-11+28_linux-x64_bin.tar.gz -C /var/go/'
-    sh 'unlink /usr/bin/java'
-    sh 'ln -s -f /var/go/jdk-11/bin/java /usr/bin/java'
     agent_config = Configuration::Agent.new
     puts 'Calling all agents'
     Parallel.each(setup.agents, in_processes: 5) do |name|
