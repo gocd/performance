@@ -145,7 +145,7 @@ module Configuration
     end
 
     def jmeter_dir
-      tools_dir + 'apache-jmeter-3.0'
+      tools_dir + 'apache-jmeter-5.1.1'
     end
 
     def jmeter_bin
