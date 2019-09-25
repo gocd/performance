@@ -15,7 +15,7 @@ namespace :jmeter do
 
       puts 'Downloading and setting up JMeter'
       Downloader.new(download_dir) do |q|
-        q.add 'https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-3.0.zip'
+        q.add 'https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.1.1.zip'
       end.start do |file|
         file.extract_to(setup.tools_dir)
       end
