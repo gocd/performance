@@ -38,6 +38,11 @@ namespace :agents do
   end
 
   task start: ['agents:stop'] do
+    p "setting up Java 11"
+    sh 'curl https://download.java.net/openjdk/jdk11/ri/openjdk-11+28_linux-x64_bin.tar.gz -o /home/openjdk-11+28_linux-x64_bin.tar.gz'
+    sh 'tar -xvf /home/openjdk-11+28_linux-x64_bin.tar.gz -C /home/'
+    sh 'unlink /usr/bin/java'
+    sh 'ln -s -f /home/jdk-11/bin/java /usr/bin/java'
     agent_config = Configuration::Agent.new
     puts 'Calling all agents'
     Parallel.each(setup.agents, in_processes: 5) do |name|
@@ -50,7 +55,7 @@ namespace :agents do
       # cp_r "scripts/agent-logback.xml" ,  logback_file
 
       cd agent_dir do
-        sh %(./with-java.sh java #{agent_config.startup_args} -jar agent.jar -serverUrl https://#{gocd_server.host}:#{gocd_server.secure_port}/go > #{name}.log 2>&1 & ), verbose: false
+        sh %(java #{agent_config.startup_args} -jar agent.jar -serverUrl https://#{gocd_server.host}:#{gocd_server.secure_port}/go > #{name}.log 2>&1 & ), verbose: false
         sleep 20
       end
     end
