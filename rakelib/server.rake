@@ -85,10 +85,13 @@ namespace :server do
     puts 'Waiting for server start up'
     server_is_running = false
     Looper.time_out(interval: 10, times: 10) do
-      res = @gocd_client.about_page
-      if res.code == 200
-        server_is_running = true
-        break
+      begin
+        res = @gocd_client.about_page
+        if res.code == 200
+          server_is_running = true
+          break
+        end
+      rescue StandardError
       end
     end
 
