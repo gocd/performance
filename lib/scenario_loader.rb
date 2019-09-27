@@ -97,7 +97,7 @@ class ScenarioLoader
             synchronizing_timer groupSize: 100 if spike == true
             Once do
               post name: 'Security Check', url: "#{base_url}/auth/security_check",
-                   raw_body: "j_username=file_based_user&j_password=#{ENV['FILE_BASED_USER_PWD']}"
+                   fill_in: { j_username: "file_based_user",j_password:"#{ENV['FILE_BASED_USER_PWD']}" }
             end
             scenario.loops.each do |jloop|
               loops jloop.loopcount do
