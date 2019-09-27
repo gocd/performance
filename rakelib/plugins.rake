@@ -34,6 +34,10 @@ namespace :plugins do
     gocd_client.create_ea_profile(JSON.parse(File.read('resources/ecs_agent_profile.json')).to_json) if setup.include_ecs_elastic_agents?
   end
 
+  task :update_ecs_ea_profile do
+    gocd_client.update_ea_profile(JSON.parse(File.read('resources/ecs_agent_profile.json')).to_json)
+  end
+
   task :setup_k8s_cluster_profile do
     if setup.include_k8s_elastic_agents?
       k8s_auth = all_k8s_info
