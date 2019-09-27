@@ -83,6 +83,21 @@ module GoCD
       end
     end
 
+    def get_ea_profile(profile_name)
+      @rest_client.get("#{@base_url}/api/elastic/profiles/#{profile_name}",
+                       accept: 'application/vnd.go.cd+json', Authorization: @auth_header)
+    end
+
+    def update_ea_profile(profile)
+      etag = get_ea_profile('test-ecs').headers[:etag]
+      @rest_client.put("#{@base_url}/api/elastic/profiles/test-ecs", profile,
+                        content_type: :json, if_match: etag, accept: 'application/vnd.go.cd+json', Authorization: @auth_header) do |response, _request, _result|
+        if response.code != 200
+          handle_api_failures(response, 'EA Profile', 'Failed to update elastic profile test-ecs')
+        end
+      end
+    end
+
     def create_environment(environment)
       @rest_client.post("#{@base_url}/api/admin/environments", %({ "name" : "#{environment}"}),
                         content_type: :json, accept: 'application/vnd.go.cd+json')
