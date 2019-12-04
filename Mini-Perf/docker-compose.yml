@@ -47,7 +47,6 @@ agents:
 
   volumes:
     - ./agent-setup:/godata
-    - ./agent-setup/init.sh:/init.sh
 
   environment:
     - TOTAL_AGENTS=$TOTAL_AGENTS
@@ -71,3 +70,13 @@ repos:
   environment:
     - TOTAL_PIPELINES=$TOTAL_PIPELINES
     - PERF_TEST_DURATION=$PERF_TEST_DURATION
+
+# Vector for monitoring server - http://getvector.io/
+vector:
+  image: netflixoss/vector:latest
+
+  links:
+    - perfserver:perfserver
+
+  ports:
+    - "80:80"
