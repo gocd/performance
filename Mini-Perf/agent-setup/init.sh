@@ -13,5 +13,3 @@ done
 # start agents as much as needed
 
 bash -x /godata/start_all_agents.sh
-
-bash -x /godata/start_all_repos.sh

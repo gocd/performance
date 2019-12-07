@@ -40,6 +40,7 @@ agents:
 
   links:
     - perfserver:perfserver
+    - repos:repos
 
   user: "root:root"
 
@@ -71,12 +72,14 @@ repos:
     - TOTAL_PIPELINES=$TOTAL_PIPELINES
     - PERF_TEST_DURATION=$PERF_TEST_DURATION
 
-# Vector for monitoring server - http://getvector.io/
-vector:
-  image: netflixoss/vector:latest
-
-  links:
-    - perfserver:perfserver
+# cAdvisor for monitoring - More info on how to send this data for storage - https://github.com/google/cadvisor/tree/master/docs/storage
+cadvisor:
+  image: google/cadvisor
 
   ports:
-    - "80:80"
+    - "8080:8080"
+  volumes:
+    - /:/rootfs:ro
+    - /var/run:/var/run:rw
+    - /sys:/sys:ro
+    - /var/lib/docker/:/var/lib/docker:ro

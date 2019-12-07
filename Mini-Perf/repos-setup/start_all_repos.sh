@@ -9,7 +9,7 @@ do
   mkdir -p /home/git-repo-$i
 
   cd /home/git-repo-$i/
-  git init; touch ".git/git-daemon-export-ok"; touch "file.txt"; git add .; git commit -m "Initial commit to git repo $i" --author 'foo <foo@bar.com>'
+  git init; touch ".git/git-daemon-export-ok"; touch file.txt; git add .; git commit -m "Initial commit to git repo $i" --author 'foo <foo@bar.com>'
   cd -
 done
 
@@ -21,7 +21,8 @@ do
   for i in $(seq 1 $TOTAL_PIPELINES)
   do
     cd /home/git-repo-$i/
-    echo "add text to file $i" > file.txt; git add .; git commit -m "Commit number $i"
+    echo "add text to file $i" > file.txt
+    git add .; git commit -m "Commit number $i"
     cd -
   done
   sleep 900
