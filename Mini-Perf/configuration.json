@@ -1,5 +1,5 @@
 {
-    "test_duration": "18000",
+    "test_duration": "1800",
     "total_pipelines": "10",
     "total_agents": "10",
     "scenarios": [
@@ -9,7 +9,15 @@
             "throughput": "60",
             "thread_count": 10,
             "rampup": 10,
-            "thread_groups": 1
+            "duration": 180
+        },
+        {
+            "name": "agents",
+            "url": "/api/agents",
+            "throughput": "60",
+            "thread_count": 10,
+            "rampup": 10,
+            "duration": 180
         }
     ]
 }

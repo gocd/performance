@@ -2,7 +2,7 @@
 
 set -e
 
-git config --global user.email "you@example.com"
+git config --global user.email "perf@test.com"
 
 for i in $(seq 1 $TOTAL_PIPELINES)
 do
@@ -21,10 +21,11 @@ do
   for i in $(seq 1 $TOTAL_PIPELINES)
   do
     cd /home/git-repo-$i/
-    echo "add text to file $i" > file.txt
-    git add .; git commit -m "Commit number $i"
+    echo "Making changes after sleeping for $COUNTER seconds" >> file.txt
+    current_time=`date +"%s"`
+    git add .; git commit -m "Commit time $current_time" --author 'Perf <perf@test.com>'; git gc;
     cd -
   done
-  sleep 900
-  COUNTER=$((COUNTER + 900))
+  sleep 300
+  COUNTER=$((COUNTER + 300))
 done

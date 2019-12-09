@@ -4,16 +4,25 @@ require 'ruby-jmeter'
 require 'rake'
 require 'rest-client'
 require 'json'
+require 'parallel'
+require 'process_builder'
+require 'pry'
 include FileUtils
 include GoCD
 
 @auth_header = "Basic #{Base64.encode64('admin:badger')}"
+@base_url = 'http://localhost:8153/go'
 
 def populate_variables
     configuration = JSON.parse(File.read('Mini-Perf/configuration.json'))
-    ENV['TOTAL_PIPELINES'] = configuration['total_pipelines']
-    ENV['TOTAL_AGETNS'] = configuration['total_agents']
-    ENV['TEST_DURATION'] = configuration['test_duration']
+    @total_pipelines = configuration['total_pipelines'].to_i
+    @total_agents = configuration['total_agents'].to_i
+    @test_duration = configuration['test_duration'].to_i
+    File.open(".env","w") do |f|
+      f.puts("TOTAL_PIPELINES=#{configuration['total_pipelines']}")
+      f.puts("TOTAL_AGENTS=#{configuration['total_agents']}")
+      f.puts("PERF_TEST_DURATION=#{configuration['test_duration']}")
+    end
     @scenarios = configuration['scenarios']
 end
 
@@ -22,9 +31,9 @@ def setup_server
 end
 
 def create_pipelines
-  (1..ENV['TOTAL_PIPELINES'].to_i).each do |pipeline|
+  (1..@total_pipelines).each do |pipeline|
       performance_pipeline = Pipeline.new(group: 'performance', name: "go-perf-#{pipeline}") do |p|
-          p << GitMaterial.new(name: 'material1', url: "git://repos/git-repo-#{pipeline}", destination: 'git-repo')
+          p << GitMaterial.new(name: 'material', url: "git://repos/git-repo-#{pipeline}", destination: 'git-repo')
 
           p << Stage.new(name: 'first') do |s|
               s << Job.new(name: 'firstJob') do |j|
@@ -48,7 +57,7 @@ def create_pipelines
 end
 
 def setup_jmeter
-    rm_rf "tools" if Dir.exist("tools")
+    rm_rf "tools" if Dir.exist? "tools"
     mkdir_p "tools"
     puts 'Downloading and setting up JMeter'
     Downloader.new("tools") do |q|
@@ -65,9 +74,10 @@ def setup_jmeter
     end.start do |plugin_file|
         plugin_file.extract_to("tools/apache-jmeter-5.1.1")
     end
+    chmod '+x', "tools/apache-jmeter-5.1.1/bin/jmeter"
 end
 
-def execute(scenario)
+def create_jmx(scenario)
   reports_dir = "reports/#{scenario['name']}"
   rm_rf reports_dir if Dir.exist? reports_dir
   FileUtils.mkdir_p reports_dir
@@ -76,27 +86,24 @@ def execute(scenario)
     cookies
     cache
     with_browser :chrome
-    (1..scenario['thread_groups']).each do |_tg|
-      threads count: scenario['thread_count'], rampup: scenario['rampup'], duration: ENV['TEST_DURATION'] do
-        constant_throughput_timer value: scenario['throughput'], calcMode: 4
-        Once do
-          post name: 'Security Check', url: "http://localhost:8153/go/auth/security_check",
-                fill_in: { j_username: "admin",j_password:"badger" }
-        end
-        loops 1 do
-            header(name: 'Accept', value: 'application/vnd.go.cd+json')
-            visit name: scenario['name'], url: "http://localhost:8153/go/#{actual_url(url_value)}" do
-              assert equals: scenario['response_code'], test_field: 'Assertion.response_code'
-            end
-        end
+    threads count: scenario['thread_count'], rampup: scenario['rampup'], duration: scenario['duration'] do
+      constant_throughput_timer value: scenario['throughput'], calcMode: 4
+      Once do
+        post name: 'Security Check', url: "#{@base_url}/go/auth/security_check",
+              fill_in: { j_username: "admin",j_password:"badger" }
+      end
+      loops count: 1 do
+          header(name: 'Accept', value: 'application/vnd.go.cd+json')
+          visit name: scenario['name'], url: "#{@base_url}/#{actual_url(scenario['url'])}" do ##{actual_url(url_value)}
+            assert equals: scenario['response_code'], test_field: 'Assertion.response_code'
+          end
       end
     end
-  end.run(path: "tools/apache-jmeter-5.1.1/bin",
+  end.jmx(path: "tools/apache-jmeter-5.1.1/bin",
           file: "#{reports_dir}/jmeter.jmx",
           log: "#{reports_dir}/jmeter.log",
           jtl: "#{reports_dir}/jmeter.jtl",
           properties: { 'jmeter.save.saveservice.output_format' => 'xml' }, gui: false)
-  generate_reports(reports_dir)
 end
 
 def cleanup_perf_setup
@@ -105,17 +112,15 @@ def cleanup_perf_setup
     FileUtils.sh ('docker volume rm -f $(docker volume ls -q) || true')
 
     ['config', 'logs', 'plugins', 'artifacts', 'db'].each do |fldr|
-        FileUtils.rm_rf "server_setup/#{fldr}" if Dir.exist? "server_setup/#{fldr}"
+        FileUtils.rm_rf "Mini-Perf/server_setup/#{fldr}" if Dir.exist? "Mini-Perf/server_setup/#{fldr}"
     end
 end
 
 def actual_url(tmp)
-  pipeline_count = ''
-  pipeline = ''
   begin
     Timeout.timeout(60) do
       loop do
-        pipeline = "go-perf-#{rand(ENV['TOTAL_PIPELINES'].to_i)}"
+        pipeline = "go-perf-#{rand(1..@total_pipelines)}"
         pipeline_count = get_pipeline_count(pipeline)
         break if pipeline_count != 'retry'
         sleep 10
@@ -124,12 +129,12 @@ def actual_url(tmp)
   rescue Timeout::Error
     pipeline_count = 1
   end
-  agent = @gocd_client.get_agent_id(rand(@setup.agents.length))
+  agent = get_agent_id(rand(1..@total_agents))
   format(tmp, pipeline: pipeline, pipelinecount: pipeline_count, comparewith: pipeline_count - 1, stage: 'default', stagecount: '1', job: 'defaultJob', jobcount: '1', agentid: agent)
 end
 
 def get_pipeline_count(name)
-  history = JSON.parse(open("http://localhost:8153/go/api/pipelines/#{name}/history/0", 'Confirm' => 'true', http_basic_authentication: @auth_header).read)
+  history = JSON.parse(open("#{@base_url}/api/pipelines/#{name}/history/0", 'Confirm' => 'true', http_basic_authentication: ['admin', 'badger']).read)
   begin
     history['pipelines'][0]['counter']
   rescue StandardError => e
@@ -138,20 +143,20 @@ def get_pipeline_count(name)
 end
 
 def get_agent_id(idx)
-  response = JSON.parse(open("http://localhost:8153/go/api/agents", 'Accept' => 'application/vnd.go.cd+json', http_basic_authentication: @auth_header, read_timeout: 300).read)
+  response = JSON.parse(open("#{@base_url}/api/agents", 'Accept' => 'application/vnd.go.cd+json', http_basic_authentication: ['admin', 'badger'], read_timeout: 300).read)
   all_agents = response['_embedded']['agents']
   all_agents.map { |a| a['uuid'] unless a.key?('elastic_agent_id') }.compact[idx - 1] # pick only the physical agents, elastic agents are not long living
 end
 
 def about_page
-  RestClient.get "http://localhost:8153/go/about", Authorization: @auth_header do |response, _request, _result|
+  RestClient.get "#{@base_url}/about", Authorization: @auth_header do |response, _request, _result|
       p "Server ping failed with response code #{response.code} and message #{response.body}" unless response.code == 200
       return response
   end
 end
 
 def create_pipeline(data)
-  RestClient.post("http://localhost:8153/go/api/admin/pipelines",
+  RestClient.post("#{@base_url}/api/admin/pipelines",
       data,
       accept: 'application/vnd.go.cd+json',
       content_type: 'application/json', Authorization: @auth_header)
@@ -161,12 +166,11 @@ end
 def start_compose
   FileUtils.sh ('docker-compose -f Mini-perf/docker-compose.yml up > compose.log 2>&1 &')
   puts 'Waiting for server start up'
-  server_is_running = false
-  Timeout.timeout(60) do
+  Timeout.timeout(600) do
     loop do
       begin
+        sleep 10
         if about_page.code == 200
-          server_is_running = true
           break
         end
       rescue StandardError
@@ -181,16 +185,12 @@ def generate_reports(reports_dir)
     generate_report(reports_dir, type_of_graph, 'png')
     generate_report(reports_dir, type_of_graph, 'csv')
   end
-  %w[AggregateReport SynthesisReport].each do |type|
-    generate_report(reports_dir, type, 'csv')
-  end
-  consolidate_reports reports_dir
 end
 
 def generate_report(reports_dir, type_of_graph, type_of_report)
   process = ProcessBuilder.build('java',
                                  '-jar',
-                                 "#{@setup.jmeter_dir}/lib/ext/CMDRunner.jar",
+                                 "tools/apache-jmeter-5.1.1/lib/ext/CMDRunner.jar",
                                  '--tool',
                                  'Reporter',
                                  "--generate-#{type_of_report}",
@@ -202,9 +202,27 @@ def generate_report(reports_dir, type_of_graph, type_of_report)
   Process.wait(process.spawn)
 end
 
-#cleanup_perf_setup
-#start_compose
-populate_variables
-#setup_jmeter
-setup_server
-#execute
+
+def execute_load
+  Parallel.each(@scenarios, in_threads: @scenarios.count) do |scenario|
+    create_jmx(scenario)
+    process = ProcessBuilder.build('tools/apache-jmeter-5.1.1/bin/jmeter',
+                                    '-n',
+                                    "-t",
+                                    "reports/#{scenario['name']}/jmeter.jmx",
+                                    '-l',
+                                    "reports/#{scenario['name']}/jmeter.jtl")
+    Process.wait(process.spawn)
+    generate_reports("reports/#{scenario['name']}")
+  end
+end
+
+
+# cleanup_perf_setup
+ populate_variables
+# start_compose
+# setup_jmeter
+# setup_server
+# # Need some warm ups here -  to get the pipelines run at least once
+# sleep 300
+execute_load
