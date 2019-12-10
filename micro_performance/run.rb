@@ -10,14 +10,11 @@ require 'pry'
 include FileUtils
 include GoCD
 
-@auth_header = "Basic #{Base64.encode64('admin:badger')}"
-@base_url = 'http://localhost:8153/go'
+AUTH_HEADER = "Basic #{Base64.encode64('admin:badger')}"
+BASE_URL = 'http://localhost:8153/go'
 
-def populate_variables
-    configuration = JSON.parse(File.read('Mini-Perf/configuration.json'))
-    @total_pipelines = configuration['total_pipelines'].to_i
-    @total_agents = configuration['total_agents'].to_i
-    @test_duration = configuration['test_duration'].to_i
+def read_configuration
+    configuration = JSON.parse(File.read('micro_performance/configuration.json'))
     File.open(".env","w") do |f|
       f.puts("TOTAL_PIPELINES=#{configuration['total_pipelines']}")
       f.puts("TOTAL_AGENTS=#{configuration['total_agents']}")
@@ -31,7 +28,8 @@ def setup_server
 end
 
 def create_pipelines
-  (1..@total_pipelines).each do |pipeline|
+  total_pipelines = JSON.parse(File.read('micro_performance/configuration.json'))['total_pipelines'].to_i
+  (1..total_pipelines).each do |pipeline|
       performance_pipeline = Pipeline.new(group: 'performance', name: "go-perf-#{pipeline}") do |p|
           p << GitMaterial.new(name: 'material', url: "git://repos/git-repo-#{pipeline}", destination: 'git-repo')
 
@@ -89,21 +87,18 @@ def create_jmx(scenario)
     threads count: scenario['thread_count'], rampup: scenario['rampup'], duration: scenario['duration'] do
       constant_throughput_timer value: scenario['throughput'], calcMode: 4
       Once do
-        post name: 'Security Check', url: "#{@base_url}/go/auth/security_check",
-              fill_in: { j_username: "admin",j_password:"badger" }
+        post name: 'Security Check', url: "#{BASE_URL}/auth/security_check",
+              fill_in: { j_username: "admin",j_password: "badger" }
       end
       loops count: 1 do
           header(name: 'Accept', value: 'application/vnd.go.cd+json')
-          visit name: scenario['name'], url: "#{@base_url}/#{actual_url(scenario['url'])}" do ##{actual_url(url_value)}
+          visit name: scenario['name'], url: "#{BASE_URL}/#{scenario['url']}" do
             assert equals: scenario['response_code'], test_field: 'Assertion.response_code'
           end
       end
     end
   end.jmx(path: "tools/apache-jmeter-5.1.1/bin",
-          file: "#{reports_dir}/jmeter.jmx",
-          log: "#{reports_dir}/jmeter.log",
-          jtl: "#{reports_dir}/jmeter.jtl",
-          properties: { 'jmeter.save.saveservice.output_format' => 'xml' }, gui: false)
+          file: "#{reports_dir}/jmeter.jmx")
 end
 
 def cleanup_perf_setup
@@ -112,59 +107,27 @@ def cleanup_perf_setup
     FileUtils.sh ('docker volume rm -f $(docker volume ls -q) || true')
 
     ['config', 'logs', 'plugins', 'artifacts', 'db'].each do |fldr|
-        FileUtils.rm_rf "Mini-Perf/server_setup/#{fldr}" if Dir.exist? "Mini-Perf/server_setup/#{fldr}"
+        FileUtils.rm_rf "micro_performance/server_setup/#{fldr}" if Dir.exist? "micro_performance/server_setup/#{fldr}"
     end
-end
-
-def actual_url(tmp)
-  begin
-    Timeout.timeout(60) do
-      loop do
-        pipeline = "go-perf-#{rand(1..@total_pipelines)}"
-        pipeline_count = get_pipeline_count(pipeline)
-        break if pipeline_count != 'retry'
-        sleep 10
-      end
-    end
-  rescue Timeout::Error
-    pipeline_count = 1
-  end
-  agent = get_agent_id(rand(1..@total_agents))
-  format(tmp, pipeline: pipeline, pipelinecount: pipeline_count, comparewith: pipeline_count - 1, stage: 'default', stagecount: '1', job: 'defaultJob', jobcount: '1', agentid: agent)
-end
-
-def get_pipeline_count(name)
-  history = JSON.parse(open("#{@base_url}/api/pipelines/#{name}/history/0", 'Confirm' => 'true', http_basic_authentication: ['admin', 'badger']).read)
-  begin
-    history['pipelines'][0]['counter']
-  rescue StandardError => e
-    'retry'
-  end
-end
-
-def get_agent_id(idx)
-  response = JSON.parse(open("#{@base_url}/api/agents", 'Accept' => 'application/vnd.go.cd+json', http_basic_authentication: ['admin', 'badger'], read_timeout: 300).read)
-  all_agents = response['_embedded']['agents']
-  all_agents.map { |a| a['uuid'] unless a.key?('elastic_agent_id') }.compact[idx - 1] # pick only the physical agents, elastic agents are not long living
 end
 
 def about_page
-  RestClient.get "#{@base_url}/about", Authorization: @auth_header do |response, _request, _result|
+  RestClient.get "#{BASE_URL}/about", Authorization: AUTH_HEADER do |response, _request, _result|
       p "Server ping failed with response code #{response.code} and message #{response.body}" unless response.code == 200
       return response
   end
 end
 
 def create_pipeline(data)
-  RestClient.post("#{@base_url}/api/admin/pipelines",
+  RestClient.post("#{BASE_URL}/api/admin/pipelines",
       data,
       accept: 'application/vnd.go.cd+json',
-      content_type: 'application/json', Authorization: @auth_header)
+      content_type: 'application/json', Authorization: AUTH_HEADER)
 end
 
 
 def start_compose
-  FileUtils.sh ('docker-compose -f Mini-perf/docker-compose.yml up > compose.log 2>&1 &')
+  FileUtils.sh ('docker-compose -f micro_performance/docker-compose.yml up > compose.log 2>&1 &')
   puts 'Waiting for server start up'
   Timeout.timeout(600) do
     loop do
@@ -218,11 +181,11 @@ def execute_load
 end
 
 
-# cleanup_perf_setup
- populate_variables
+ cleanup_perf_setup
+#read_configuration
 # start_compose
 # setup_jmeter
 # setup_server
 # # Need some warm ups here -  to get the pipelines run at least once
 # sleep 300
-execute_load
+#execute_load
