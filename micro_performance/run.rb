@@ -1,5 +1,7 @@
 require './lib/downloader'
 require './lib/gocd/pipeline'
+require './micro_performance/lib/server_entities'
+require './micro_performance/lib/go_constants'
 require 'ruby-jmeter'
 require 'rake'
 require 'rest-client'
@@ -10,48 +12,18 @@ require 'pry'
 include FileUtils
 include GoCD
 
-AUTH_HEADER = "Basic #{Base64.encode64('admin:badger')}"
-BASE_URL = 'http://localhost:8153/go'
 
 def read_configuration
     configuration = JSON.parse(File.read('micro_performance/configuration.json'))
     File.open(".env","w") do |f|
-      f.puts("TOTAL_PIPELINES=#{configuration['total_pipelines']}")
-      f.puts("TOTAL_AGENTS=#{configuration['total_agents']}")
+      f.puts("TOTAL_PIPELINES=#{configuration['pipelines']['count']}")
+      f.puts("STATIC_AGENTS=#{configuration['agents']['static']['count']}")
       f.puts("PERF_TEST_DURATION=#{configuration['test_duration']}")
     end
-    @scenarios = configuration['scenarios']
 end
 
 def setup_server
-    create_pipelines
-end
-
-def create_pipelines
-  total_pipelines = JSON.parse(File.read('micro_performance/configuration.json'))['total_pipelines'].to_i
-  (1..total_pipelines).each do |pipeline|
-      performance_pipeline = Pipeline.new(group: 'performance', name: "go-perf-#{pipeline}") do |p|
-          p << GitMaterial.new(name: 'material', url: "git://repos/git-repo-#{pipeline}", destination: 'git-repo')
-
-          p << Stage.new(name: 'first') do |s|
-              s << Job.new(name: 'firstJob') do |j|
-              j << ExecTask.new(command: 'ls')
-              end
-          end
-
-        p << Stage.new(name: 'second') do |s|
-          s << Job.new(name: 'secondJob') do |j|
-            j << ExecTask.new(command: 'ls')
-          end
-        end
-      end
-
-      begin
-        create_pipeline(performance_pipeline.to_json)
-      rescue StandardError => e
-        raise "Something went wrong while creating pipeline #{pipeline}. \n Server says:\n #{e.response}"
-      end
-  end
+    Server::Entities.new('micro_performance/configuration.json').create
 end
 
 def setup_jmeter
@@ -87,12 +59,12 @@ def create_jmx(scenario)
     threads count: scenario['thread_count'], rampup: scenario['rampup'], duration: scenario['duration'] do
       constant_throughput_timer value: scenario['throughput'], calcMode: 4
       Once do
-        post name: 'Security Check', url: "#{BASE_URL}/auth/security_check",
+        post name: 'Security Check', url: "#{GoConstants::BASE_URL}/auth/security_check",
               fill_in: { j_username: "admin",j_password: "badger" }
       end
       loops count: 1 do
           header(name: 'Accept', value: 'application/vnd.go.cd+json')
-          visit name: scenario['name'], url: "#{BASE_URL}/#{scenario['url']}" do
+          visit name: scenario['name'], url: "#{GoConstants::BASE_URL}/#{scenario['url']}" do
             assert equals: scenario['response_code'], test_field: 'Assertion.response_code'
           end
       end
@@ -112,17 +84,17 @@ def cleanup_perf_setup
 end
 
 def about_page
-  RestClient.get "#{BASE_URL}/about", Authorization: AUTH_HEADER do |response, _request, _result|
+  RestClient.get "#{GoConstants::BASE_URL}/about", Authorization: GoConstants::AUTH_HEADER do |response, _request, _result|
       p "Server ping failed with response code #{response.code} and message #{response.body}" unless response.code == 200
       return response
   end
 end
 
 def create_pipeline(data)
-  RestClient.post("#{BASE_URL}/api/admin/pipelines",
+  RestClient.post("#{GoConstants::BASE_URL}/api/admin/pipelines",
       data,
       accept: 'application/vnd.go.cd+json',
-      content_type: 'application/json', Authorization: AUTH_HEADER)
+      content_type: 'application/json', Authorization: GoConstants::AUTH_HEADER)
 end
 
 
@@ -167,7 +139,9 @@ end
 
 
 def execute_load
-  Parallel.each(@scenarios, in_threads: @scenarios.count) do |scenario|
+  configuration = JSON.parse(File.read('micro_performance/configuration.json'))
+  scenarios = configuration['scenarios']
+  Parallel.each(scenarios, in_threads: scenarios.count) do |scenario|
     create_jmx(scenario)
     process = ProcessBuilder.build('tools/apache-jmeter-5.1.1/bin/jmeter',
                                     '-n',
@@ -180,12 +154,32 @@ def execute_load
   end
 end
 
-
- cleanup_perf_setup
-#read_configuration
-# start_compose
-# setup_jmeter
-# setup_server
-# # Need some warm ups here -  to get the pipelines run at least once
-# sleep 300
-#execute_load
+puts "1) Run perf test from scratch
+2) Cleanup all components created by performance script(including docker images)
+3) Start docker compose and bring up the perf setup
+4) Setup Jmeter
+5) Sertup pipeline and other entities on already running server
+6) Execute perf test on already running server
+Enter your choice: "
+input = gets.chomp
+if input == '1'
+  cleanup_perf_setup
+  read_configuration
+  start_compose
+  setup_jmeter
+  setup_server
+  execute_load
+elsif input == '2'
+  cleanup_perf_setup
+elsif input == '3'
+  read_configuration
+  start_compose
+elsif input == '4'
+  setup_jmeter
+elsif input == '5'
+  setup_server
+elsif input == '6'
+  execute_load
+else
+  p "No choice selected. Doing nothing"
+end

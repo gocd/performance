@@ -50,7 +50,7 @@ agents:
     - ./agent-setup:/godata
 
   environment:
-    - TOTAL_AGENTS=$TOTAL_AGENTS
+    - TOTAL_AGENTS=$STATIC_AGENTS
     - PERF_TEST_DURATION=$PERF_TEST_DURATION
 
 

@@ -1,7 +1,13 @@
 {
     "test_duration": "1800",
-    "total_pipelines": "10",
-    "total_agents": "10",
+    "pipelines": {
+        "count": "10"
+    },
+    "agents": {
+        "static":{
+            "count": "10"
+            }
+        },
     "scenarios": [
         {
             "name": "dashboard",
