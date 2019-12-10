@@ -1,0 +1,85 @@
+# DB for primary Go Server
+perfdb:
+  build: db_setup
+
+  user: "root:root"
+
+  environment:
+    - POSTGRES_USER=go
+    - POSTGRES_PASSWORD=password1
+
+# Performance Go Server
+perfserver:
+  image: gocd/gocd-server-centos-7:v${GO_VERSION}
+
+  links:
+    - perfdb:db
+    - repos:repos
+
+  user: "root:root"
+
+  command: ["./godata/init.sh"]
+
+  environment:
+    - GOCD_SERVER_JVM_OPTS=-Dgo.database.provider=com.thoughtworks.go.postgresql.PostgresqlDatabase
+
+  volumes:
+    - ./server_setup/postgresqldb.properties:/godata/config/postgresqldb.properties
+    - ./server_setup:/godata
+
+  ports:
+    - "8153:8153"
+    - "8154:8154"
+
+  privileged: true
+
+
+# Agents and Repos container
+agents:
+  image: centos:7
+
+  links:
+    - perfserver:perfserver
+    - repos:repos
+
+  user: "root:root"
+
+  command: ["./godata/init.sh"]
+
+  volumes:
+    - ./agent-setup:/godata
+
+  environment:
+    - TOTAL_AGENTS=$STATIC_AGENTS
+    - PERF_TEST_DURATION=$PERF_TEST_DURATION
+
+
+# Repos container
+repos:
+  image: centos:7
+
+  user: "root:root"
+
+  command: ["./godata/init.sh"]
+
+  volumes:
+    - ./repos-setup:/godata
+
+  ports:
+    - "9418:9418"
+
+  environment:
+    - TOTAL_PIPELINES=$TOTAL_PIPELINES
+    - PERF_TEST_DURATION=$PERF_TEST_DURATION
+
+# cAdvisor for monitoring - More info on how to send this data for storage - https://github.com/google/cadvisor/tree/master/docs/storage
+cadvisor:
+  image: google/cadvisor
+
+  ports:
+    - "8080:8080"
+  volumes:
+    - /:/rootfs:ro
+    - /var/run:/var/run:rw
+    - /sys:/sys:ro
+    - /var/lib/docker/:/var/lib/docker:ro
