@@ -10,9 +10,9 @@ This script is used for performance test of GoCD server and agents.
 
 ## Micro Performance
 
-GoCD performance test is executed on the build.gocd.org server since resources needed to deploy, setup and load 1000s of pipelines need bigger infrastructure. For situations where need to run simple micro performance test locally on ones computer there is micro performance setup available in this repo
+GoCD performance test is executed on the build.gocd.org server since resources needed to deploy, setup and load 1000s of pipelines need bigger infrastructure. For situations where need to run simple micro performance test locally on contributor's computer there is micro performance setup available in this repo
 
-To start micro performance checkout this repo and run below commands from the repo folder,
+To start micro performance, checkout this repo and run below commands from the repo folder,
 
 This prepares the bundler environment
 
@@ -22,7 +22,7 @@ $ bundle install --path=vendor/bundle
 
 Micro performance setup is based on docker-compose, ensure `docker` and `docker-compose` are installed and docker engine is running. All scripts are in `micro_performance` folder. 
 
-File `micro_performance/configuration.json` is used for defining the performance test configuration. A Sample content for configuration file 
+The file `micro_performance/configuration.json` is used for defining the performance test configuration. A Sample content for configuration file 
 
 ```
 {
@@ -50,7 +50,7 @@ File `micro_performance/configuration.json` is used for defining the performance
 ```
 
 
-From the repo checkout folder run,
+From the repo checkout folder, run
 
 ```
 $ bundle exec ruby micro_performance/run.rb
@@ -63,9 +63,9 @@ $ bundle exec ruby micro_performance/run.rb
 Enter your choice:
 ```
 
-Enter your choice according to the purpose. Selecting `1` will run from scrath - Setup separate containers for `GoCD Server`, `Static Agents`, `Git Repos`, `Postgres DB` and `cAdvisor`(for docker container monitoring). Then will create pipelines and other entities as defined in the `micro_performance/configuration.json`(currently only pipelines are supported). Then setup Jmeter and run the scenarios as defined in the file `micro_performance/configuration.json`
+Enter your choice according to the purpose. Selecting `1` will run from scrath - Setup separate containers for `GoCD Server`, `Static Agents`, `Git Repos`, `Postgres DB` and `cAdvisor`(for docker container monitoring). Then will create pipelines and other entities as defined in the `micro_performance/configuration.json`(currently only pipelines and agents are supported). Then setup Jmeter and run the scenarios as defined in the file `micro_performance/configuration.json`
 
-Jmeter reports will be stored in `reports` folder for each `scenario` name. 
+At the end of the run, Jmeter reports will be stored in `reports` folder for each `scenario` name. Each scenarios response time and response code are catured in the report
 
 While performance setup is running cAdvisor can be accessed at `http://localhost:8080`. cAdvisor will help in monitoring CPU and Memory usage of the containers - https://github.com/google/cadvisor
 
