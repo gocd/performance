@@ -49,6 +49,7 @@ The file `micro_performance/configuration.json` is used for defining the perform
 }
 ```
 
+Copy postgres DB addon jar to `micro_performance/addons` folder. This step is currently not automated. Once the addons are open sourced can add this step in the script
 
 From the repo checkout folder, run
 
