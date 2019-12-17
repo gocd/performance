@@ -2,6 +2,8 @@
 perfdb:
   build: db_setup
 
+  container_name: "perf_db"
+
   user: "root:root"
 
   environment:
@@ -10,7 +12,9 @@ perfdb:
 
 # Performance Go Server
 perfserver:
-  image: gocd/gocd-server-centos-7:v${GO_VERSION}
+  image: ${GOCD_SERVER_IMAGE}
+
+  container_name: "perf_server"
 
   links:
     - perfdb:db
@@ -28,8 +32,8 @@ perfserver:
     - ./server_setup:/godata
 
   ports:
-    - "8153:8153"
-    - "8154:8154"
+    - "8353:8153"
+    - "8354:8154"
 
   privileged: true
 
@@ -37,6 +41,8 @@ perfserver:
 # Agents and Repos container
 agents:
   image: centos:7
+
+  container_name: "perf_agents"
 
   links:
     - perfserver:perfserver
@@ -58,6 +64,8 @@ agents:
 repos:
   image: centos:7
 
+  container_name: "perf_repos"
+
   user: "root:root"
 
   command: ["./godata/init.sh"]
@@ -75,6 +83,8 @@ repos:
 # cAdvisor for monitoring - More info on how to send this data for storage - https://github.com/google/cadvisor/tree/master/docs/storage
 cadvisor:
   image: google/cadvisor
+
+  container_name: "cadvisor"
 
   ports:
     - "8080:8080"
