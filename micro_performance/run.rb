@@ -19,6 +19,7 @@ def read_configuration
       f.puts("TOTAL_PIPELINES=#{configuration['pipelines']['count']}")
       f.puts("STATIC_AGENTS=#{configuration['agents']['static']['count']}")
       f.puts("PERF_TEST_DURATION=#{configuration['test_duration']}")
+      f.puts("GOCD_SERVER_IMAGE=#{configuration['gocd_server_image_name']}")
     end
 end
 
@@ -74,9 +75,9 @@ def create_jmx(scenario)
 end
 
 def cleanup_perf_setup
-    FileUtils.sh 'docker rm -f $(docker ps -q -a) || true'
-    FileUtils.sh ('docker rmi -f $(docker images -q) || true')
-    FileUtils.sh ('docker volume rm -f $(docker volume ls -q) || true')
+    ['perf_db', 'perf_server', 'perf_agents', 'perf_repos', 'cadvisor'].each do |container|
+      FileUtils.sh "docker rm -f -v #{container} || true"
+    end
 
     ['config', 'logs', 'plugins', 'artifacts', 'db'].each do |fldr|
         FileUtils.rm_rf "micro_performance/server_setup/#{fldr}" if Dir.exist? "micro_performance/server_setup/#{fldr}"

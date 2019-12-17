@@ -1,4 +1,5 @@
 {
+    "gocd_server_image_name": "gocd/gocd-server-centos-7:v19.10.0",
     "test_duration": "1800",
     "pipelines": {
         "count": "10"
