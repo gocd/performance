@@ -100,7 +100,7 @@ namespace :server do
     raise "Couldn't start GoCD server" unless server_is_running
 
 
-    revision = setup.include_addons? ? "#{$version}-#{$build_number}-PG" : "#{$version}-#{$build_number}-H2"
+    revision = @setup.include_addons? ? "#{$version}-#{$build_number}-PG" : "#{$version}-#{$build_number}-H2"
     sh("curl -L -o 'resources/newrelic-agent.jar' --fail 'http://central.maven.org/maven2/com/newrelic/agent/java/newrelic-agent/4.7.0/newrelic-agent-4.7.0.jar'")
 
     revision = @setup.include_addons? ? "#{v}-#{b}-PG" : "#{v}-#{b}-H2"
