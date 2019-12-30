@@ -430,7 +430,7 @@ module Configuration
     end
 
     def url
-      "#{secure_url}/go"
+      "#{base_url}/go"
     end
 
     def secure_url
