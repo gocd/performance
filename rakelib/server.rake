@@ -123,6 +123,8 @@ namespace :server do
     sh %(wget http://central.maven.org/maven2/com/newrelic/agent/java/newrelic-api/4.12.0/newrelic-api-4.12.0.jar -O /var/go/newrelic/newrelic-api.jar)
     newrelic_config = File.read('resources/newrelic.yml')
     newrelic_config.gsub!(/<%= license_key %>/, @setup.newrelic_license_key)
+    newrelic_config.gsub!(/<%= app_name %>/, 'GoCD Perf Server')
+
     File.open('/var/go/newrelic/newrelic.yml', 'w') do |f|
       f.write newrelic_config
     end

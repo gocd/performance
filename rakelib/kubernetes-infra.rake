@@ -32,6 +32,7 @@ namespace :k8_infra do
   task :setup_new_relic_license do
     newrelic_config = File.read('resources/newrelic.yml')
     newrelic_config.gsub!(/<%= license_key %>/,"#{ENV['NEWRELIC_LICENSE_KEY']}")
+    newrelic_config.gsub!(/<%= app_name %>/, 'GoCD K8s Perf Server')
     File.open('resources/newrelic.yml', 'w') do |f|
       f.write newrelic_config
     end
