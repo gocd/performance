@@ -116,8 +116,8 @@ namespace :server do
   end
 
   task :setup_newrelic_agent do
-    rm_rf '/godata/newrelic'
-    mkdir_p '/godata/newrelic'
+    rm_rf '/var/go/newrelic'
+    mkdir_p '/var/go/newrelic'
     sh %(wget http://central.maven.org/maven2/com/newrelic/agent/java/newrelic-agent/4.12.0/newrelic-agent-4.12.0.jar -O /godata/newrelic/newrelic-agent.jar)
     sh %(wget http://central.maven.org/maven2/com/newrelic/agent/java/newrelic-api/4.12.0/newrelic-api-4.12.0.jar -O /godata/newrelic/newrelic-api.jar)
     newrelic_config = File.read('resources/newrelic.yml')
