@@ -55,46 +55,48 @@ namespace :plugins do
   end
 
   task :setup_analytics_plugin do
+
     if setup.include_analytics_plugin?
-      k8s = Plugins::Elastic_agent.new('resources/analytics_plugin_settings.json')
-      k8s.create_plugin_settings_with_actual_values({ 'host' => setup.pg_db_host.to_s,
+      analytics = Plugins::Elastic_agent.new('resources/analytics_plugin_settings.json')
+      analytics.create_plugin_settings_with_actual_values({ 'host' => setup.pg_db_host.to_s,
                                                       'license' => setup.analytics_license_key,
                                                       'password' => setup.pg_db_password}, gocd_client)
     end
+
   end
 
-  task :prepare_k8s_cluster do
-    unless setup.include_k8s_elastic_agents?
-      p 'Not creating the kubernetes cluster since plugin is not included in this run'
-      next
+  task :setup_file_based_auth do
+
+    if gocd_server.auth == 'Y'
+      gocd_client.create_file_based_auth_config('resources/auth_configuration.json')
     end
 
-    sh("gcloud auth activate-service-account #{ENV['K8S_ACCOUNT']} --key-file=#{ENV['K8S_KEYFILE']}")
-    sh("gcloud config set project #{ENV['K8S_PROJECT_NAME']}")
-    sh("gcloud container clusters create #{ENV['K8S_CLUSTER_NAME']} --num-nodes=#{ENV['K8S_NODES_COUNT']} --zone #{ENV['K8S_REGION']} --machine-type=#{ENV['K8S_MACHINE_TYPE']} --cluster-version=#{ENV['K8S_CLUSTER_VERSION']}")
-    sh("gcloud container clusters get-credentials #{ENV['K8S_CLUSTER_NAME']} --zone #{ENV['K8S_REGION']}")
   end
 
-  task :delete_k8s_cluster do
-    unless setup.include_k8s_elastic_agents?
-      p 'Not delting the kubernetes cluster since plugin is not included in this run'
-      next
-    end
+  task :configure_k8_cluster_profile do
 
-    sh("gcloud container clusters get-credentials #{ENV['K8S_CLUSTER_NAME']} --zone #{ENV['K8S_REGION']}")
-    sh("gcloud container clusters delete #{ENV['K8S_CLUSTER_NAME']} --quiet --zone #{ENV['K8S_REGION']}")
+    secret_name=`kubectl --namespace=#{setup.k8s_namespace} get serviceaccount #{setup.k8_service_account} -o jsonpath="{.secrets[0].name}"`
+    secret_token=`kubectl --namespace=#{setup.k8s_namespace} get secret #{secret_name} -o jsonpath="{.data['token']}" | base64 --decode`
+    k8_cluster_url=`kubectl config view --minify | grep server | cut -f 2- -d ":" | tr -d " "`
+    k8_cluster_ca_cert=`kubectl config view --raw --minify --flatten -o jsonpath='{.clusters[].cluster.certificate-authority-data}'`
+
+    cluster_profile = Plugins::Elastic_agent.new('resources/k8_cluster_profile.json')
+    cluster_profile.create_cluster_profile_with_actual_values({'go_server_url' => setup.go_k8_service_url,
+                                                            'auto_register_timeout' => setup.k8_auto_register_timeout,
+                                                            'pending_pods_count' => setup.k8_pending_pods_count,
+                                                            'kubernetes_cluster_url' => k8_cluster_url ,
+                                                            'security_token' => secret_token,
+                                                            'namespace' => setup.k8s_namespace,
+                                                            'kubernetes_cluster_ca_cert' => k8_cluster_ca_cert
+                                                          },gocd_client)
   end
 
-  def all_k8s_info
-    k8s_info = {}
-    k8s_info['cluster_url'] = JSON.parse(`kubectl config view  -o json`)['clusters'].select { |cluster| cluster['name'] == "gke_#{ENV['K8S_PROJECT_NAME']}_#{ENV['K8S_REGION']}_#{ENV['K8S_CLUSTER_NAME']}" }[0]['cluster']['server']
-    secret = `kubectl  get serviceaccount default -o jsonpath="{.secrets[0].name}"`
-    k8s_info['token'] = `kubectl  get secret #{secret} -o jsonpath="{.data['token']}" | base64 --decode`
-    k8s_info['cacrt'] = `kubectl get secret #{secret} -o jsonpath="{.data['ca\\.crt']}"  | base64 --decode`
-    ["-----BEGIN CERTIFICATE-----\n", "\n-----END CERTIFICATE-----\n"].each { |remove| k8s_info['crt'].slice! remove }
-    sh 'Kubectl delete clusterrolebinding clusterRoleBinding || true'
-    sh 'kubectl create clusterrolebinding clusterRoleBinding --clusterrole=cluster-admin --serviceaccount=default:default'
-    k8s_info
+
+  task :configure_k8_elastic_profile do
+
+    elastic_profile =  Plugins::Elastic_agent.new('resources/k8_elastic_profile.json')
+    elastic_profile.create_elastic_profile_with_actual_values({'Image' => setup.gocd_agent_image},gocd_client)
+
   end
 
 end

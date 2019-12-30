@@ -29,9 +29,20 @@ module GoCD
                         content_type: 'application/json', Authorization: @auth_header)
     end
 
+    def create_cluster_profile(cluster_profile)
+      @rest_client.post("#{@base_url}/api/admin/elastic/cluster_profiles", cluster_profile,
+        content_type: :json, accept: 'application/vnd.go.cd.v1+json', Authorization: @auth_header) 
+      
+
+    end
     def delete_pipeline(pipeline)
       @rest_client.delete "#{@base_url}/api/admin/pipelines/#{pipeline}",
                           accept: 'application/vnd.go.cd+json', Authorization: @auth_header
+    end
+
+    def get_version
+      response = @rest_client.get "#{@base_url}/api/version",
+                          accept: 'application/vnd.go.cd.v1+json'
     end
 
     def unpause_pipeline(name)
@@ -101,6 +112,13 @@ module GoCD
     def create_environment(environment)
       @rest_client.post("#{@base_url}/api/admin/environments", %({ "name" : "#{environment}"}),
                         content_type: :json, accept: 'application/vnd.go.cd+json')
+    end
+
+    def create_file_based_auth_config(auth_config)
+      auth_config_json = JSON.parse(File.read(auth_config))
+      auth_config_json = JSON.generate(auth_config_json)
+      @rest_client.post("#{@base_url}/api/admin/security/auth_configs", auth_config_json,
+        content_type: :json, accept: 'application/vnd.go.cd.v1+json')
     end
 
     def get_pipeline_count(name)

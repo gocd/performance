@@ -89,7 +89,7 @@ module Configuration
     end
 
     def git_repository_host
-      env('GIT_REPOSITORY_HOST', 'git://localhost')
+      env('GIT_REPOSITORY_HOST', 'git://perf-repo-service')
     end
 
     def support_api_interval
@@ -164,6 +164,10 @@ module Configuration
       env('AGENT_IDENTIFIER', 'perf_on_h2')
     end
 
+    def k8_elastic_agent_profile
+      env('K8_ELASTIC_AGENT_PROFILE', nil)
+    end
+
     def go_version
       raw_version = env('GO_FULL_VERSION') do
         json = JSON.parse(open(RELEASES_JSON_URL).read)
@@ -186,14 +190,14 @@ module Configuration
     end
 
     def git_root
-      env('GIT_ROOT', 'gitrepos')
+      env('GIT_ROOT', '/var/repos')
     end
 
     def config_repo_commit_duration
       interval = env('CONFIG_REPO_COMMIT_INTERVAL', 3600).to_i
       {
         interval: interval,
-        times: load_test_duration / interval
+        times: (load_test_duration + 3600) / interval
       }
     end
 
@@ -201,7 +205,7 @@ module Configuration
       interval = env('GIT_COMMIT_INTERVAL', 10).to_i
       {
         interval: interval,
-        times: load_test_duration / interval
+        times: (load_test_duration + 3600) / interval
       }
     end
 
@@ -278,7 +282,7 @@ module Configuration
     end
 
     def k8s_namespace
-      key = env('K8s_NAMESPACE', 'default')
+      key = env('K8s_NAMESPACE', 'gocd')
       raise 'Please set K8s_NAMESPACE environment variable if need to setup Kubernetes EA plugin' unless key
       key
     end
@@ -294,7 +298,7 @@ module Configuration
     end
 
     def pg_db_host
-      env('PG_DB_HOST', 'localhost')
+      env('PG_DB_HOST', 'postgresdb-postgresql')
     end
 
     def pg_db_password
@@ -321,6 +325,25 @@ module Configuration
       key
     end
 
+    def go_k8_service_url
+      env('GO_SERVER_SERVICE_URL', "https://gocd-app-server:8154/go")
+    end
+
+    def k8_auto_register_timeout
+      env('K8_AGENT_AUTO_REGISTER_TIMEOUT','10')
+    end
+
+    def k8_pending_pods_count
+      env('K8_PENDING_POD_COUNT','100')
+    end
+
+    def k8_service_account
+      env('K8_SERVICE_ACCOUNT','gocd-app')
+    end
+
+    def gocd_agent_image
+      env('GO_AGENT_IMAGE', 'gocd/gocd-agent-alpine-3.9:v19.4.0')
+    end
     private
 
     def number_of_pipelines
@@ -367,6 +390,7 @@ module Configuration
     def gocd_host
       "#{server_url}/go"
     end
+
   end
 
   class Agent
@@ -406,7 +430,7 @@ module Configuration
     end
 
     def url
-      "#{base_url}/go"
+      "#{secure_url}/go"
     end
 
     def secure_url

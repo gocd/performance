@@ -1,0 +1,18 @@
+{
+  "id": "demo-app",
+  "cluster_profile_id": "k8-cluster-profile",
+  "properties": [
+    {
+      "key": "Image",
+      "value": "#GO_AGENT_IMAGE"
+    },
+    {
+"key" : "PodConfiguration",
+"value" :  "apiVersion: v1\nkind: Pod\nmetadata:\n  name: gocd-agent-{{ POD_POSTFIX }}\n  labels:\n    app: web\nspec:\n  nodeSelector:\n    app: gocd\n  serviceAccountName: gocd-app\n  containers:\n    - name: gocd-agent-container-{{ CONTAINER_POSTFIX }}\n      image: gocd/gocd-agent-alpine-3.9:v19.4.0\n      securityContext:\n      resources:\n        limits:\n          memory: 512Mi\n          ephemeral-storage: 256Mi\n        requests:\n          memory: 256Mi\n          ephemeral-storage: 256Mi"
+},
+    {
+      "key": "PodSpecType",
+      "value": "yaml"
+    }
+  ]
+}
