@@ -85,7 +85,7 @@ namespace :server do
 
     puts 'Waiting for server start up'
     server_is_running = false
-    Looper.time_out(interval: 10, times: 10) do
+    Looper.time_out(interval: 10, times: 30) do
       begin
         res = @gocd_client.about_page
         if res.code == 200
