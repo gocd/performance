@@ -8,9 +8,6 @@ require './lib/looper'
 require 'parallel'
 
 namespace :k8_infra do
-  setup = Configuration::SetUp.new
-  gocd_server = Configuration::Server.new
-  gocd_client = GoCD::Client.new gocd_server.url
 
   task :prepare_gke_k8s_cluster do
 
@@ -38,7 +35,7 @@ namespace :k8_infra do
     File.open('resources/newrelic.yml', 'w') do |f|
       f.write newrelic_config
     end
-    
+
   end
 
   task :setup_gocd_server do
@@ -71,10 +68,10 @@ namespace :k8_infra do
         }
       ]
     }.to_json
-    
+
     File.open("helm_chart/batch-change.json", 'w') { |file| file.write(request_to_update_route53) }
     sh("aws route53 change-resource-record-sets --hosted-zone-id Z2I0AUBABYDS9 --change-batch file://helm_chart/batch-change.json")
-    
+
   end
 
   task :setup_postgresdb do
@@ -88,7 +85,7 @@ namespace :k8_infra do
     sh("kubectl create -f helm_chart/perf-repo-service.yaml --namespace=gocd")
     sh("kubectl create -f helm_chart/gocd-repos-init-configmap.yaml --namespace=gocd")
     sh("kubectl create -f helm_chart/perf-repos-pod.yaml --namespace=gocd")
-    
+
   end
 
   task :prepare_eks_k8s_cluster do
@@ -122,7 +119,7 @@ namespace :k8_infra do
   end
 
   task :delete_eks_k8s_cluster do
-    
+
     sh("kubectl delete -n gocd --grace-period=0 --force --all pod")
     sh("kubectl delete namespaces gocd --ignore-not-found=true")
     sh("kubectl delete crd prometheusrules.monitoring.coreos.com alertmanagers.monitoring.coreos.com servicemonitors.monitoring.coreos.com -n gocd")
@@ -160,7 +157,7 @@ namespace :k8_infra do
 
     File.open("helm_chart/batch-change-grafana.json", 'w') { |file| file.write(request_to_update_route53) }
     sh("aws route53 change-resource-record-sets --hosted-zone-id Z2I0AUBABYDS9 --change-batch file://helm_chart/batch-change-grafana.json")
-  
+
   end
 
 end
