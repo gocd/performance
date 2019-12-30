@@ -121,6 +121,48 @@ class ScenarioLoader
     generate_reports(reports_dir)
     assert_test(reports_dir)
   end
+  
+  def run_with_access_token(name, base_url, spike = false)
+    reports_dir = "reports/#{name}"
+    throughput = @setup.throughput_per_minute
+    FileUtils.mkdir_p reports_dir
+
+    test do
+      parse("#{name}.scenario").list.each do |scenario|
+        @setup.thread_groups.each do |_tg|
+          threads scenario.threads do
+            constant_throughput_timer value: throughput, calcMode: 4
+            synchronizing_timer groupSize: 100 if spike == true
+            Once do
+              header(name: 'Authorization', value: "Basic #{Base64.encode64(['file_based_user', ENV['FILE_BASED_USER_PWD']].join(':'))}".strip)
+              header(name: 'Accept', value: "application/vnd.go.cd.v1+json")
+              header(name: 'Content-Type', value: "application/json")
+              post name: 'Get Access Token', url: "#{base_url}/api/current_user/access_tokens", raw_body: { description: "perf testing" }.to_json do
+                extract name: 'access_token', regex: %q{.*"token": "([^"]+)".*}
+              end
+            end
+            scenario.loops.each do |jloop|
+              loops jloop.loopcount do
+                jloop.url_list.each do |url_value|
+                  header(name: 'Accept', value: scenario.version) unless scenario.version.nil?
+                  header(name: 'Authorization', value: "Bearer ${access_token}")
+                  visit name: scenario.name, url: "#{base_url}#{jloop.actual_url(url_value)}" do
+                    assert equals: scenario.response_code, test_field: 'Assertion.response_code'
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
+    end.run(path: @setup.jmeter_bin,
+            file: "#{reports_dir}/jmeter.jmx",
+            log: "#{reports_dir}/jmeter.log",
+            jtl: "#{reports_dir}/jmeter.jtl",
+            properties: { 'jmeter.save.saveservice.output_format' => 'xml' }, gui: false)
+    generate_reports(reports_dir)
+    assert_test(reports_dir)
+  end
 
   def run_with_access_token(name, base_url, spike = false)
     reports_dir = "reports/#{name}"
