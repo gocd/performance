@@ -52,7 +52,7 @@ namespace :agents do
       # cp_r "scripts/agent-logback.xml" ,  logback_file
 
       cd agent_dir do
-        sh %(java #{agent_config.startup_args} -jar agent.jar -serverUrl https://#{gocd_server.host}:#{gocd_server.secure_port}/go > #{name}.log 2>&1 & ), verbose: false
+        sh %(./with-java.sh java #{agent_config.startup_args} -jar agent.jar -serverUrl https://#{gocd_server.host}:#{gocd_server.secure_port}/go > #{name}.log 2>&1 & ), verbose: false
         sleep 20
       end
     end
