@@ -40,6 +40,15 @@ namespace :server do
       puts 'Copying the addons'
       mkdir_p "#{server_dir}/go-server-#{v}/addons/"
       sh "curl -L -o #{server_dir}/go-server-#{v}/addons/postgres-addon.jar --fail -H 'Accept: binary/octet-stream' --user '#{ENV['EXTENSIONS_USER']}:#{ENV['EXTENSIONS_PASSWORD']}'  #{ENV['PG_ADDON_DOWNLOAD_URL']}"
+      unless File.exist? "#{server_dir}/go-server-#{v}/config/postgresqldb.properties" do
+        open("#{server_dir}/go-server-#{v}/config/postgresqldb.properties", 'w') do |f|
+          f.puts("db.host=#{@setup.pg_db_host}")
+          f.puts('db.port=5432')
+          f.puts('db.name=cruise')
+          f.puts('db.user=postgres')
+          f.puts("db.password=#{@setup.pg_db_password}")
+        end
+      end
     end
 
     mkdir_p "#{server_dir}/go-server-#{v}/plugins/external/"
