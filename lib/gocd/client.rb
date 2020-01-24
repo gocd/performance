@@ -122,7 +122,7 @@ module GoCD
     end
 
     def get_pipeline_count(name)
-      history = JSON.parse(open("#{@base_url}/api/pipelines/#{name}/history", ssl_verify_mode: 0, 'Confirm' => 'true', http_basic_authentication: ['file_based_user', ENV['FILE_BASED_USER_PWD']]).read)
+      history = JSON.parse(open("#{@base_url}/api/pipelines/#{name}/history", 'Accept' => 'application/vnd.go.cd+json', ssl_verify_mode: 0, 'Confirm' => 'true', http_basic_authentication: ['file_based_user', ENV['FILE_BASED_USER_PWD']]).read)
       begin
         history['pipelines'][0]['counter']
       rescue StandardError => e
