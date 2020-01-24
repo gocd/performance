@@ -39,6 +39,7 @@ namespace :server do
     if @setup.include_addons?
       puts 'Copying the addons'
       mkdir_p "#{server_dir}/go-server-#{v}/addons/"
+      mkdir_p "#{server_dir}/go-server-#{v}/config/" unless Dir.exist? "#{server_dir}/go-server-#{v}/config/"
       sh "curl -L -o #{server_dir}/go-server-#{v}/addons/postgres-addon.jar --fail -H 'Accept: binary/octet-stream' --user '#{ENV['EXTENSIONS_USER']}:#{ENV['EXTENSIONS_PASSWORD']}'  #{ENV['PG_ADDON_DOWNLOAD_URL']}"
       unless File.exist? "#{server_dir}/go-server-#{v}/config/postgresqldb.properties"
         open("#{server_dir}/go-server-#{v}/config/postgresqldb.properties", 'w') do |f|
