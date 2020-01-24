@@ -147,9 +147,9 @@ namespace :server do
     v, b = @setup.go_version
     mkdir_p "#{server_dir}/secrets"
 
-    sh %(java -jar #{server_dir}/plugins/bundled/gocd-file-based-secrets-plugin.jar init -f #{server_dir}/secrets/secret.db)
+    sh %(java -jar #{server_dir}/go-server-#{v}/plugins/bundled/gocd-file-based-secrets-plugin.jar init -f #{server_dir}/secrets/secret.db)
     (1..100).each do |counter|
-      sh %(java -jar #{server_dir}/plugins/bundled/gocd-file-based-secrets-plugin.jar add -f #{server_dir}/secrets/secret.db -n secret_var_#{counter} -v value)
+      sh %(java -jar #{server_dir}/go-server-#{v}/plugins/bundled/gocd-file-based-secrets-plugin.jar add -f #{server_dir}/secrets/secret.db -n secret_var_#{counter} -v value)
     end
     "#{server_dir}/secrets/secret.db"
   end
