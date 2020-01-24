@@ -154,6 +154,16 @@ namespace :server do
     "#{server_dir}/secrets/secret.db"
   end
 
+  task :setup_auth do
+    if !@gocd_client.auth_enabled?
+      # @gocd_client.set_ldap_auth_config(@setup.ldap_server_ip)
+      File.open("#{@setup.server_install_dir}/password.properties", 'w') { |file| file.write("file_based_user:#{BCrypt::Password.create(ENV['FILE_BASED_USER_PWD'])}") }
+      @gocd_client.setup_file_based_auth_config("#{@setup.server_install_dir}/password.properties")
+    else
+      p 'Auth config already setup on the server, skipping.'
+    end
+  end
+
   task :setup_config_repo do
     @gocd_client.setup_config_repo(@setup.git_repository_host)
   end
