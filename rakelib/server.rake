@@ -100,10 +100,6 @@ namespace :server do
 
     raise "Couldn't start GoCD server" unless server_is_running
 
-
-    revision = @setup.include_addons? ? "#{$version}-#{$build_number}-PG" : "#{$version}-#{$build_number}-H2"
-    sh("curl -L -o 'resources/newrelic-agent.jar' --fail 'http://central.maven.org/maven2/com/newrelic/agent/java/newrelic-agent/4.7.0/newrelic-agent-4.7.0.jar'")
-
     revision = @setup.include_addons? ? "#{v}-#{b}-PG" : "#{v}-#{b}-H2"
     sh %(java -jar /var/go/newrelic/newrelic-agent.jar deployment --appname='GoCD Perf Server' --revision="#{revision}")
     puts 'The server is up and running'
@@ -120,8 +116,8 @@ namespace :server do
   task :setup_newrelic_agent do
     rm_rf '/var/go/newrelic'
     mkdir_p '/var/go/newrelic'
-    sh %(wget http://central.maven.org/maven2/com/newrelic/agent/java/newrelic-agent/4.12.0/newrelic-agent-4.12.0.jar -O /var/go/newrelic/newrelic-agent.jar)
-    sh %(wget http://central.maven.org/maven2/com/newrelic/agent/java/newrelic-api/4.12.0/newrelic-api-4.12.0.jar -O /var/go/newrelic/newrelic-api.jar)
+    sh %(wget https://download.newrelic.com/newrelic/java-agent/newrelic-agent/5.9.0/newrelic-agent-5.9.0.jar -O /var/go/newrelic/newrelic-agent.jar)
+    sh %(wget https://download.newrelic.com/newrelic/java-agent/newrelic-api/5.9.0/newrelic-api-5.9.0.jar -O /var/go/newrelic/newrelic-api.jar)
     newrelic_config = File.read('resources/newrelic.yml')
     newrelic_config.gsub!(/<%= license_key %>/, @setup.newrelic_license_key)
     newrelic_config.gsub!(/<%= app_name %>/, 'GoCD Perf Server')
@@ -130,5 +126,59 @@ namespace :server do
       f.write newrelic_config
     end
   end
+
+  task :setup_secrets do
+    server_dir = @setup.server_install_dir
+    file_path = setup_secrets_config_file(server_dir)
+    setup_secrets_config(file_path)
+  end
+
+  def setup_secrets_config_file(server_dir)
+    v, b = @setup.go_version
+    mkdir_p "#{server_dir}/secrets"
+
+    sh %(java -jar #{server_dir}/plugins/bundled/gocd-file-based-secrets-plugin.jar init -f #{server_dir}/secrets/secret.db)
+    (1..100).each do |counter|
+      sh %(java -jar #{server_dir}/plugins/bundled/gocd-file-based-secrets-plugin.jar add -f #{server_dir}/secrets/secret.db -n secret_var_#{counter} -v value)
+    end
+    "#{server_dir}/secrets/secret.db"
+  end
+
+  task :setup_config_repo do
+    @gocd_client.setup_config_repo(@setup.git_repository_host)
+  end
+
+  task :create_environment do
+    @gocd_client.create_environment('performance')
+  end
+
+  task :auto_register do
+    @gocd_client.auto_register_key 'perf-auto-register-key'
+  end
+
+  def setup_secrets_config(secret_file_path)
+    secret_config = %({
+                      "id": "perf_secret",
+                      "plugin_id": "cd.go.secrets.file-based-plugin",
+                      "description": "",
+                      "properties": [
+                          {
+                              "key": "SecretsFilePath",
+                              "value": "#{secret_file_path}"
+                          }
+                      ],
+                      "rules": [
+                          {
+                              "directive": "allow",
+                              "action": "refer",
+                              "type": "*",
+                              "resource": "*"
+                          }
+                      ]
+                    })
+    @gocd_client.create_secret_config(secret_config)
+  end
+
+
 
 end
