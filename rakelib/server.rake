@@ -33,7 +33,7 @@ namespace :server do
 
     # Copy all the files from previous run of performance
     %w[artifacts config db].each do |fldr|
-      mv "#{server_dir}/go-server-19.7.0/#{fldr}", "#{server_dir}/go-server-#{v}/", force: true
+      mv "#{server_dir}/go-server-20.1.0/#{fldr}", "#{server_dir}/go-server-#{v}/", force: true
     end
 
     if @setup.include_addons?
