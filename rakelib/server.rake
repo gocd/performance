@@ -69,6 +69,8 @@ namespace :server do
     if @setup.include_azure_elastic_agents?
       sh "curl -L -o #{server_dir}/go-server-#{v}/plugins/external/azure-elastic-agents-plugin.jar --fail -H 'Accept: binary/octet-stream' --user '#{ENV['EXTENSIONS_USER']}:#{ENV['EXTENSIONS_PASSWORD']}' #{ENV['AZURE_EA_PLUGIN_DOWNLOAD_URL']}"
     end
+
+    File.open("#{@setup.server_install_dir}/password.properties", 'w') { |file| file.write("file_based_user:#{BCrypt::Password.create(ENV['FILE_BASED_USER_PWD'])}") }
   end
 
   task start: ['server:stop', 'server:setup_newrelic_agent'] do
