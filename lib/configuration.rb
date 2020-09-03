@@ -245,12 +245,6 @@ module Configuration
       env('FAILURE_TOLERANCE_RATE', '5').to_i
     end
 
-    def newrelic_license_key
-      key = env('NEWRELIC_LICENSE_KEY')
-      raise 'Please set NEWRELIC_LICENSE_KEY environment variable' unless key
-      key
-    end
-
     def aws_secret
       key = env('AWS_SECRET_KEY')
       raise 'Please set AWS_SECRET_KEY environment variable if need to setup ECS plugin' unless key

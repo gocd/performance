@@ -30,12 +30,3 @@ data:
     md5sum /godata/plugins/external/gocd-analytics-plugin.jar
 
     ls -altr /godata/addons/
-
-    rm -rf /godata/newrelic
-    mkdir -p /godata/newrelic
-
-    curl -L -o '/godata/newrelic/newrelic-agent.jar' --fail 'http://central.maven.org/maven2/com/newrelic/agent/java/newrelic-agent/4.7.0/newrelic-agent-4.7.0.jar'
-
-    curl -L -o '/godata/newrelic/newrelic-api.jar' --fail 'http://central.maven.org/maven2/com/newrelic/agent/java/newrelic-api/4.7.0/newrelic-api-4.7.0.jar'
-
-    cp /godata/resources/newrelic.yml /godata/newrelic/newrelic.yml
