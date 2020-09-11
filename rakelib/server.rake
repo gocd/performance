@@ -73,7 +73,7 @@ namespace :server do
     File.open("#{@setup.server_install_dir}/password.properties", 'w') { |file| file.write("file_based_user:#{BCrypt::Password.create(ENV['FILE_BASED_USER_PWD'])}") }
   end
 
-  task start: ['server:stop', 'server:setup_newrelic_agent'] do
+  task start: ['server:stop'] do
     v, b = @setup.go_version
 
     server_dir = "#{@setup.server_install_dir}/go-server-#{v}"
@@ -112,8 +112,6 @@ namespace :server do
 
     raise "Couldn't start GoCD server" unless server_is_running
 
-    revision = @setup.include_addons? ? "#{v}-#{b}-PG" : "#{v}-#{b}-H2"
-    sh %(java -jar /var/go/newrelic/newrelic-agent.jar deployment --appname='GoCD Perf Server' --revision="#{revision}")
     puts 'The server is up and running'
   end
 
@@ -122,20 +120,6 @@ namespace :server do
       sh %( pkill -f go-server ) do |ok, _res|
         puts 'Stopped server' if ok
       end
-    end
-  end
-
-  task :setup_newrelic_agent do
-    rm_rf '/var/go/newrelic'
-    mkdir_p '/var/go/newrelic'
-    sh %(wget https://download.newrelic.com/newrelic/java-agent/newrelic-agent/5.9.0/newrelic-agent-5.9.0.jar -O /var/go/newrelic/newrelic-agent.jar)
-    sh %(wget https://download.newrelic.com/newrelic/java-agent/newrelic-api/5.9.0/newrelic-api-5.9.0.jar -O /var/go/newrelic/newrelic-api.jar)
-    newrelic_config = File.read('resources/newrelic.yml')
-    newrelic_config.gsub!(/<%= license_key %>/, @setup.newrelic_license_key)
-    newrelic_config.gsub!(/<%= app_name %>/, 'GoCD Perf Server')
-
-    File.open('/var/go/newrelic/newrelic.yml', 'w') do |f|
-      f.write newrelic_config
     end
   end
 

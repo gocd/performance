@@ -29,16 +29,6 @@ namespace :k8_infra do
     sh("gcloud container clusters delete #{ENV['K8S_CLUSTER_NAME']} --quiet --zone #{ENV['K8S_REGION']}")
   end
 
-  task :setup_new_relic_license do
-    newrelic_config = File.read('resources/newrelic.yml')
-    newrelic_config.gsub!(/<%= license_key %>/,"#{ENV['NEWRELIC_LICENSE_KEY']}")
-    newrelic_config.gsub!(/<%= app_name %>/, 'GoCD K8s Perf Server')
-    File.open('resources/newrelic.yml', 'w') do |f|
-      f.write newrelic_config
-    end
-
-  end
-
   task :setup_gocd_server do
 
     sh("kubectl create secret generic gocd-extensions --from-literal=extensions_user=#{ENV['EXTENSIONS_USER']} --from-literal=extensions_password='#{ENV['EXTENSIONS_PASSWORD']}' --namespace=gocd")
