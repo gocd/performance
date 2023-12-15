@@ -25,7 +25,7 @@ GEM
     json_builder (3.1.7)
       activesupport (>= 2.0.0)
       json
-    markaby (0.9.1)
+    markaby (0.9.3)
       builder
     method_source (1.0.0)
     mime-types (3.4.1)
