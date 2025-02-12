@@ -1,11 +1,14 @@
 # GoCD Performance tests
 
-This script is used for performance test of GoCD server and agents. 
+This script was used for performance test of GoCD server and agents. It was last run some time in 2020, but has been
+abandoned since then and probably no longer runs. It is retained here in case it is useful to resurrect a similar process.
+
+Note example build.gocd.org pipeline configuration for how it used to be run at [./removed-gocd-config.xml](./removed-gocd-config.xml)
 
 ## Requirements
 
 * Ruby 2.1+
-* bundler
+* Bundler
 * Docker
 
 ## Micro Performance
@@ -24,7 +27,7 @@ Micro performance setup is based on docker-compose, ensure `docker` and `docker-
 
 The file `micro_performance/configuration.json` is used for defining the performance test configuration. A Sample content for configuration file 
 
-```
+```json
 {
     "test_duration": "1800",
     "pipelines": {

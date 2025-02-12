@@ -1,0 +1,2564 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    This is an incomplete subset of the old GoCD config for performance pipelines before they were removed.
+
+    This is NOT  a full configuration, just contains the overall shape and the templates/pipelines that existed in
+    case these are useful/required to resurrect the infrastructure that was used to run these.
+    -->
+<cruise xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="cruise-config.xsd" schemaVersion="139">
+    <pipelines group="performance">
+        <pipeline name="perf-on-pre-loaded-data" lockBehavior="lockOnFailure">
+            <params>
+                <param name="SERVER_INSTALL_DIR">/var/go/server</param>
+                <param name="AGENTS_INSTALL_DIR">/var/go/agent</param>
+                <param name="GIT_ROOT">/var/go/repos</param>
+                <param name="DOWNLOAD_URL">https://download.gocd.org/experimental</param>
+                <param name="PLUGIN_SRC_DIR">plugins/gocd-analytics-1.0.jar</param>
+                <param name="NO_OF_PIPELINES">750</param>
+                <param name="GIT_REPOSITORY_HOST">git://performancegitandpostgres.gocd.org</param>
+                <param name="NO_OF_AGENTS">70</param>
+                <param name="GO_SERVER_SYSTEM_PROPERTIES">-Ddatabase_url=http://172.16.38.88:8886/,-Dcom.sun.management.jmxremote,-Dcom.sun.management.jmxremote.port=4711,-Dcom.sun.management.jmxremote.authenticate=false,-Dcom.sun.management.jmxremote.ssl=false,-XX:+HeapDumpOnOutOfMemoryError,-XX:+UseSerialGC,-Dgo.security.reauthentication.enabled=true,-Dgo.security.reauthentication.interval=1800000,-Dgo.database.provider=com.thoughtworks.go.postgresql.PostgresqlDatabase,-XX:+PrintGCDetails,-Xloggc:gc.log,-XX:+UnlockDiagnosticVMOptions,-javaagent:/var/go/newrelic/newrelic-agent.jar,-Dcruise.server.port=8153,-Dcruise.server.ssl.port=8154,-Xms8g,-Xmx10g</param>
+                <param name="GOCD_HOST">performancegocdperfserver.gocd.org</param>
+                <param name="CONFIG_SAVE_INTERVAL">1800</param>
+                <param name="NO_OF_THREAD_GROUPS">2</param>
+                <param name="LOAD_TEST_DURATION">3600</param>
+                <param name="GIT_COMMIT_INTERVAL">900</param>
+                <param name="THROUGHPUT_PER_MINUTE">120</param>
+                <param name="THREAD_COUNT">25</param>
+                <param name="PG_DB_HOST">performancegitandpostgres.gocd.org</param>
+                <param name="INFLUXDB_HOST">10.38.28.58</param>
+                <param name="GO_VERSION">20.2.0</param>
+                <param name="THREAD_DUMP_INTERVAL">1800</param>
+                <param name="NO_OF_PIPELINES_ECS_EA">250</param>
+                <param name="PERCENT_MULTISTAGE_PIPELINES">10</param>
+                <param name="SERVER_MEM">8g</param>
+                <param name="SERVER_MAX_MEM">10g</param>
+                <param name="INCLUDE_ECS_EA_PLUGINS">Y</param>
+                <param name="INCLUDE_ADDONS">Y</param>
+                <param name="INCLUDE_k8S_EA_PLUGINS">N</param>
+                <param name="GIT_MATERIAL_RATIO">100</param>
+                <param name="TFS_MATERIAL_RATIO">0</param>
+                <param name="RELEASES_JSON_URL">https://download.gocd.org/experimental/releases.json</param>
+                <param name="K8S_EA_PLUGIN_DOWNLOAD_URL">https://github.com/gocd/kubernetes-elastic-agents/releases/download/v1.0.0/kubernetes-elastic-agent-1.0.0-94.jar</param>
+                <param name="NO_OF_PIPELINES_K8S_EA">0</param>
+                <param name="INCLUDE_ANALYTICS_PLUGIN">Y</param>
+                <param name="K8S_ACCOUNT">REDACTED_GCP_ACCOUNT</param>
+                <param name="K8S_PROJECT_NAME">REDACTED</param>
+                <param name="K8S_CLUSTER_NAME">performance-cluster</param>
+                <param name="K8S_NODES_COUNT">3</param>
+                <param name="K8S_REGION">us-central1-a</param>
+                <param name="K8S_MACHINE_TYPE">n1-standard-1</param>
+                <param name="K8S_CLUSTER_VERSION">1.8.8-gke.0</param>
+                <param name="NO_OF_PIPELINES_CONFIG_REPO">25</param>
+                <param name="NO_OF_ENVIRONMENTS">5</param>
+                <param name="PERF_SERVER_SSH_URL">https://performancegocdperfserver.gocd.org:8154</param>
+            </params>
+            <environmentvariables>
+                <variable name="GIT_MATERIAL_RATIO">
+                    <value>#{GIT_MATERIAL_RATIO}</value>
+                </variable>
+                <variable name="TFS_MATERIAL_RATIO">
+                    <value>#{TFS_MATERIAL_RATIO}</value>
+                </variable>
+                <variable name="INCLUDE_PLUGINS">
+                    <value>N</value>
+                </variable>
+                <variable name="NO_OF_PIPELINES">
+                    <value>#{NO_OF_PIPELINES}</value>
+                </variable>
+                <variable name="NO_OF_AGENTS">
+                    <value>#{NO_OF_AGENTS}</value>
+                </variable>
+                <variable name="NO_OF_THREAD_GROUPS">
+                    <value>#{NO_OF_THREAD_GROUPS}</value>
+                </variable>
+                <variable name="LOAD_TEST_DURATION">
+                    <value>#{LOAD_TEST_DURATION}</value>
+                </variable>
+                <variable name="THROUGHPUT_PER_MINUTE">
+                    <value>#{THROUGHPUT_PER_MINUTE}</value>
+                </variable>
+                <variable name="SERVER_INSTALL_DIR">
+                    <value>#{SERVER_INSTALL_DIR}</value>
+                </variable>
+                <variable name="INFLUXDB_HOST">
+                    <value>#{INFLUXDB_HOST}</value>
+                </variable>
+                <variable name="GO_VERSION">
+                    <value>#{GO_VERSION}</value>
+                </variable>
+                <variable name="RELEASES_JSON_URL">
+                    <value>#{RELEASES_JSON_URL}</value>
+                </variable>
+                <variable name="INCLUDE_k8S_EA_PLUGINS">
+                    <value>#{INCLUDE_k8S_EA_PLUGINS}</value>
+                </variable>
+                <variable name="K8S_EA_PLUGIN_DOWNLOAD_URL">
+                    <value>#{K8S_EA_PLUGIN_DOWNLOAD_URL}</value>
+                </variable>
+                <variable name="NO_OF_PIPELINES_ECS_EA">
+                    <value>#{NO_OF_PIPELINES_ECS_EA}</value>
+                </variable>
+                <variable name="PERCENT_MULTISTAGE_PIPELINES">
+                    <value>#{PERCENT_MULTISTAGE_PIPELINES}</value>
+                </variable>
+                <variable name="SERVER_MEM">
+                    <value>#{SERVER_MEM}</value>
+                </variable>
+                <variable name="SERVER_MAX_MEM">
+                    <value>#{SERVER_MAX_MEM}</value>
+                </variable>
+                <variable name="INCLUDE_ECS_EA_PLUGINS">
+                    <value>#{INCLUDE_ECS_EA_PLUGINS}</value>
+                </variable>
+                <variable name="NO_OF_PIPELINES_K8S_EA">
+                    <value>#{NO_OF_PIPELINES_K8S_EA}</value>
+                </variable>
+                <variable name="INCLUDE_ANALYTICS_PLUGIN">
+                    <value>#{INCLUDE_ANALYTICS_PLUGIN}</value>
+                </variable>
+                <variable name="PG_DB_HOST">
+                    <value>#{PG_DB_HOST}</value>
+                </variable>
+                <variable name="K8S_ACCOUNT">
+                    <value>#{K8S_ACCOUNT}</value>
+                </variable>
+                <variable name="K8S_PROJECT_NAME">
+                    <value>#{K8S_PROJECT_NAME}</value>
+                </variable>
+                <variable name="K8S_CLUSTER_NAME">
+                    <value>#{K8S_CLUSTER_NAME}</value>
+                </variable>
+                <variable name="K8S_NODES_COUNT">
+                    <value>#{K8S_NODES_COUNT}</value>
+                </variable>
+                <variable name="K8S_REGION">
+                    <value>#{K8S_REGION}</value>
+                </variable>
+                <variable name="K8S_MACHINE_TYPE">
+                    <value>#{K8S_MACHINE_TYPE}</value>
+                </variable>
+                <variable name="K8S_CLUSTER_VERSION">
+                    <value>#{K8S_CLUSTER_VERSION}</value>
+                </variable>
+                <variable name="INCLUDE_ADDONS">
+                    <value>#{INCLUDE_ADDONS}</value>
+                </variable>
+                <variable name="NO_OF_PIPELINES_CONFIG_REPO">
+                    <value>#{NO_OF_PIPELINES_CONFIG_REPO}</value>
+                </variable>
+                <variable name="GIT_REPOSITORY_HOST">
+                    <value>#{GIT_REPOSITORY_HOST}</value>
+                </variable>
+                <variable name="NO_OF_ENVIRONMENTS">
+                    <value>#{NO_OF_ENVIRONMENTS}</value>
+                </variable>
+                <variable name="GOCD_HOST">
+                    <value>#{GOCD_HOST}</value>
+                </variable>
+                <variable name="FILE_BASED_USER_PWD" secure="true">
+                    <encryptedValue>REDACTED</encryptedValue>
+                </variable>
+                <variable name="K8S_KEYFILE" secure="true">
+                    <encryptedValue>REDACTED</encryptedValue>
+                </variable>
+                <variable name="PG_DB_PASSWORD" secure="true">
+                    <encryptedValue>REDACTED</encryptedValue>
+                </variable>
+                <variable name="NEWRELIC_LICENSE_KEY" secure="true">
+                    <encryptedValue>REDACTED</encryptedValue>
+                </variable>
+                <variable name="AWS_ACCESS_KEY" secure="true">
+                    <encryptedValue>REDACTED</encryptedValue>
+                </variable>
+                <variable name="AWS_SECRET_ACCESS_KEY" secure="true">
+                    <encryptedValue>REDACTED</encryptedValue>
+                </variable>
+                <variable name="BUILD_SERVER_AUTO_REGISTER_KEY" secure="true">
+                    <encryptedValue>REDACTED</encryptedValue>
+                </variable>
+                <variable name="view" secure="true">
+                    <encryptedValue>REDACTED</encryptedValue>
+                </variable>
+            </environmentvariables>
+            <materials>
+                <git url="https://github.com/gocd/performance" dest="performance" />
+                <git url="https://git.gocd.io/git/gocd/aws" dest="aws" autoUpdate="false" username="REDACTED" encryptedPassword="REDACTED" />
+            </materials>
+            <stage name="start-perf-instances">
+                <approval type="manual" />
+                <jobs>
+                    <job name="setup_infra" elasticProfileId="ecs-gocd-dev-build">
+                        <tasks>
+                            <exec command="/bin/bash" workingdir="aws">
+                                <arg>-c</arg>
+                                <arg>bundle install --path .bundle --binstubs</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash" workingdir="aws">
+                                <arg>-c</arg>
+                                <arg>bundle exec ruby perf_setup create --stack-name Performance --region us-east-2 --parameters "ServerAutoRegisterKey=$BUILD_SERVER_AUTO_REGISTER_KEY;PerfServerDBPassword=$PG_DB_PASSWORD"</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                    </job>
+                </jobs>
+            </stage>
+            <stage name="prepare">
+                <jobs>
+                    <job name="server" timeout="60">
+                        <environmentvariables>
+                            <variable name="GO_SERVER_SYSTEM_PROPERTIES">
+                                <value>#{GO_SERVER_SYSTEM_PROPERTIES}</value>
+                            </variable>
+                            <variable name="INCLUDE_ECS_EA_PLUGINS">
+                                <value>#{INCLUDE_ECS_EA_PLUGINS}</value>
+                            </variable>
+                            <variable name="PG_DB_HOST">
+                                <value>#{PG_DB_HOST}</value>
+                            </variable>
+                            <variable name="PERF_SERVER_SSH_URL">
+                                <value>https://performancegocdperfserver.gocd.org:8154</value>
+                            </variable>
+                            <variable name="AWS_SECRET_KEY" secure="true">
+                                <encryptedValue>REDACTED</encryptedValue>
+                            </variable>
+                            <variable name="AWS_ACCESS_KEY_ID" secure="true">
+                                <encryptedValue>REDACTED</encryptedValue>
+                            </variable>
+                            <variable name="AWS_IAM_PROFILE" secure="true">
+                                <encryptedValue>REDACTED</encryptedValue>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="/bin/bash" workingdir="performance">
+                                <arg>-c</arg>
+                                <arg>git pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>server:prepare</arg>
+                                <arg>SERVER_INSTALL_DIR=#{SERVER_INSTALL_DIR}</arg>
+                                <arg>DOWNLOAD_URL=#{DOWNLOAD_URL}</arg>
+                                <arg>PLUGIN_SRC_DIR=#{PLUGIN_SRC_DIR}</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>server:start</arg>
+                                <arg>SERVER_INSTALL_DIR=#{SERVER_INSTALL_DIR}</arg>
+                                <arg>GOCD_HOST=localhost</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash" workingdir="performance">
+                                <arg>-c</arg>
+                                <arg>bundle exec rake plugins:update_ecs_cluster_profile GOCD_HOST=localhost</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash" workingdir="performance">
+                                <arg>-c</arg>
+                                <arg>bundle exec rake plugins:update_ecs_ea_profile GOCD_HOST=localhost</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <resources>
+                            <resource>server</resource>
+                        </resources>
+                    </job>
+                </jobs>
+            </stage>
+            <stage name="start-agents">
+                <jobs>
+                    <job name="agents" timeout="0">
+                        <environmentvariables>
+                            <variable name="PRODUCTION_MODE">
+                                <value>N</value>
+                            </variable>
+                            <variable name="GO_SERVER_URL">
+                                <value>https://#{GOCD_HOST}:8154/go</value>
+                            </variable>
+                            <variable name="GOCD_HOST">
+                                <value>#{GOCD_HOST}</value>
+                            </variable>
+                            <variable name="ENABLE_AGENT_DEBUG_LOGS">
+                                <value>Y</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="/bin/bash" workingdir="performance">
+                                <arg>-c</arg>
+                                <arg>git pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash">
+                                <arg>-c</arg>
+                                <arg>ulimit -u 8192</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash" workingdir="performance">
+                                <arg>-c</arg>
+                                <arg>bundle exec rake agents:prepare AGENTS_INSTALL_DIR=#{AGENTS_INSTALL_DIR} PATH=/var/go/jdk-11/bin:$PATH</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash" workingdir="performance">
+                                <arg>-c</arg>
+                                <arg>bundle exec rake agents:start AGENTS_INSTALL_DIR=#{AGENTS_INSTALL_DIR} PATH=/var/go/jdk-11/bin:$PATH</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <resources>
+                            <resource>agents</resource>
+                        </resources>
+                    </job>
+                </jobs>
+            </stage>
+            <stage name="benchmark">
+                <approval type="manual" />
+                <environmentvariables>
+                    <variable name="THREAD_COUNT">
+                        <value>#{THREAD_COUNT}</value>
+                    </variable>
+                    <variable name="NEXUS_PASSWORD" secure="true">
+                        <encryptedValue>REDACTED</encryptedValue>
+                    </variable>
+                </environmentvariables>
+                <jobs>
+                    <job name="job_details_page" runInstanceCount="2" timeout="0" elasticProfileId="ecs-perf-test-load-generators">
+                        <environmentvariables>
+                            <variable name="GOCD_HOST">
+                                <value>#{GOCD_HOST}</value>
+                            </variable>
+                            <variable name="JVM_ARGS">
+                                <value>-Xmx1g</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="/bin/bash" workingdir="performance">
+                                <arg>-c</arg>
+                                <arg>git pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash">
+                                <arg>-c</arg>
+                                <arg>bundle config nexus.gocd.io admin:$NEXUS_PASSWORD</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:dashboard_to_job_instance</arg>
+                                <arg>NO_OF_AGENTS=#{NO_OF_AGENTS}</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <tabs>
+                            <tab name="Report" path="reports/dashboard_to_job_instance/index.html" />
+                        </tabs>
+                        <artifacts>
+                            <artifact type="build" src="performance/reports" />
+                        </artifacts>
+                    </job>
+                    <job name="agents_page" timeout="0" elasticProfileId="ecs-perf-test-load-generators">
+                        <environmentvariables>
+                            <variable name="GOCD_HOST">
+                                <value>#{GOCD_HOST}</value>
+                            </variable>
+                            <variable name="JVM_ARGS">
+                                <value>-Xmx1g</value>
+                            </variable>
+                            <variable name="THROUGHPUT_PER_MINUTE">
+                                <value>1</value>
+                            </variable>
+                            <variable name="THREAD_COUNT">
+                                <value>5</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="/bin/bash" workingdir="performance">
+                                <arg>-c</arg>
+                                <arg>git pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash">
+                                <arg>-c</arg>
+                                <arg>bundle config nexus.gocd.io admin:$NEXUS_PASSWORD</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:agents_page</arg>
+                                <arg>NO_OF_AGENTS=#{NO_OF_AGENTS}</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <tabs>
+                            <tab name="Report" path="reports/agents_to_jobs_history/index.html" />
+                        </tabs>
+                        <artifacts>
+                            <artifact type="build" src="performance/reports" />
+                        </artifacts>
+                    </job>
+                    <job name="plugin_status_report_page" timeout="0" elasticProfileId="ecs-perf-test-load-generators">
+                        <environmentvariables>
+                            <variable name="GOCD_HOST">
+                                <value>#{GOCD_HOST}</value>
+                            </variable>
+                            <variable name="JVM_ARGS">
+                                <value>-Xmx1g</value>
+                            </variable>
+                            <variable name="THROUGHPUT_PER_MINUTE">
+                                <value>5</value>
+                            </variable>
+                            <variable name="THREAD_COUNT">
+                                <value>10</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="/bin/bash" workingdir="performance">
+                                <arg>-c</arg>
+                                <arg>git pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash">
+                                <arg>-c</arg>
+                                <arg>bundle config nexus.gocd.io admin:$NEXUS_PASSWORD</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:plugin_status_report</arg>
+                                <arg>NO_OF_AGENTS=#{NO_OF_AGENTS}</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <tabs>
+                            <tab name="Report" path="reports/plugin_status_report/index.html" />
+                        </tabs>
+                        <artifacts>
+                            <artifact type="build" src="performance/reports" />
+                        </artifacts>
+                    </job>
+                    <job name="pipeline_history" timeout="0" elasticProfileId="ecs-perf-test-load-generators">
+                        <environmentvariables>
+                            <variable name="GOCD_HOST">
+                                <value>#{GOCD_HOST}</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="/bin/bash" workingdir="performance">
+                                <arg>-c</arg>
+                                <arg>git pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash">
+                                <arg>-c</arg>
+                                <arg>bundle config nexus.gocd.io admin:$NEXUS_PASSWORD</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:pipeline_history</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <tabs>
+                            <tab name="Reports" path="reports/pipeline_history/index.html" />
+                        </tabs>
+                        <artifacts>
+                            <artifact type="build" src="performance/reports" />
+                        </artifacts>
+                    </job>
+                    <job name="git_commit_loop" timeout="0">
+                        <environmentvariables>
+                            <variable name="GIT_COMMIT_INTERVAL">
+                                <value>#{GIT_COMMIT_INTERVAL}</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="/bin/bash" workingdir="performance">
+                                <arg>-c</arg>
+                                <arg>git pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:git:update</arg>
+                                <arg>GIT_ROOT=#{GIT_ROOT}</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <resources>
+                            <resource>repos</resource>
+                        </resources>
+                    </job>
+                    <job name="config_update_loop" timeout="0">
+                        <environmentvariables>
+                            <variable name="CONFIG_SAVE_INTERVAL">
+                                <value>#{CONFIG_SAVE_INTERVAL}</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="/bin/bash" workingdir="performance">
+                                <arg>-c</arg>
+                                <arg>git pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:config:update</arg>
+                                <arg>GOCD_HOST=#{GOCD_HOST}</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <resources>
+                            <resource>agents</resource>
+                        </resources>
+                    </job>
+                    <job name="compare_page" timeout="0" elasticProfileId="ecs-perf-test-load-generators">
+                        <environmentvariables>
+                            <variable name="GOCD_HOST">
+                                <value>#{GOCD_HOST}</value>
+                            </variable>
+                            <variable name="JVM_ARGS">
+                                <value>-Xmx1g</value>
+                            </variable>
+                            <variable name="THROUGHPUT_PER_MINUTE">
+                                <value>1</value>
+                            </variable>
+                            <variable name="THREAD_COUNT">
+                                <value>3</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="/bin/bash" workingdir="performance">
+                                <arg>-c</arg>
+                                <arg>git pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash">
+                                <arg>-c</arg>
+                                <arg>bundle config nexus.gocd.io admin:$NEXUS_PASSWORD</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:dashboard_to_compare</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <tabs>
+                            <tab name="Report" path="reports/dashboard_to_compare/index.html" />
+                        </tabs>
+                        <artifacts>
+                            <artifact type="build" src="performance/reports" />
+                        </artifacts>
+                    </job>
+                    <job name="global_analytics_page" timeout="0" elasticProfileId="ecs-perf-test-load-generators">
+                        <environmentvariables>
+                            <variable name="GOCD_HOST">
+                                <value>#{GOCD_HOST}</value>
+                            </variable>
+                            <variable name="JVM_ARGS">
+                                <value>-Xms512m -Xmx4096m</value>
+                            </variable>
+                            <variable name="THROUGHPUT_PER_MINUTE">
+                                <value>30</value>
+                            </variable>
+                            <variable name="THREAD_COUNT">
+                                <value>30</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="/bin/bash" workingdir="performance">
+                                <arg>-c</arg>
+                                <arg>git pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash">
+                                <arg>-c</arg>
+                                <arg>bundle config nexus.gocd.io admin:$NEXUS_PASSWORD</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:global_analytics</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <tabs>
+                            <tab name="Report" path="reports/global_analytics/index.html" />
+                        </tabs>
+                        <artifacts>
+                            <artifact type="build" src="performance/reports" />
+                        </artifacts>
+                    </job>
+                    <job name="build_time_analytics_page" timeout="0" elasticProfileId="ecs-perf-test-load-generators">
+                        <environmentvariables>
+                            <variable name="GOCD_HOST">
+                                <value>#{GOCD_HOST}</value>
+                            </variable>
+                            <variable name="JVM_ARGS">
+                                <value>-Xms512m -Xmx4096m</value>
+                            </variable>
+                            <variable name="THROUGHPUT_PER_MINUTE">
+                                <value>30</value>
+                            </variable>
+                            <variable name="THREAD_COUNT">
+                                <value>30</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="/bin/bash" workingdir="performance">
+                                <arg>-c</arg>
+                                <arg>git pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash">
+                                <arg>-c</arg>
+                                <arg>bundle config nexus.gocd.io admin:$NEXUS_PASSWORD</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:build_time_analytics</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <tabs>
+                            <tab name="Report" path="reports/build_time_analytics/index.html" />
+                        </tabs>
+                        <artifacts>
+                            <artifact type="build" src="performance/reports" />
+                        </artifacts>
+                    </job>
+                    <job name="new_dashboard_page" timeout="0" elasticProfileId="ecs-perf-test-load-generators">
+                        <environmentvariables>
+                            <variable name="GOCD_HOST">
+                                <value>#{GOCD_HOST}</value>
+                            </variable>
+                            <variable name="JVM_ARGS">
+                                <value>-Xms512m -Xmx4096m</value>
+                            </variable>
+                            <variable name="THROUGHPUT_PER_MINUTE">
+                                <value>240</value>
+                            </variable>
+                            <variable name="THREAD_COUNT">
+                                <value>250</value>
+                            </variable>
+                            <variable name="NO_OF_THREAD_GROUPS">
+                                <value>2</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="/bin/bash" workingdir="performance">
+                                <arg>-c</arg>
+                                <arg>git pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash">
+                                <arg>-c</arg>
+                                <arg>bundle config nexus.gocd.io admin:$NEXUS_PASSWORD</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:new_dashboard_page_using_access_token</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <tabs>
+                            <tab name="Report" path="reports/new_pipeline_dashboard/index.html" />
+                        </tabs>
+                        <artifacts>
+                            <artifact type="build" src="performance/reports" />
+                        </artifacts>
+                    </job>
+                    <job name="vsm_page" runInstanceCount="2" timeout="0" elasticProfileId="ecs-perf-test-load-generators">
+                        <environmentvariables>
+                            <variable name="GOCD_HOST">
+                                <value>#{GOCD_HOST}</value>
+                            </variable>
+                            <variable name="JVM_ARGS">
+                                <value>-Xmx1g</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="/bin/bash" workingdir="performance">
+                                <arg>-c</arg>
+                                <arg>git pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="git" workingdir="performance">
+                                <arg>pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash">
+                                <arg>-c</arg>
+                                <arg>bundle config nexus.gocd.io admin:$NEXUS_PASSWORD</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:dashboard_to_vsm</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <tabs>
+                            <tab name="Report" path="reports/dashboard_to_vsm/index.html" />
+                        </tabs>
+                        <artifacts>
+                            <artifact type="build" src="performance/reports" />
+                        </artifacts>
+                    </job>
+                    <job name="pipeline_edit_page" timeout="0" elasticProfileId="ecs-perf-test-load-generators">
+                        <environmentvariables>
+                            <variable name="GOCD_HOST">
+                                <value>#{GOCD_HOST}</value>
+                            </variable>
+                            <variable name="JVM_ARGS">
+                                <value>-Xmx1g</value>
+                            </variable>
+                            <variable name="NO_OF_THREAD_GROUPS">
+                                <value>1</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="/bin/bash" workingdir="performance">
+                                <arg>-c</arg>
+                                <arg>git pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash">
+                                <arg>-c</arg>
+                                <arg>bundle config nexus.gocd.io admin:$NEXUS_PASSWORD</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:dashboard_to_pipeline_edit</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <tabs>
+                            <tab name="Report" path="reports/dashboard_to_pipeline_edit/index.html" />
+                        </tabs>
+                        <artifacts>
+                            <artifact type="build" src="performance/reports" />
+                        </artifacts>
+                    </job>
+                    <job name="admin_pipelines" timeout="0" elasticProfileId="ecs-perf-test-load-generators">
+                        <environmentvariables>
+                            <variable name="GOCD_HOST">
+                                <value>#{GOCD_HOST}</value>
+                            </variable>
+                            <variable name="JVM_ARGS">
+                                <value>-Xms512m -Xmx4096m</value>
+                            </variable>
+                            <variable name="NO_OF_THREAD_GROUPS">
+                                <value>1</value>
+                            </variable>
+                            <variable name="THROUGHPUT_PER_MINUTE">
+                                <value>10</value>
+                            </variable>
+                            <variable name="THREAD_COUNT">
+                                <value>25</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="/bin/bash" workingdir="performance">
+                                <arg>-c</arg>
+                                <arg>git pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash">
+                                <arg>-c</arg>
+                                <arg>bundle config nexus.gocd.io admin:$NEXUS_PASSWORD</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:admin_pipelines</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <tabs>
+                            <tab name="Report" path="reports/admin_pages/index.html" />
+                        </tabs>
+                        <artifacts>
+                            <artifact type="build" src="performance/reports" />
+                        </artifacts>
+                    </job>
+                    <job name="CCTray" timeout="0" elasticProfileId="ecs-perf-test-load-generators">
+                        <environmentvariables>
+                            <variable name="GOCD_HOST">
+                                <value>#{GOCD_HOST}</value>
+                            </variable>
+                            <variable name="JVM_ARGS">
+                                <value>-Xms512m -Xmx4096m</value>
+                            </variable>
+                            <variable name="NO_OF_THREAD_GROUPS">
+                                <value>3</value>
+                            </variable>
+                            <variable name="THROUGHPUT_PER_MINUTE">
+                                <value>60</value>
+                            </variable>
+                            <variable name="THREAD_COUNT">
+                                <value>50</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="/bin/bash" workingdir="performance">
+                                <arg>-c</arg>
+                                <arg>git pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash">
+                                <arg>-c</arg>
+                                <arg>bundle config nexus.gocd.io admin:$NEXUS_PASSWORD</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:CCTray</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <tabs>
+                            <tab name="Report" path="reports/admin_pages/index.html" />
+                        </tabs>
+                        <artifacts>
+                            <artifact type="build" src="performance/reports" />
+                        </artifacts>
+                    </job>
+                    <job name="user_summary" timeout="0" elasticProfileId="ecs-perf-test-load-generators">
+                        <environmentvariables>
+                            <variable name="GOCD_HOST">
+                                <value>#{GOCD_HOST}</value>
+                            </variable>
+                            <variable name="JVM_ARGS">
+                                <value>-Xms512m -Xmx4096m</value>
+                            </variable>
+                            <variable name="NO_OF_THREAD_GROUPS">
+                                <value>1</value>
+                            </variable>
+                            <variable name="THROUGHPUT_PER_MINUTE">
+                                <value>10</value>
+                            </variable>
+                            <variable name="THREAD_COUNT">
+                                <value>25</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="/bin/bash" workingdir="performance">
+                                <arg>-c</arg>
+                                <arg>git pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash">
+                                <arg>-c</arg>
+                                <arg>bundle config nexus.gocd.io admin:$NEXUS_PASSWORD</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:user_summary</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <tabs>
+                            <tab name="Report" path="reports/admin_pages/index.html" />
+                        </tabs>
+                        <artifacts>
+                            <artifact type="build" src="performance/reports" />
+                        </artifacts>
+                    </job>
+                    <job name="thread_gc_analysis" timeout="0">
+                        <environmentvariables>
+                            <variable name="FASTTHREAD_APIKEY" secure="true">
+                                <encryptedValue>REDACTED</encryptedValue>
+                            </variable>
+                            <variable name="THREAD_DUMP_INTERVAL">
+                                <value>#{THREAD_DUMP_INTERVAL}</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="/bin/bash" workingdir="performance">
+                                <arg>-c</arg>
+                                <arg>git pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:analyze_thread_dump</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:analyze_gc</arg>
+                                <runif status="any" />
+                            </exec>
+                        </tasks>
+                        <tabs>
+                            <tab name="ThreadDump" path="ThreadDump_Analysis_report.html" />
+                            <tab name="GC" path="GC_Analysis_report.html" />
+                        </tabs>
+                        <resources>
+                            <resource>server</resource>
+                        </resources>
+                        <artifacts>
+                            <artifact type="build" src="performance/thread_dumps" />
+                            <artifact type="build" src="performance/ThreadDump_Analysis_report.html" />
+                            <artifact type="build" src="performance/GC_Analysis_report.html" />
+                        </artifacts>
+                    </job>
+                </jobs>
+            </stage>
+            <stage name="stop">
+                <approval type="manual" />
+                <jobs>
+                    <job name="all" elasticProfileId="ecs-gocd-dev-build">
+                        <tasks>
+                            <exec command="/bin/bash" workingdir="aws">
+                                <arg>-c</arg>
+                                <arg>bundle install --path .bundle --binstubs</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash" workingdir="aws">
+                                <arg>-c</arg>
+                                <arg>echo 'y' | bundle exec ruby perf_setup delete --stack-name Performance --region us-east-2 --parameters "ServerAutoRegisterKey=$BUILD_SERVER_AUTO_REGISTER_KEY;PerfServerDBPassword=$PG_DB_PASSWORD"</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                    </job>
+                </jobs>
+            </stage>
+        </pipeline>
+        <pipeline name="performance" lockBehavior="lockOnFailure" template="performance">
+            <params>
+                <param name="SERVER_INSTALL_DIR">/var/go/server</param>
+                <param name="AGENTS_INSTALL_DIR">/var/go/agent</param>
+                <param name="GIT_ROOT">/var/go/repos</param>
+                <param name="DOWNLOAD_URL">https://download.gocd.org/experimental</param>
+                <param name="PLUGIN_SRC_DIR">plugins/gocd-analytics-1.0.jar</param>
+                <param name="NO_OF_PIPELINES">750</param>
+                <param name="GIT_REPOSITORY_HOST">git://performancegitandpostgres.gocd.org</param>
+                <param name="NO_OF_AGENTS">70</param>
+                <param name="GO_SERVER_SYSTEM_PROPERTIES">-Ddatabase_url=http://172.16.38.88:8886/,-Dcom.sun.management.jmxremote,-Dcom.sun.management.jmxremote.port=4711,-Dcom.sun.management.jmxremote.authenticate=false,-Dcom.sun.management.jmxremote.ssl=false,-XX:+HeapDumpOnOutOfMemoryError,-XX:+UseSerialGC,-Dgo.security.reauthentication.enabled=true,-Dgo.security.reauthentication.interval=1800000,-Dgo.database.provider=com.thoughtworks.go.postgresql.PostgresqlDatabase,-XX:+PrintGCDetails,-Xloggc:gc.log,-XX:+UnlockDiagnosticVMOptions,-javaagent:/var/go/newrelic/newrelic-agent.jar,-Dcruise.server.port=8153,-Dcruise.server.ssl.port=8154,-Xms8g,-Xmx10g</param>
+                <param name="GOCD_HOST">performancegocdperfserver.gocd.org</param>
+                <param name="CONFIG_SAVE_INTERVAL">1800</param>
+                <param name="NO_OF_THREAD_GROUPS">2</param>
+                <param name="LOAD_TEST_DURATION">43200</param>
+                <param name="GIT_COMMIT_INTERVAL">900</param>
+                <param name="THROUGHPUT_PER_MINUTE">120</param>
+                <param name="THREAD_COUNT">25</param>
+                <param name="PG_DB_HOST">performancegitandpostgres.gocd.org</param>
+                <param name="INFLUXDB_HOST">10.38.28.58</param>
+                <param name="GO_VERSION">20.1.0</param>
+                <param name="THREAD_DUMP_INTERVAL">1800</param>
+                <param name="NO_OF_PIPELINES_ECS_EA">250</param>
+                <param name="PERCENT_MULTISTAGE_PIPELINES">10</param>
+                <param name="SERVER_MEM">8g</param>
+                <param name="SERVER_MAX_MEM">10g</param>
+                <param name="INCLUDE_ECS_EA_PLUGINS">Y</param>
+                <param name="INCLUDE_ADDONS">Y</param>
+                <param name="INCLUDE_k8S_EA_PLUGINS">N</param>
+                <param name="GIT_MATERIAL_RATIO">100</param>
+                <param name="TFS_MATERIAL_RATIO">0</param>
+                <param name="RELEASES_JSON_URL">https://download.gocd.org/experimental/releases.json</param>
+                <param name="K8S_EA_PLUGIN_DOWNLOAD_URL">https://github.com/gocd/kubernetes-elastic-agents/releases/download/v1.0.0/kubernetes-elastic-agent-1.0.0-94.jar</param>
+                <param name="NO_OF_PIPELINES_K8S_EA">0</param>
+                <param name="INCLUDE_ANALYTICS_PLUGIN">Y</param>
+                <param name="K8S_ACCOUNT">REDACTED_GCP_ACCOUNT</param>
+                <param name="K8S_PROJECT_NAME">REDACTED</param>
+                <param name="K8S_CLUSTER_NAME">performance-cluster</param>
+                <param name="K8S_NODES_COUNT">3</param>
+                <param name="K8S_REGION">us-central1-a</param>
+                <param name="K8S_MACHINE_TYPE">n1-standard-1</param>
+                <param name="K8S_CLUSTER_VERSION">1.8.8-gke.0</param>
+                <param name="NO_OF_PIPELINES_CONFIG_REPO">25</param>
+                <param name="NO_OF_ENVIRONMENTS">5</param>
+                <param name="PERF_SERVER_SSH_URL">https://performancegocdperfserver.gocd.org:8154</param>
+            </params>
+            <environmentvariables>
+                <variable name="GIT_MATERIAL_RATIO">
+                    <value>#{GIT_MATERIAL_RATIO}</value>
+                </variable>
+                <variable name="TFS_MATERIAL_RATIO">
+                    <value>#{TFS_MATERIAL_RATIO}</value>
+                </variable>
+                <variable name="INCLUDE_PLUGINS">
+                    <value>N</value>
+                </variable>
+                <variable name="NO_OF_PIPELINES">
+                    <value>#{NO_OF_PIPELINES}</value>
+                </variable>
+                <variable name="NO_OF_AGENTS">
+                    <value>#{NO_OF_AGENTS}</value>
+                </variable>
+                <variable name="NO_OF_THREAD_GROUPS">
+                    <value>#{NO_OF_THREAD_GROUPS}</value>
+                </variable>
+                <variable name="LOAD_TEST_DURATION">
+                    <value>#{LOAD_TEST_DURATION}</value>
+                </variable>
+                <variable name="THROUGHPUT_PER_MINUTE">
+                    <value>#{THROUGHPUT_PER_MINUTE}</value>
+                </variable>
+                <variable name="SERVER_INSTALL_DIR">
+                    <value>#{SERVER_INSTALL_DIR}</value>
+                </variable>
+                <variable name="INFLUXDB_HOST">
+                    <value>#{INFLUXDB_HOST}</value>
+                </variable>
+                <variable name="GO_VERSION">
+                    <value>#{GO_VERSION}</value>
+                </variable>
+                <variable name="RELEASES_JSON_URL">
+                    <value>#{RELEASES_JSON_URL}</value>
+                </variable>
+                <variable name="INCLUDE_k8S_EA_PLUGINS">
+                    <value>#{INCLUDE_k8S_EA_PLUGINS}</value>
+                </variable>
+                <variable name="K8S_EA_PLUGIN_DOWNLOAD_URL">
+                    <value>#{K8S_EA_PLUGIN_DOWNLOAD_URL}</value>
+                </variable>
+                <variable name="NO_OF_PIPELINES_ECS_EA">
+                    <value>#{NO_OF_PIPELINES_ECS_EA}</value>
+                </variable>
+                <variable name="PERCENT_MULTISTAGE_PIPELINES">
+                    <value>#{PERCENT_MULTISTAGE_PIPELINES}</value>
+                </variable>
+                <variable name="SERVER_MEM">
+                    <value>#{SERVER_MEM}</value>
+                </variable>
+                <variable name="SERVER_MAX_MEM">
+                    <value>#{SERVER_MAX_MEM}</value>
+                </variable>
+                <variable name="INCLUDE_ECS_EA_PLUGINS">
+                    <value>#{INCLUDE_ECS_EA_PLUGINS}</value>
+                </variable>
+                <variable name="NO_OF_PIPELINES_K8S_EA">
+                    <value>#{NO_OF_PIPELINES_K8S_EA}</value>
+                </variable>
+                <variable name="INCLUDE_ANALYTICS_PLUGIN">
+                    <value>#{INCLUDE_ANALYTICS_PLUGIN}</value>
+                </variable>
+                <variable name="PG_DB_HOST">
+                    <value>#{PG_DB_HOST}</value>
+                </variable>
+                <variable name="K8S_ACCOUNT">
+                    <value>#{K8S_ACCOUNT}</value>
+                </variable>
+                <variable name="K8S_PROJECT_NAME">
+                    <value>#{K8S_PROJECT_NAME}</value>
+                </variable>
+                <variable name="K8S_CLUSTER_NAME">
+                    <value>#{K8S_CLUSTER_NAME}</value>
+                </variable>
+                <variable name="K8S_NODES_COUNT">
+                    <value>#{K8S_NODES_COUNT}</value>
+                </variable>
+                <variable name="K8S_REGION">
+                    <value>#{K8S_REGION}</value>
+                </variable>
+                <variable name="K8S_MACHINE_TYPE">
+                    <value>#{K8S_MACHINE_TYPE}</value>
+                </variable>
+                <variable name="K8S_CLUSTER_VERSION">
+                    <value>#{K8S_CLUSTER_VERSION}</value>
+                </variable>
+                <variable name="INCLUDE_ADDONS">
+                    <value>#{INCLUDE_ADDONS}</value>
+                </variable>
+                <variable name="NO_OF_PIPELINES_CONFIG_REPO">
+                    <value>#{NO_OF_PIPELINES_CONFIG_REPO}</value>
+                </variable>
+                <variable name="GIT_REPOSITORY_HOST">
+                    <value>#{GIT_REPOSITORY_HOST}</value>
+                </variable>
+                <variable name="NO_OF_ENVIRONMENTS">
+                    <value>#{NO_OF_ENVIRONMENTS}</value>
+                </variable>
+                <variable name="TFS_PWD" secure="true">
+                    <encryptedValue>REDACTED</encryptedValue>
+                </variable>
+                <variable name="LDAP_SERVER_IP" secure="true">
+                    <encryptedValue>REDACTED</encryptedValue>
+                </variable>
+                <variable name="FILE_BASED_USER_PWD" secure="true">
+                    <encryptedValue>REDACTED</encryptedValue>
+                </variable>
+                <variable name="LDAP_USER_PWD" secure="true">
+                    <encryptedValue>REDACTED</encryptedValue>
+                </variable>
+                <variable name="K8S_KEYFILE" secure="true">
+                    <encryptedValue>REDACTED</encryptedValue>
+                </variable>
+                <variable name="PG_DB_PASSWORD" secure="true">
+                    <encryptedValue>REDACTED</encryptedValue>
+                </variable>
+                <variable name="NEWRELIC_LICENSE_KEY" secure="true">
+                    <encryptedValue>REDACTED</encryptedValue>
+                </variable>
+                <variable name="AWS_ACCESS_KEY" secure="true">
+                    <encryptedValue>REDACTED</encryptedValue>
+                </variable>
+                <variable name="AWS_SECRET_ACCESS_KEY" secure="true">
+                    <encryptedValue>REDACTED</encryptedValue>
+                </variable>
+                <variable name="BUILD_SERVER_AUTO_REGISTER_KEY" secure="true">
+                    <encryptedValue>REDACTED</encryptedValue>
+                </variable>
+                <variable name="view" secure="true">
+                    <encryptedValue>REDACTED</encryptedValue>
+                </variable>
+            </environmentvariables>
+            <materials>
+                <git url="https://github.com/gocd/performance" dest="performance" />
+                <git url="https://git.gocd.io/git/gocd/aws" dest="aws" autoUpdate="false" />
+            </materials>
+        </pipeline>
+        <pipeline name="Performance-with-h2" lockBehavior="lockOnFailure" template="performance">
+            <params>
+                <param name="SERVER_INSTALL_DIR">/var/go/server</param>
+                <param name="AGENTS_INSTALL_DIR">/var/go/agent</param>
+                <param name="GIT_ROOT">/var/go/repos</param>
+                <param name="DOWNLOAD_URL">https://download.gocd.org/experimental</param>
+                <param name="PLUGIN_SRC_DIR">plugins/gocd-analytics-1.0.jar</param>
+                <param name="NO_OF_PIPELINES">750</param>
+                <param name="GIT_REPOSITORY_HOST">git://perf-test-repo-server.gocd.org</param>
+                <param name="NO_OF_AGENTS">70</param>
+                <param name="GO_SERVER_SYSTEM_PROPERTIES">-Ddatabase_url=http://172.16.38.88:8886/ -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=4711 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -XX:+HeapDumpOnOutOfMemoryError -XX:+UseSerialGC -Dgo.security.reauthentication.enabled=true -Dgo.security.reauthentication.interval=1800000 -Dgo.config.repo.gc.periodic=Y -Dgo.config.repo.gc.cron='0 0 0/3 1/1 * ?'  -XX:+PrintGCDetails -XX:+PrintGCApplicationStoppedTime -Xloggc:gc.log -javaagent:/var/go/newrelic/newrelic.jar</param>
+                <param name="GOCD_HOST">172.16.38.211</param>
+                <param name="CONFIG_SAVE_INTERVAL">900</param>
+                <param name="NO_OF_THREAD_GROUPS">1</param>
+                <param name="LOAD_TEST_DURATION">43200</param>
+                <param name="GIT_COMMIT_INTERVAL">120</param>
+                <param name="THROUGHPUT_PER_MINUTE">120</param>
+                <param name="THREAD_COUNT">25</param>
+                <param name="PG_DB_HOST">172.16.38.212</param>
+                <param name="INFLUXDB_HOST">10.38.28.58</param>
+                <param name="GO_VERSION">19.4.0</param>
+                <param name="THREAD_DUMP_INTERVAL">1800</param>
+                <param name="NO_OF_PIPELINES_ECS_EA">50</param>
+                <param name="PERCENT_MULTISTAGE_PIPELINES">10</param>
+                <param name="SERVER_MEM">8g</param>
+                <param name="SERVER_MAX_MEM">10g</param>
+                <param name="INCLUDE_ECS_EA_PLUGINS">Y</param>
+                <param name="INCLUDE_ADDONS">N</param>
+                <param name="INCLUDE_k8S_EA_PLUGINS">N</param>
+                <param name="GIT_MATERIAL_RATIO">100</param>
+                <param name="TFS_MATERIAL_RATIO">0</param>
+                <param name="RELEASES_JSON_URL">https://download.gocd.org/experimental/releases.json</param>
+                <param name="K8S_EA_PLUGIN_DOWNLOAD_URL">https://github.com/gocd/kubernetes-elastic-agents/releases/download/v1.0.0/kubernetes-elastic-agent-1.0.0-94.jar</param>
+                <param name="NO_OF_PIPELINES_K8S_EA">100</param>
+                <param name="INCLUDE_ANALYTICS_PLUGIN">Y</param>
+                <param name="K8S_ACCOUNT">REDACTED_GCP_ACCOUNT</param>
+                <param name="K8S_PROJECT_NAME">REDACTED</param>
+                <param name="K8S_CLUSTER_NAME">performance-cluster</param>
+                <param name="K8S_NODES_COUNT">3</param>
+                <param name="K8S_REGION">us-central1-a</param>
+                <param name="K8S_MACHINE_TYPE">n1-standard-1</param>
+                <param name="K8S_CLUSTER_VERSION">1.8.8-gke.0</param>
+                <param name="NO_OF_PIPELINES_CONFIG_REPO">25</param>
+                <param name="PERF_SERVER_SSH_URL">https://performancegocdperfserver.gocd.org:8154</param>
+            </params>
+            <environmentvariables>
+                <variable name="GIT_MATERIAL_RATIO">
+                    <value>#{GIT_MATERIAL_RATIO}</value>
+                </variable>
+                <variable name="TFS_MATERIAL_RATIO">
+                    <value>#{TFS_MATERIAL_RATIO}</value>
+                </variable>
+                <variable name="INCLUDE_PLUGINS">
+                    <value>N</value>
+                </variable>
+                <variable name="NO_OF_PIPELINES">
+                    <value>#{NO_OF_PIPELINES}</value>
+                </variable>
+                <variable name="NO_OF_AGENTS">
+                    <value>#{NO_OF_AGENTS}</value>
+                </variable>
+                <variable name="NO_OF_THREAD_GROUPS">
+                    <value>#{NO_OF_THREAD_GROUPS}</value>
+                </variable>
+                <variable name="LOAD_TEST_DURATION">
+                    <value>#{LOAD_TEST_DURATION}</value>
+                </variable>
+                <variable name="THROUGHPUT_PER_MINUTE">
+                    <value>#{THROUGHPUT_PER_MINUTE}</value>
+                </variable>
+                <variable name="SERVER_INSTALL_DIR">
+                    <value>#{SERVER_INSTALL_DIR}</value>
+                </variable>
+                <variable name="INFLUXDB_HOST">
+                    <value>#{INFLUXDB_HOST}</value>
+                </variable>
+                <variable name="GO_VERSION">
+                    <value>#{GO_VERSION}</value>
+                </variable>
+                <variable name="RELEASES_JSON_URL">
+                    <value>#{RELEASES_JSON_URL}</value>
+                </variable>
+                <variable name="INCLUDE_k8S_EA_PLUGINS">
+                    <value>#{INCLUDE_k8S_EA_PLUGINS}</value>
+                </variable>
+                <variable name="K8S_EA_PLUGIN_DOWNLOAD_URL">
+                    <value>#{K8S_EA_PLUGIN_DOWNLOAD_URL}</value>
+                </variable>
+                <variable name="NO_OF_PIPELINES_ECS_EA">
+                    <value>#{NO_OF_PIPELINES_ECS_EA}</value>
+                </variable>
+                <variable name="PERCENT_MULTISTAGE_PIPELINES">
+                    <value>#{PERCENT_MULTISTAGE_PIPELINES}</value>
+                </variable>
+                <variable name="SERVER_MEM">
+                    <value>#{SERVER_MEM}</value>
+                </variable>
+                <variable name="SERVER_MAX_MEM">
+                    <value>#{SERVER_MAX_MEM}</value>
+                </variable>
+                <variable name="INCLUDE_ECS_EA_PLUGINS">
+                    <value>#{INCLUDE_ECS_EA_PLUGINS}</value>
+                </variable>
+                <variable name="NO_OF_PIPELINES_K8S_EA">
+                    <value>#{NO_OF_PIPELINES_K8S_EA}</value>
+                </variable>
+                <variable name="INCLUDE_ANALYTICS_PLUGIN">
+                    <value>#{INCLUDE_ANALYTICS_PLUGIN}</value>
+                </variable>
+                <variable name="PG_DB_HOST">
+                    <value>#{PG_DB_HOST}</value>
+                </variable>
+                <variable name="K8S_ACCOUNT">
+                    <value>#{K8S_ACCOUNT}</value>
+                </variable>
+                <variable name="K8S_PROJECT_NAME">
+                    <value>#{K8S_PROJECT_NAME}</value>
+                </variable>
+                <variable name="K8S_CLUSTER_NAME">
+                    <value>#{K8S_CLUSTER_NAME}</value>
+                </variable>
+                <variable name="K8S_NODES_COUNT">
+                    <value>#{K8S_NODES_COUNT}</value>
+                </variable>
+                <variable name="K8S_REGION">
+                    <value>#{K8S_REGION}</value>
+                </variable>
+                <variable name="K8S_MACHINE_TYPE">
+                    <value>#{K8S_MACHINE_TYPE}</value>
+                </variable>
+                <variable name="K8S_CLUSTER_VERSION">
+                    <value>#{K8S_CLUSTER_VERSION}</value>
+                </variable>
+                <variable name="INCLUDE_ADDONS">
+                    <value>#{INCLUDE_ADDONS}</value>
+                </variable>
+                <variable name="NO_OF_PIPELINES_CONFIG_REPO">
+                    <value>#{NO_OF_PIPELINES_CONFIG_REPO}</value>
+                </variable>
+                <variable name="GIT_REPOSITORY_HOST">
+                    <value>#{GIT_REPOSITORY_HOST}</value>
+                </variable>
+                <variable name="TFS_PWD" secure="true">
+                    <encryptedValue>REDACTED</encryptedValue>
+                </variable>
+                <variable name="LDAP_SERVER_IP" secure="true">
+                    <encryptedValue>REDACTED</encryptedValue>
+                </variable>
+                <variable name="FILE_BASED_USER_PWD" secure="true">
+                    <encryptedValue>REDACTED</encryptedValue>
+                </variable>
+                <variable name="LDAP_USER_PWD" secure="true">
+                    <encryptedValue>REDACTED</encryptedValue>
+                </variable>
+                <variable name="K8S_KEYFILE" secure="true">
+                    <encryptedValue>REDACTED</encryptedValue>
+                </variable>
+                <variable name="PERF_SERVER_SSH_URL" secure="true">
+                    <encryptedValue>REDACTED</encryptedValue>
+                </variable>
+            </environmentvariables>
+            <materials>
+                <git url="https://git.gocd.io/git/gocd/performance" />
+            </materials>
+        </pipeline>
+    </pipelines>
+    <templates>
+        <pipeline name="performance">
+            <stage name="Infra">
+                <approval type="manual" />
+                <jobs>
+                    <job name="setup_infra" elasticProfileId="ecs-gocd-dev-build">
+                        <tasks>
+                            <exec command="/bin/bash" workingdir="aws">
+                                <arg>-c</arg>
+                                <arg>bundle install --path .bundle --binstubs</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash" workingdir="aws">
+                                <arg>-c</arg>
+                                <arg>bundle exec ruby perf_setup create --stack-name Performance --region us-east-2 --parameters "ServerAutoRegisterKey=$BUILD_SERVER_AUTO_REGISTER_KEY;PerfServerDBPassword=$PG_DB_PASSWORD"</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                    </job>
+                </jobs>
+            </stage>
+            <stage name="prepare">
+                <jobs>
+                    <job name="server">
+                        <environmentvariables>
+                            <variable name="INCLUDE_ECS_EA_PLUGINS">
+                                <value>#{INCLUDE_ECS_EA_PLUGINS}</value>
+                            </variable>
+                            <variable name="PG_DB_HOST">
+                                <value>#{PG_DB_HOST}</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="git" workingdir="performance">
+                                <arg>pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>server:prepare</arg>
+                                <arg>SERVER_INSTALL_DIR=#{SERVER_INSTALL_DIR}</arg>
+                                <arg>DOWNLOAD_URL=#{DOWNLOAD_URL}</arg>
+                                <arg>PLUGIN_SRC_DIR=#{PLUGIN_SRC_DIR}</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <resources>
+                            <resource>server</resource>
+                        </resources>
+                    </job>
+                    <job name="git-repo-setup">
+                        <tasks>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>git:daemon:start</arg>
+                                <arg>GIT_ROOT=#{GIT_ROOT}</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <resources>
+                            <resource>repos</resource>
+                        </resources>
+                    </job>
+                    <job name="postgres">
+                        <tasks>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>postgres:setup_db</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <resources>
+                            <resource>repos</resource>
+                        </resources>
+                    </job>
+                </jobs>
+            </stage>
+            <stage name="start-server">
+                <approval type="manual" />
+                <jobs>
+                    <job name="server">
+                        <environmentvariables>
+                            <variable name="GO_SERVER_SYSTEM_PROPERTIES">
+                                <value>#{GO_SERVER_SYSTEM_PROPERTIES}</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="git" workingdir="performance">
+                                <arg>pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>server:start</arg>
+                                <arg>SERVER_INSTALL_DIR=#{SERVER_INSTALL_DIR}</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>server:create_environment</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>server:auto_register</arg>
+                                <runif status="any" />
+                            </exec>
+                        </tasks>
+                        <resources>
+                            <resource>server</resource>
+                        </resources>
+                    </job>
+                </jobs>
+            </stage>
+            <stage name="start-agents">
+                <jobs>
+                    <job name="agents" runOnAllAgents="true" timeout="0">
+                        <environmentvariables>
+                            <variable name="PRODUCTION_MODE">
+                                <value>N</value>
+                            </variable>
+                            <variable name="GO_SERVER_URL">
+                                <value>https://#{GOCD_HOST}:8154/go</value>
+                            </variable>
+                            <variable name="GOCD_HOST">
+                                <value>#{GOCD_HOST}</value>
+                            </variable>
+                            <variable name="ENABLE_AGENT_DEBUG_LOGS">
+                                <value>Y</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="/bin/bash">
+                                <arg>-c</arg>
+                                <arg>ulimit -u 8192</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="git" workingdir="performance">
+                                <arg>pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>agents:prepare</arg>
+                                <arg>AGENTS_INSTALL_DIR=#{AGENTS_INSTALL_DIR}</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>agents:start</arg>
+                                <arg>AGENTS_INSTALL_DIR=#{AGENTS_INSTALL_DIR}</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <resources>
+                            <resource>agents</resource>
+                        </resources>
+                    </job>
+                </jobs>
+            </stage>
+            <stage name="configure">
+                <approval type="manual" />
+                <environmentvariables>
+                    <variable name="GOCD_HOST">
+                        <value>localhost</value>
+                    </variable>
+                    <variable name="PERF_SERVER_SSH_URL">
+                        <value>#{PERF_SERVER_SSH_URL}</value>
+                    </variable>
+                </environmentvariables>
+                <jobs>
+                    <job name="pipelines" timeout="0">
+                        <environmentvariables>
+                            <variable name="AWS_SECRET_KEY" secure="true">
+                                <encryptedValue>REDACTED</encryptedValue>
+                            </variable>
+                            <variable name="AWS_ACCESS_KEY_ID" secure="true">
+                                <encryptedValue>REDACTED</encryptedValue>
+                            </variable>
+                            <variable name="AWS_IAM_PROFILE" secure="true">
+                                <encryptedValue>REDACTED</encryptedValue>
+                            </variable>
+                            <variable name="K8s_TOKEN" secure="true">
+                                <encryptedValue>REDACTED</encryptedValue>
+                            </variable>
+                            <variable name="K8s_CA_CERT" secure="true">
+                                <encryptedValue>REDACTED</encryptedValue>
+                            </variable>
+                            <variable name="K8s_CLUSTER_URL" secure="true">
+                                <encryptedValue>REDACTED</encryptedValue>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="/bin/bash" workingdir="performance">
+                                <arg>-c</arg>
+                                <arg>git pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>server:setup_auth</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>server:setup_secrets</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>plugins:setup_ecs_cluster_profile</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>plugins:setup_ecs_ea_profile</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>pipeline:create</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>server:setup_config_repo</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>pipeline:create_pipelines_to_run_on_ecs_elastic_agents[test-ecs]</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>plugins:setup_analytics_plugin</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <resources>
+                            <resource>server</resource>
+                        </resources>
+                    </job>
+                    <job name="config_repo_pipelines">
+                        <environmentvariables>
+                            <variable name="NO_OF_PIPELINES_K8S_EA">
+                                <value>0</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="git" workingdir="performance">
+                                <arg>pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>pipeline:create_pipeline_in_config_repo</arg>
+                                <arg>GIT_ROOT=#{GIT_ROOT}</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <resources>
+                            <resource>repos</resource>
+                        </resources>
+                    </job>
+                </jobs>
+            </stage>
+            <stage name="warmup">
+                <approval type="manual" />
+                <jobs>
+                    <job name="wait" timeout="0" elasticProfileId="ecs-gocd-dev-build">
+                        <tasks>
+                            <exec command="sleep">
+                                <arg>1200</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                    </job>
+                    <job name="git_commit_loop" timeout="0">
+                        <environmentvariables>
+                            <variable name="GIT_COMMIT_INTERVAL">
+                                <value>300</value>
+                            </variable>
+                            <variable name="LOAD_TEST_DURATION">
+                                <value>1200</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:git:update</arg>
+                                <arg>GIT_ROOT=#{GIT_ROOT}</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <resources>
+                            <resource>repos</resource>
+                        </resources>
+                    </job>
+                </jobs>
+            </stage>
+            <stage name="benchmark">
+                <approval type="manual" />
+                <environmentvariables>
+                    <variable name="THREAD_COUNT">
+                        <value>#{THREAD_COUNT}</value>
+                    </variable>
+                    <variable name="NEXUS_PASSWORD" secure="true">
+                        <encryptedValue>REDACTED</encryptedValue>
+                    </variable>
+                </environmentvariables>
+                <jobs>
+                    <job name="job_details_page" runInstanceCount="2" timeout="0" elasticProfileId="ecs-perf-test-load-generators">
+                        <environmentvariables>
+                            <variable name="GOCD_HOST">
+                                <value>#{GOCD_HOST}</value>
+                            </variable>
+                            <variable name="JVM_ARGS">
+                                <value>-Xmx1g</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="git" workingdir="performance">
+                                <arg>pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash">
+                                <arg>-c</arg>
+                                <arg>bundle config nexus.gocd.io admin:$NEXUS_PASSWORD</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:dashboard_to_job_instance</arg>
+                                <arg>NO_OF_AGENTS=#{NO_OF_AGENTS}</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <tabs>
+                            <tab name="Report" path="reports/dashboard_to_job_instance/index.html" />
+                        </tabs>
+                        <artifacts>
+                            <artifact type="build" src="performance/reports" />
+                        </artifacts>
+                    </job>
+                    <job name="agents_page" timeout="0" elasticProfileId="ecs-perf-test-load-generators">
+                        <environmentvariables>
+                            <variable name="GOCD_HOST">
+                                <value>#{GOCD_HOST}</value>
+                            </variable>
+                            <variable name="JVM_ARGS">
+                                <value>-Xmx1g</value>
+                            </variable>
+                            <variable name="THROUGHPUT_PER_MINUTE">
+                                <value>1</value>
+                            </variable>
+                            <variable name="THREAD_COUNT">
+                                <value>5</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="git" workingdir="performance">
+                                <arg>pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash">
+                                <arg>-c</arg>
+                                <arg>bundle config nexus.gocd.io admin:$NEXUS_PASSWORD</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:agents_page</arg>
+                                <arg>NO_OF_AGENTS=#{NO_OF_AGENTS}</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <tabs>
+                            <tab name="Report" path="reports/agents_to_jobs_history/index.html" />
+                        </tabs>
+                        <artifacts>
+                            <artifact type="build" src="performance/reports" />
+                        </artifacts>
+                    </job>
+                    <job name="plugin_status_report_page" runInstanceCount="2" timeout="0" elasticProfileId="ecs-perf-test-load-generators">
+                        <environmentvariables>
+                            <variable name="GOCD_HOST">
+                                <value>#{GOCD_HOST}</value>
+                            </variable>
+                            <variable name="JVM_ARGS">
+                                <value>-Xmx1g</value>
+                            </variable>
+                            <variable name="THROUGHPUT_PER_MINUTE">
+                                <value>5</value>
+                            </variable>
+                            <variable name="THREAD_COUNT">
+                                <value>10</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="git" workingdir="performance">
+                                <arg>pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash">
+                                <arg>-c</arg>
+                                <arg>bundle config nexus.gocd.io admin:$NEXUS_PASSWORD</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:plugin_status_report</arg>
+                                <arg>NO_OF_AGENTS=#{NO_OF_AGENTS}</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <tabs>
+                            <tab name="Report" path="reports/plugin_status_report/index.html" />
+                        </tabs>
+                        <artifacts>
+                            <artifact type="build" src="performance/reports" />
+                        </artifacts>
+                    </job>
+                    <job name="pipeline_history" timeout="0" elasticProfileId="ecs-perf-test-load-generators">
+                        <environmentvariables>
+                            <variable name="GOCD_HOST">
+                                <value>#{GOCD_HOST}</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="git" workingdir="performance">
+                                <arg>pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash">
+                                <arg>-c</arg>
+                                <arg>bundle config nexus.gocd.io admin:$NEXUS_PASSWORD</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:pipeline_history</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <tabs>
+                            <tab name="Reports" path="reports/pipeline_history/index.html" />
+                        </tabs>
+                        <artifacts>
+                            <artifact type="build" src="performance/reports" />
+                        </artifacts>
+                    </job>
+                    <job name="git_commit_loop" timeout="0">
+                        <environmentvariables>
+                            <variable name="GIT_COMMIT_INTERVAL">
+                                <value>#{GIT_COMMIT_INTERVAL}</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="git" workingdir="performance">
+                                <arg>pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:git:update</arg>
+                                <arg>GIT_ROOT=#{GIT_ROOT}</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <resources>
+                            <resource>repos</resource>
+                        </resources>
+                    </job>
+                    <job name="tfs_commit_loop" timeout="0" elasticProfileId="ecs-perf-test-load-generators">
+                        <tasks>
+                            <exec command="/bin/bash">
+                                <arg>-c</arg>
+                                <arg>bundle config nexus.gocd.io admin:$NEXUS_PASSWORD</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:tfs:update</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                    </job>
+                    <job name="config_update_loop" timeout="0">
+                        <environmentvariables>
+                            <variable name="CONFIG_SAVE_INTERVAL">
+                                <value>#{CONFIG_SAVE_INTERVAL}</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="git" workingdir="performance">
+                                <arg>pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:config:update</arg>
+                                <arg>GOCD_HOST=#{GOCD_HOST}</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <resources>
+                            <resource>agents</resource>
+                        </resources>
+                    </job>
+                    <job name="compare_page" timeout="0" elasticProfileId="ecs-perf-test-load-generators">
+                        <environmentvariables>
+                            <variable name="GOCD_HOST">
+                                <value>#{GOCD_HOST}</value>
+                            </variable>
+                            <variable name="JVM_ARGS">
+                                <value>-Xmx1g</value>
+                            </variable>
+                            <variable name="THROUGHPUT_PER_MINUTE">
+                                <value>1</value>
+                            </variable>
+                            <variable name="THREAD_COUNT">
+                                <value>3</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="git" workingdir="performance">
+                                <arg>pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash">
+                                <arg>-c</arg>
+                                <arg>bundle config nexus.gocd.io admin:$NEXUS_PASSWORD</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:dashboard_to_compare</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <tabs>
+                            <tab name="Report" path="reports/dashboard_to_compare/index.html" />
+                        </tabs>
+                        <artifacts>
+                            <artifact type="build" src="performance/reports" />
+                        </artifacts>
+                    </job>
+                    <job name="global_analytics_page" timeout="0" elasticProfileId="ecs-perf-test-load-generators">
+                        <environmentvariables>
+                            <variable name="GOCD_HOST">
+                                <value>#{GOCD_HOST}</value>
+                            </variable>
+                            <variable name="JVM_ARGS">
+                                <value>-Xms512m -Xmx4096m</value>
+                            </variable>
+                            <variable name="THROUGHPUT_PER_MINUTE">
+                                <value>30</value>
+                            </variable>
+                            <variable name="THREAD_COUNT">
+                                <value>30</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="git" workingdir="performance">
+                                <arg>pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash">
+                                <arg>-c</arg>
+                                <arg>bundle config nexus.gocd.io admin:$NEXUS_PASSWORD</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:global_analytics</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <tabs>
+                            <tab name="Report" path="reports/global_analytics/index.html" />
+                        </tabs>
+                        <artifacts>
+                            <artifact type="build" src="performance/reports" />
+                        </artifacts>
+                    </job>
+                    <job name="build_time_analytics_page" timeout="0" elasticProfileId="ecs-perf-test-load-generators">
+                        <environmentvariables>
+                            <variable name="GOCD_HOST">
+                                <value>#{GOCD_HOST}</value>
+                            </variable>
+                            <variable name="JVM_ARGS">
+                                <value>-Xms512m -Xmx4096m</value>
+                            </variable>
+                            <variable name="THROUGHPUT_PER_MINUTE">
+                                <value>30</value>
+                            </variable>
+                            <variable name="THREAD_COUNT">
+                                <value>30</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="git" workingdir="performance">
+                                <arg>pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash">
+                                <arg>-c</arg>
+                                <arg>bundle config nexus.gocd.io admin:$NEXUS_PASSWORD</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:build_time_analytics</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <tabs>
+                            <tab name="Report" path="reports/build_time_analytics/index.html" />
+                        </tabs>
+                        <artifacts>
+                            <artifact type="build" src="performance/reports" />
+                        </artifacts>
+                    </job>
+                    <job name="new_dashboard_page" timeout="0" elasticProfileId="ecs-perf-test-load-generators">
+                        <environmentvariables>
+                            <variable name="GOCD_HOST">
+                                <value>#{GOCD_HOST}</value>
+                            </variable>
+                            <variable name="JVM_ARGS">
+                                <value>-Xms512m -Xmx4096m</value>
+                            </variable>
+                            <variable name="THROUGHPUT_PER_MINUTE">
+                                <value>240</value>
+                            </variable>
+                            <variable name="THREAD_COUNT">
+                                <value>250</value>
+                            </variable>
+                            <variable name="NO_OF_THREAD_GROUPS">
+                                <value>2</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="git" workingdir="performance">
+                                <arg>pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash">
+                                <arg>-c</arg>
+                                <arg>bundle config nexus.gocd.io admin:$NEXUS_PASSWORD</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:new_dashboard_page_using_access_token</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <tabs>
+                            <tab name="Report" path="reports/new_pipeline_dashboard/index.html" />
+                        </tabs>
+                        <artifacts>
+                            <artifact type="build" src="performance/reports" />
+                        </artifacts>
+                    </job>
+                    <job name="vsm_page" runInstanceCount="2" timeout="0" elasticProfileId="ecs-perf-test-load-generators">
+                        <environmentvariables>
+                            <variable name="GOCD_HOST">
+                                <value>#{GOCD_HOST}</value>
+                            </variable>
+                            <variable name="JVM_ARGS">
+                                <value>-Xmx1g</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="git" workingdir="performance">
+                                <arg>pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash">
+                                <arg>-c</arg>
+                                <arg>bundle config nexus.gocd.io admin:$NEXUS_PASSWORD</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:dashboard_to_vsm</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <tabs>
+                            <tab name="Report" path="reports/dashboard_to_vsm/index.html" />
+                        </tabs>
+                        <artifacts>
+                            <artifact type="build" src="performance/reports" />
+                        </artifacts>
+                    </job>
+                    <job name="pipeline_edit_page" timeout="0" elasticProfileId="ecs-perf-test-load-generators">
+                        <environmentvariables>
+                            <variable name="GOCD_HOST">
+                                <value>#{GOCD_HOST}</value>
+                            </variable>
+                            <variable name="JVM_ARGS">
+                                <value>-Xmx1g</value>
+                            </variable>
+                            <variable name="NO_OF_THREAD_GROUPS">
+                                <value>2</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="git" workingdir="performance">
+                                <arg>pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash">
+                                <arg>-c</arg>
+                                <arg>bundle config nexus.gocd.io admin:$NEXUS_PASSWORD</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:dashboard_to_pipeline_edit</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <tabs>
+                            <tab name="Report" path="reports/dashboard_to_pipeline_edit/index.html" />
+                        </tabs>
+                        <artifacts>
+                            <artifact type="build" src="performance/reports" />
+                        </artifacts>
+                    </job>
+                    <job name="admin_pipelines" timeout="0" elasticProfileId="ecs-perf-test-load-generators">
+                        <environmentvariables>
+                            <variable name="GOCD_HOST">
+                                <value>#{GOCD_HOST}</value>
+                            </variable>
+                            <variable name="JVM_ARGS">
+                                <value>-Xms512m -Xmx4096m</value>
+                            </variable>
+                            <variable name="NO_OF_THREAD_GROUPS">
+                                <value>1</value>
+                            </variable>
+                            <variable name="THROUGHPUT_PER_MINUTE">
+                                <value>10</value>
+                            </variable>
+                            <variable name="THREAD_COUNT">
+                                <value>25</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="git" workingdir="performance">
+                                <arg>pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash">
+                                <arg>-c</arg>
+                                <arg>bundle config nexus.gocd.io admin:$NEXUS_PASSWORD</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:admin_pipelines</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <tabs>
+                            <tab name="Report" path="reports/admin_pages/index.html" />
+                        </tabs>
+                        <artifacts>
+                            <artifact type="build" src="performance/reports" />
+                        </artifacts>
+                    </job>
+                    <job name="CCTray" timeout="0" elasticProfileId="ecs-perf-test-load-generators">
+                        <environmentvariables>
+                            <variable name="GOCD_HOST">
+                                <value>#{GOCD_HOST}</value>
+                            </variable>
+                            <variable name="JVM_ARGS">
+                                <value>-Xms512m -Xmx4096m</value>
+                            </variable>
+                            <variable name="NO_OF_THREAD_GROUPS">
+                                <value>3</value>
+                            </variable>
+                            <variable name="THROUGHPUT_PER_MINUTE">
+                                <value>60</value>
+                            </variable>
+                            <variable name="THREAD_COUNT">
+                                <value>50</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="git" workingdir="performance">
+                                <arg>pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash">
+                                <arg>-c</arg>
+                                <arg>bundle config nexus.gocd.io admin:$NEXUS_PASSWORD</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:CCTray</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <tabs>
+                            <tab name="Report" path="reports/admin_pages/index.html" />
+                        </tabs>
+                        <artifacts>
+                            <artifact type="build" src="performance/reports" />
+                        </artifacts>
+                    </job>
+                    <job name="server_health_messages" timeout="0" elasticProfileId="ecs-perf-test-load-generators">
+                        <environmentvariables>
+                            <variable name="GOCD_HOST">
+                                <value>#{GOCD_HOST}</value>
+                            </variable>
+                            <variable name="JVM_ARGS">
+                                <value>-Xms512m -Xmx4096m</value>
+                            </variable>
+                            <variable name="NO_OF_THREAD_GROUPS">
+                                <value>1</value>
+                            </variable>
+                            <variable name="THROUGHPUT_PER_MINUTE">
+                                <value>60</value>
+                            </variable>
+                            <variable name="THREAD_COUNT">
+                                <value>50</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="git" workingdir="performance">
+                                <arg>pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash">
+                                <arg>-c</arg>
+                                <arg>bundle config nexus.gocd.io admin:$NEXUS_PASSWORD</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:server_health_messages</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <tabs>
+                            <tab name="Report" path="reports/admin_pages/index.html" />
+                        </tabs>
+                        <artifacts>
+                            <artifact type="build" src="performance/reports" />
+                        </artifacts>
+                    </job>
+                    <job name="user_summary" timeout="0" elasticProfileId="ecs-perf-test-load-generators">
+                        <environmentvariables>
+                            <variable name="GOCD_HOST">
+                                <value>#{GOCD_HOST}</value>
+                            </variable>
+                            <variable name="JVM_ARGS">
+                                <value>-Xms512m -Xmx4096m</value>
+                            </variable>
+                            <variable name="NO_OF_THREAD_GROUPS">
+                                <value>1</value>
+                            </variable>
+                            <variable name="THROUGHPUT_PER_MINUTE">
+                                <value>10</value>
+                            </variable>
+                            <variable name="THREAD_COUNT">
+                                <value>25</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="git" workingdir="performance">
+                                <arg>pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash">
+                                <arg>-c</arg>
+                                <arg>bundle config nexus.gocd.io admin:$NEXUS_PASSWORD</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:user_summary</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                        <tabs>
+                            <tab name="Report" path="reports/admin_pages/index.html" />
+                        </tabs>
+                        <artifacts>
+                            <artifact type="build" src="performance/reports" />
+                        </artifacts>
+                    </job>
+                    <job name="thread_gc_analysis" timeout="0">
+                        <environmentvariables>
+                            <variable name="FASTTHREAD_APIKEY" secure="true">
+                                <encryptedValue>REDACTED</encryptedValue>
+                            </variable>
+                            <variable name="THREAD_DUMP_INTERVAL">
+                                <value>#{THREAD_DUMP_INTERVAL}</value>
+                            </variable>
+                        </environmentvariables>
+                        <tasks>
+                            <exec command="git" workingdir="performance">
+                                <arg>pull</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>install</arg>
+                                <arg>--path</arg>
+                                <arg>vendor/bundle</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:analyze_thread_dump</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="bundle" workingdir="performance">
+                                <arg>exec</arg>
+                                <arg>rake</arg>
+                                <arg>performance:analyze_gc</arg>
+                                <runif status="any" />
+                            </exec>
+                        </tasks>
+                        <tabs>
+                            <tab name="ThreadDump" path="ThreadDump_Analysis_report.html" />
+                            <tab name="GC" path="GC_Analysis_report.html" />
+                        </tabs>
+                        <resources>
+                            <resource>server</resource>
+                        </resources>
+                        <artifacts>
+                            <artifact type="build" src="performance/thread_dumps" />
+                            <artifact type="build" src="performance/ThreadDump_Analysis_report.html" />
+                            <artifact type="build" src="performance/GC_Analysis_report.html" />
+                        </artifacts>
+                    </job>
+                </jobs>
+            </stage>
+            <stage name="stop">
+                <approval type="manual" />
+                <jobs>
+                    <job name="all" elasticProfileId="ecs-gocd-dev-build">
+                        <tasks>
+                            <exec command="/bin/bash" workingdir="aws">
+                                <arg>-c</arg>
+                                <arg>bundle install --path .bundle --binstubs</arg>
+                                <runif status="passed" />
+                            </exec>
+                            <exec command="/bin/bash" workingdir="aws">
+                                <arg>-c</arg>
+                                <arg>bundle exec ruby perf_setup delete --stack-name Performance --region us-east-2 --parameters "ServerAutoRegisterKey=$BUILD_SERVER_AUTO_REGISTER_KEY;PerfServerDBPassword=$PG_DB_PASSWORD"</arg>
+                                <runif status="passed" />
+                            </exec>
+                        </tasks>
+                    </job>
+                </jobs>
+            </stage>
+        </pipeline>
+    </templates>
+</cruise>
